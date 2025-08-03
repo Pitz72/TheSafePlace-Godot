@@ -31,6 +31,14 @@ func _ready():
 	world = get_node("World") if has_node("World") else null
 	game_ui = get_node("GameUI/GameUI") if has_node("GameUI/GameUI") else null
 	
+	# Sposta il mondo nel viewport della UI
+	if world and game_ui:
+		var viewport = game_ui.get_world_viewport()
+		if viewport:
+			world.get_parent().remove_child(world)
+			viewport.add_child(world)
+			print("✅ Mondo spostato nel viewport della UI")
+
 	# Connetti segnali se disponibili
 	if world and world.has_signal("player_moved"):
 		world.player_moved.connect(_on_player_moved)

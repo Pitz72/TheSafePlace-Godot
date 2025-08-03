@@ -98,7 +98,7 @@ func _ready():
 	_connect_input_manager()
 	
 	# 7. CONNETTI SEGNALE A GAMEUI PER AGGIORNAMENTI INFO
-	_connect_to_gameui()
+	# _connect_to_gameui() # NON PIU' NECESSARIO
 	
 	print("✅ World v2.1 pronto - Sistema completo con camera fix e log movimento!")
 
@@ -273,21 +273,21 @@ func _connect_input_manager():
 	
 	print("🎮 World: Gestione input delegata a InputManager")
 
-## Connette il segnale player_moved al GameUI per aggiornamenti info real-time
-func _connect_to_gameui():
-	"""Connette il segnale al GameUI per aggiornamenti pannello informazioni"""
-	# Cerca GameUI nella scena
-	var gameui = get_tree().get_first_node_in_group("gameui")
-	if gameui == null:
-		# Cerca tramite percorso relativo se non trovato nel gruppo
-		gameui = get_node("../../../GameUI") if get_node_or_null("../../../GameUI") else null
-	
-	if gameui and gameui.has_method("_on_player_moved"):
-		if not player_moved.is_connected(gameui._on_player_moved):
-			player_moved.connect(gameui._on_player_moved)
-			print("✅ World: Connesso segnale player_moved a GameUI")
-	else:
-		print("⚠️ World: GameUI non trovato per connessione segnale")
+# ## Connette il segnale player_moved al GameUI per aggiornamenti info real-time
+# func _connect_to_gameui():
+# 	"""Connette il segnale al GameUI per aggiornamenti pannello informazioni"""
+# 	# Cerca GameUI nella scena
+# 	var gameui = get_tree().get_first_node_in_group("gameui")
+# 	if gameui == null:
+# 		# Cerca tramite percorso relativo se non trovato nel gruppo
+# 		gameui = get_node("../../../GameUI") if get_node_or_null("../../../GameUI") else null
+#
+# 	if gameui and gameui.has_method("_on_player_moved"):
+# 		if not player_moved.is_connected(gameui._on_player_moved):
+# 			player_moved.connect(gameui._on_player_moved)
+# 			print("✅ World: Connesso segnale player_moved a GameUI")
+# 	else:
+# 		print("⚠️ World: GameUI non trovato per connessione segnale")
 
 ## Callback per movimento player tramite InputManager
 ## @param direction: Vector2i direzione movimento (-1,0,1 per x/y)

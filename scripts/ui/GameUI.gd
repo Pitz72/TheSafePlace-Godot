@@ -95,7 +95,7 @@ func _ready():
 	connect_player_manager_signals()
 	
 	# Step 3: Instanzia la scena World nel viewport
-	instantiate_world_scene()
+	# instantiate_world_scene() # RIMOSSO - Causa il bug della doppia istanza del mondo
 	
 	# Step 4: Aggiorna l'UI con valori iniziali
 	update_all_ui()
@@ -157,62 +157,62 @@ func verify_player_manager():
 		print("GameUI: ❌ ERRORE CRITICO - PlayerManager non disponibile!")
 		push_error("GameUI: PlayerManager Singleton non configurato correttamente")
 
-func instantiate_world_scene():
-	"""Instanzia la scena World.tscn nel WorldViewport del pannello mappa"""
-	if not world_viewport:
-		print("GameUI: ❌ world_viewport è null - impossibile istanziare World")
-		return
-		
-	var world_scene = preload("res://scenes/World.tscn")
-	if world_scene:
-		world_scene_instance = world_scene.instantiate()
-		world_viewport.add_child(world_scene_instance)
-		
-		# Configurazione speciale per SubViewport
-		world_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-		world_viewport.size = Vector2i(400, 300)  # Dimensione fissa per il monitor
-		
-		# Configurazioni aggiuntive per il rendering
-		world_viewport.snap_2d_transforms_to_pixel = true
-		world_viewport.snap_2d_vertices_to_pixel = true
-		world_viewport.disable_3d = true  # Forza 2D only
-		
-		# CRUCIALE: Configurazione input per movimento player nel SubViewport
-		world_viewport.gui_disable_input = false  # Abilita ricezione input
-		world_viewport.handle_input_locally = true  # SubViewport gestisce input internamente
-		world_viewport.physics_object_picking = true  # Abilita interazioni fisiche
-		print("GameUI: 🎮 SubViewport configurato per gestire input internamente")
-		
-		# Configura la camera del World per il SubViewport
-		var camera = world_scene_instance.get_node("Camera2D")
-		if camera:
-			camera.enabled = true
-			camera.make_current()
-			# APPROCCIO 1: Rimuovo sovrascrittura zoom - World.gd gestisce il suo zoom
-			print("GameUI: 📷 Camera2D configurata per SubViewport - zoom gestito da World.gd")
-		
-		# Forza il World a inizializzarsi
-		if world_scene_instance.has_method("_ready"):
-			print("GameUI: 🔄 Forzando inizializzazione World...")
-		
-		# Forza rendering immediato
-		world_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-		
-		print("GameUI: ✅ Scena World.tscn istanziata nel viewport mappa")
-		print("GameUI: 🖥️ SubViewport configurato come 'monitor' 400x300")
-		print("GameUI: 📊 World children: %d" % world_scene_instance.get_child_count())
-		
-		# Collega la texture del SubViewport al TextureRect per visualizzazione
-		call_deferred("connect_viewport_to_display")
-		
-		# PROBLEMA LAYOUT RISOLTO: Configura MapDisplay per riempimento completo
-		call_deferred("configure_map_display_scaling")
-		
-		# Debug immediato per test
-		call_deferred("test_viewport_content")
-	else:
-		print("GameUI: ❌ ERRORE nel caricamento scena World.tscn")
-		push_error("GameUI: Impossibile caricare res://scenes/World.tscn")
+# func instantiate_world_scene():
+# 	"""Instanzia la scena World.tscn nel WorldViewport del pannello mappa"""
+# 	if not world_viewport:
+# 		print("GameUI: ❌ world_viewport è null - impossibile istanziare World")
+# 		return
+#
+# 	var world_scene = preload("res://scenes/World.tscn")
+# 	if world_scene:
+# 		world_scene_instance = world_scene.instantiate()
+# 		world_viewport.add_child(world_scene_instance)
+#
+# 		# Configurazione speciale per SubViewport
+# 		world_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+# 		world_viewport.size = Vector2i(400, 300)  # Dimensione fissa per il monitor
+#
+# 		# Configurazioni aggiuntive per il rendering
+# 		world_viewport.snap_2d_transforms_to_pixel = true
+# 		world_viewport.snap_2d_vertices_to_pixel = true
+# 		world_viewport.disable_3d = true  # Forza 2D only
+#
+# 		# CRUCIALE: Configurazione input per movimento player nel SubViewport
+# 		world_viewport.gui_disable_input = false  # Abilita ricezione input
+# 		world_viewport.handle_input_locally = true  # SubViewport gestisce input internamente
+# 		world_viewport.physics_object_picking = true  # Abilita interazioni fisiche
+# 		print("GameUI: 🎮 SubViewport configurato per gestire input internamente")
+#
+# 		# Configura la camera del World per il SubViewport
+# 		var camera = world_scene_instance.get_node("Camera2D")
+# 		if camera:
+# 			camera.enabled = true
+# 			camera.make_current()
+# 			# APPROCCIO 1: Rimuovo sovrascrittura zoom - World.gd gestisce il suo zoom
+# 			print("GameUI: 📷 Camera2D configurata per SubViewport - zoom gestito da World.gd")
+#
+# 		# Forza il World a inizializzarsi
+# 		if world_scene_instance.has_method("_ready"):
+# 			print("GameUI: 🔄 Forzando inizializzazione World...")
+#
+# 		# Forza rendering immediato
+# 		world_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+#
+# 		print("GameUI: ✅ Scena World.tscn istanziata nel viewport mappa")
+# 		print("GameUI: 🖥️ SubViewport configurato come 'monitor' 400x300")
+# 		print("GameUI: 📊 World children: %d" % world_scene_instance.get_child_count())
+#
+# 		# Collega la texture del SubViewport al TextureRect per visualizzazione
+# 		call_deferred("connect_viewport_to_display")
+#
+# 		# PROBLEMA LAYOUT RISOLTO: Configura MapDisplay per riempimento completo
+# 		call_deferred("configure_map_display_scaling")
+#
+# 		# Debug immediato per test
+# 		call_deferred("test_viewport_content")
+# 	else:
+# 		print("GameUI: ❌ ERRORE nel caricamento scena World.tscn")
+# 		push_error("GameUI: Impossibile caricare res://scenes/World.tscn")
 
 # ═══ CONNESSIONI SEGNALI PLAYERMANAGER ═══
 
@@ -760,6 +760,10 @@ func show_system_message(message: String):
 func show_player_action(action: String):
 	"""Mostra un'azione del giocatore nel diario"""
 	add_log_message("[AZIONE] " + action)
+
+func get_world_viewport() -> SubViewport:
+	"""Restituisce il SubViewport per la mappa"""
+	return world_viewport
 
 func get_world_scene() -> Node:
 	"""Restituisce l'istanza della scena World per accesso esterno"""
