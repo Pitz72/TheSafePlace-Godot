@@ -354,8 +354,7 @@ func _on_map_move(direction: Vector2i):
 			narrative_message_sent.emit()
 		else:
 			# Messaggio generico per altri ostacoli
-			var direction_name = direction_to_name.get(direction, "Direzione Sconosciuta")
-			_add_movement_log("Movimento bloccato verso %s: ostacolo invalicabile" % direction_name)
+			_add_movement_log("Movimento bloccato: ostacolo invalicabile.")
 
 		print("🚫 Movimento bloccato verso: %s" % str(new_position))
 
