@@ -1,0 +1,1077 @@
+extends Node
+
+## PlayerManager Singleton - The Safe Place v0.1.2
+## 
+## Gestisce tutti i dati del personaggio giocatore (statistiche, inventario, risorse).
+## Progettato come Singleton (Autoload) per accesso globale allo stato del player.
+## 
+## Milestone 2: Gameplay Core - Sistema centrale di gestione personaggio
+## Integrato con DataManager per validazione oggetti e proprietà avanzate.
+
+# ========================================
+# ENUM STATI PERSONAGGIO (M3.T3)
+# ========================================
+
+## Definisce i possibili stati fisici del personaggio
+enum Status {
+	NORMAL,      ## Condizione normale, nessun problema
+	WOUNDED,     ## Ferito, ridotta capacità di combattimento
+	SICK,        ## Malato, debilitato fisicamente
+	POISONED     ## Avvelenato, perdita HP graduale
+}
+
+# ========================================
+# SEGNALI PUBBLICI
+# ========================================
+
+## Emesso quando l'inventario cambia (aggiunta/rimozione oggetti)
+signal inventory_changed
+
+## Emesso quando le statistiche del player cambiano
+signal stats_changed
+
+## Emesso quando HP, food o water cambiano
+signal resources_changed
+
+## Emesso per messaggi narrativi da mostrare nel diario di gioco
+signal narrative_log_generated(message: String)
+
+# ========================================
+# RISORSE VITALI
+# ========================================
+
+## Punti vita correnti
+var hp: int = 100
+## Punti vita massimi
+var max_hp: int = 100
+
+## Livello fame corrente (0 = affamato)
+var food: int = 100
+## Livello fame massimo
+var max_food: int = 100
+
+## Livello sete corrente (0 = assetato)
+var water: int = 100
+## Livello sete massimo
+var max_water: int = 100
+
+# ========================================
+# STATISTICHE PERSONAGGIO
+# ========================================
+
+## Statistiche del personaggio
+## Chiavi: "forza", "agilita", "intelligenza", "carisma", "fortuna"
+var stats: Dictionary = {}
+
+# ========================================
+# SISTEMA PROGRESSIONE (M3.T1)
+# ========================================
+
+## Punti esperienza totali accumulati
+var experience: int = 0
+
+## Soglia esperienza per prossimo punto statistica
+var experience_for_next_point: int = 100
+
+## Punti statistica disponibili da spendere
+var available_stat_points: int = 0
+
+# ========================================
+# STATI PERSONAGGIO (M3.T3)
+# ========================================
+
+## Array degli stati attivi del personaggio
+## Può contenere più stati contemporaneamente
+var active_statuses: Array[Status] = []
+
+# ========================================
+# INVENTARIO E EQUIPAGGIAMENTO
+# ========================================
+
+## Inventario del giocatore
+## Struttura: Array di Dictionary { "id": String, "quantity": int, "instance_data": Dictionary }
+var inventory: Array[Dictionary] = []
+
+## Arma equipaggiata corrente
+## Struttura: Dictionary con dati completi dell'arma (da DataManager)
+var equipped_weapon: Dictionary = {}
+
+## Armatura equipaggiata corrente  
+## Struttura: Dictionary con dati completi dell'armatura (da DataManager)
+var equipped_armor: Dictionary = {}
+
+# ========================================
+# INIZIALIZZAZIONE
+# ========================================
+
+func _ready() -> void:
+	print("🎮 PlayerManager inizializzazione...")
+	_initialize_new_character()
+	_connect_time_manager_signals()
+	print("✅ PlayerManager pronto - Personaggio inizializzato")
+
+## Inizializza un nuovo personaggio con valori di default
+func _initialize_new_character() -> void:
+	print("👤 Inizializzazione nuovo personaggio...")
+	
+	# GENERAZIONE CASUALE STATISTICHE (M3.T3.5)
+	stats = _generate_initial_stats()
+	
+	# CALCOLO HP DINAMICO BASATO SU VIGORE
+	max_hp = _calculate_max_hp(stats.vigore)
+	hp = max_hp  # HP correnti = HP massimi all'inizio
+	
+	# RISORSE SOPRAVVIVENZA DI DEFAULT
+	food = 100
+	max_food = 100
+	water = 100
+	max_water = 100
+	
+	# INVENTARIO VUOTO
+	inventory.clear()
+	
+	# EQUIPAGGIAMENTO VUOTO
+	equipped_weapon.clear()
+	equipped_armor.clear()
+	
+	# OGGETTI DI PARTENZA (opzionale - solo per testing)
+	_add_starting_items()
+	
+	print("   ✅ Risorse: HP=%d/%d (basato su Vigore), Food=%d/%d, Water=%d/%d" % [hp, max_hp, food, max_food, water, max_water])
+	print("   ✅ Statistiche generate casualmente: %s" % str(stats))
+	print("   ✅ Inventario inizializzato con %d slot occupati" % inventory.size())
+
+## Aggiunge oggetti di partenza per il nuovo sistema di gioco
+func _add_starting_items() -> void:
+	# Solo se DataManager è disponibile, aggiungi alcuni oggetti base
+	if not DataManager:
+		print("   ⚠️ DataManager non disponibile - inventario vuoto")
+		return
+	
+	# Oggetti base per iniziare il gameplay (set fisso per The Survivor's Pack)
+	var starting_items = [
+		{"item_id": "weapon_knife_rusty", "quantity": 1},
+		{"item_id": "ration_pack", "quantity": 3},
+		{"item_id": "water_purified", "quantity": 2}
+	]
+	
+	for starting_item in starting_items:
+		if DataManager.has_item(starting_item.item_id):
+			add_item(starting_item.item_id, starting_item.quantity)
+		else:
+			print("   ⚠️ Oggetto di partenza non trovato: %s" % starting_item.item_id)
+
+# ========================================
+# GENERAZIONE CASUALE PERSONAGGIO (M3.T3.5)
+# ========================================
+
+## Genera un singolo valore di statistica usando il metodo 4d6 drop lowest
+## Lancia 4 dadi a 6 facce e somma i 3 più alti
+## @return: Valore statistica compreso tra 3 e 18
+func _roll_one_stat() -> int:
+	var rolls = []
+	
+	# Lancia 4 dadi a 6 facce
+	for i in 4:
+		rolls.append(randi_range(1, 6))
+	
+	# Ordina i risultati
+	rolls.sort()
+	
+	# Rimuove il tiro più basso (primo elemento dopo sort)
+	rolls.remove_at(0)
+	
+	# Somma i 3 risultati rimanenti
+	return rolls[0] + rolls[1] + rolls[2]
+
+## Genera tutte le statistiche del personaggio con vincoli tematici
+## Ultimo è un sopravvissuto: non forte fisicamente ma agile e percettivo
+## @return: Dictionary con le 6 statistiche assegnate secondo i vincoli
+func _generate_initial_stats() -> Dictionary:
+	# Genera 6 valori statistici casuali
+	var raw_values = []
+	for i in 6:
+		raw_values.append(_roll_one_stat())
+	
+	# Ordina i valori per identificare high/low
+	var sorted_values = raw_values.duplicate()
+	sorted_values.sort()
+	
+	# Identifica i range di valori
+	var lowest_two = [sorted_values[0], sorted_values[1]]
+	var middle_two = [sorted_values[2], sorted_values[3]]
+	var highest_two = [sorted_values[4], sorted_values[5]]
+	
+	# Applica vincoli tematici per "Ultimo il Sopravvissuto"
+	var generated_stats = {}
+	
+	# FORZA: Deve ricevere uno dei due valori più bassi
+	generated_stats["forza"] = lowest_two[randi_range(0, 1)]
+	
+	# AGILITA e INTELLIGENZA: Devono ricevere i due valori più alti
+	var high_shuffle = highest_two.duplicate()
+	high_shuffle.shuffle()
+	generated_stats["agilita"] = high_shuffle[0]
+	generated_stats["intelligenza"] = high_shuffle[1]
+	
+	# VIGORE, CARISMA, FORTUNA: Ricevono i valori di mezzo e il low rimanente
+	var remaining_values = middle_two.duplicate()
+	remaining_values.append(lowest_two[1] if generated_stats["forza"] == lowest_two[0] else lowest_two[0])
+	remaining_values.shuffle()
+	
+	generated_stats["vigore"] = remaining_values[0]
+	generated_stats["carisma"] = remaining_values[1]
+	generated_stats["fortuna"] = remaining_values[2]
+	
+	print("   🎲 Statistiche generate - Forza: %d (low), Agilità: %d (high), Intelligenza: %d (high)" % [generated_stats["forza"], generated_stats["agilita"], generated_stats["intelligenza"]])
+	print("   🎲 Vigore: %d, Carisma: %d, Fortuna: %d" % [generated_stats["vigore"], generated_stats["carisma"], generated_stats["fortuna"]])
+	
+	return generated_stats
+
+## Calcola gli HP massimi basati sulla statistica Vigore
+## Formula: 80 HP base + (Vigore * 2)
+## @param vigore_stat: Valore della statistica vigore (tipicamente 3-18)
+## @return: HP massimi calcolati (range 86-116)
+func _calculate_max_hp(vigore_stat: int) -> int:
+	var calculated_hp = 80 + (vigore_stat * 2)
+	print("   💗 HP Massimi: %d (80 base + %d vigore * 2)" % [calculated_hp, vigore_stat])
+	return calculated_hp
+
+# ========================================
+# API INVENTARIO
+# ========================================
+
+## Aggiunge un oggetto all'inventario
+## @param item_id: ID univoco dell'oggetto (deve esistere in DataManager)
+## @param quantity: Quantità da aggiungere (deve essere > 0)
+## @return: true se aggiunto con successo, false altrimenti
+func add_item(item_id: String, quantity: int) -> bool:
+	if quantity <= 0:
+		print("⚠️ PlayerManager: Quantità non valida: %d" % quantity)
+		return false
+	
+	# Verifica che l'oggetto esista nel DataManager
+	if not DataManager or not DataManager.has_item(item_id):
+		print("❌ PlayerManager: Oggetto non trovato nel database: %s" % item_id)
+		return false
+	
+	# Ottieni dati oggetto per verificare se è stackable e gestire porzioni
+	var item_data = DataManager.get_item_data(item_id)
+	var is_stackable = item_data.get("stackable", true)  # Default: stackable
+	var max_portions = item_data.get("max_portions", 0)  # 0 = nessuna porzione
+	
+	# Cerca se l'oggetto è già nell'inventario
+	var existing_slot = _find_inventory_slot(item_id)
+	
+	if existing_slot != -1 and is_stackable:
+		# OGGETTO STACKABLE GIÀ PRESENTE: incrementa quantità
+		inventory[existing_slot].quantity += quantity
+		print("📦 Aggiunto %dx %s (stack esistente, totale: %d)" % [quantity, item_id, inventory[existing_slot].quantity])
+	else:
+		# NUOVO OGGETTO O NON STACKABLE: crea nuovo slot
+		var instance_data = {}
+		
+		# Se l'oggetto ha max_portions, inizializza le porzioni
+		if max_portions > 0:
+			instance_data["portions"] = max_portions
+			print("📦 Oggetto con porzioni: %s inizializzato con %d porzioni" % [item_id, max_portions])
+		
+		var new_slot = {
+			"id": item_id,
+			"quantity": quantity,
+			"instance_data": instance_data
+		}
+		inventory.append(new_slot)
+		print("📦 Aggiunto %dx %s (nuovo slot)" % [quantity, item_id])
+	
+	# Emetti segnale di cambiamento
+	inventory_changed.emit()
+	return true
+
+## Rimuove un oggetto dall'inventario
+## @param item_id: ID oggetto da rimuovere
+## @param quantity: Quantità da rimuovere (deve essere > 0)
+## @return: true se rimosso con successo, false se non c'è abbastanza quantità
+func remove_item(item_id: String, quantity: int) -> bool:
+	if quantity <= 0:
+		print("⚠️ PlayerManager: Quantità non valida: %d" % quantity)
+		return false
+	
+	var slot_index = _find_inventory_slot(item_id)
+	if slot_index == -1:
+		print("⚠️ PlayerManager: Oggetto non presente nell'inventario: %s" % item_id)
+		return false
+	
+	var current_quantity = inventory[slot_index].quantity
+	if current_quantity < quantity:
+		print("⚠️ PlayerManager: Quantità insufficiente per %s (disponibile: %d, richiesto: %d)" % [item_id, current_quantity, quantity])
+		return false
+	
+	# Rimuovi quantità
+	inventory[slot_index].quantity -= quantity
+	
+	# Se quantità = 0, rimuovi completamente lo slot
+	if inventory[slot_index].quantity == 0:
+		inventory.remove_at(slot_index)
+		print("📦 Rimosso completamente %s dall'inventario" % item_id)
+	else:
+		print("📦 Rimosso %dx %s (rimanente: %d)" % [quantity, item_id, inventory[slot_index].quantity])
+	
+	# Emetti segnale di cambiamento
+	inventory_changed.emit()
+	return true
+
+## Controlla se il giocatore ha un oggetto specifico
+## @param item_id: ID oggetto da cercare
+## @return: true se presente (quantità > 0), false altrimenti
+func has_item(item_id: String) -> bool:
+	return get_item_count(item_id) > 0
+
+## Restituisce la quantità di un oggetto nell'inventario
+## @param item_id: ID oggetto da contare
+## @return: Quantità posseduta (0 se non presente)
+func get_item_count(item_id: String) -> int:
+	var slot_index = _find_inventory_slot(item_id)
+	if slot_index != -1:
+		return inventory[slot_index].quantity
+	return 0
+
+## Usa un oggetto dall'inventario (consumo con effetti e gestione porzioni)
+## @param item_id: ID oggetto da usare
+## @param quantity: Quantità da usare (default 1)
+## @return: true se usato con successo, false altrimenti
+func use_item(item_id: String, quantity: int = 1) -> bool:
+	# Verifica che abbiamo l'oggetto
+	if not has_item(item_id) or get_item_count(item_id) < quantity:
+		print("⚠️ PlayerManager: Oggetto non disponibile o quantità insufficiente: %s" % item_id)
+		return false
+	
+	# Ottieni dati oggetto per applicare effetti
+	var item_data = DataManager.get_item_data(item_id)
+	if not item_data:
+		print("❌ PlayerManager: Dati oggetto non trovati: %s" % item_id)
+		return false
+	
+	# Trova slot inventario per gestione porzioni
+	var slot_index = _find_inventory_slot(item_id)
+	if slot_index == -1:
+		print("❌ PlayerManager: Errore interno - oggetto non trovato in inventario: %s" % item_id)
+		return false
+	
+	var item_slot = inventory[slot_index]
+	var has_portions = item_slot.instance_data.has("portions")
+	
+	# Applica effetti basati sul tipo oggetto
+	var item_type = item_data.get("type", "unknown")
+	var item_name = item_data.get("name", item_id)
+	
+	match item_type:
+		"consumable":
+			_apply_consumable_effects(item_data, quantity)
+		"weapon":
+			print("⚠️ Armi non possono essere 'usate' direttamente. Usa equip_weapon()")
+			return false
+		"armor":
+			print("⚠️ Armature non possono essere 'usate' direttamente. Usa equip_armor()")
+			return false
+		_:
+			print("⚠️ Tipo oggetto non gestito per uso: %s" % item_type)
+			# Per oggetti senza effetti, li gestiamo comunque
+	
+	# GESTIONE PORZIONI: Se l'oggetto ha porzioni, decrementa invece di rimuovere
+	if has_portions:
+		var current_portions = item_slot.instance_data.portions
+		item_slot.instance_data.portions -= 1
+		
+		print("🍽️ Usata porzione di %s (%d porzioni rimanenti)" % [item_name, item_slot.instance_data.portions])
+		
+		# Solo se le porzioni raggiungono 0, rimuovi l'oggetto
+		if item_slot.instance_data.portions <= 0:
+			if not remove_item(item_id, quantity):
+				print("❌ PlayerManager: Errore rimozione oggetto esaurito: %s" % item_id)
+				return false
+			print("📦 %s completamente consumato e rimosso dall'inventario" % item_name)
+		else:
+			# Emetti segnale per aggiornare UI (porzioni cambiate)
+			inventory_changed.emit()
+	else:
+		# LOGICA NORMALE: Rimuovi oggetto dall'inventario (consumo standard)
+		if not remove_item(item_id, quantity):
+			print("❌ PlayerManager: Errore rimozione oggetto dopo uso: %s" % item_id)
+			return false
+	
+	print("✅ Usato %dx %s" % [quantity, item_name])
+	
+	# Emetti messaggio narrativo per il diario
+	_emit_narrative_message_for_use(item_data, quantity)
+	
+	return true
+
+## Applica gli effetti di un oggetto consumabile
+## @param item_data: Dati completi dell'oggetto
+## @param quantity: Quantità usata (per moltiplicare effetti)
+func _apply_consumable_effects(item_data: Dictionary, quantity: int) -> void:
+	var effects = item_data.get("effects", [])
+	var effects_applied = []
+	
+	# Itera through array of effects
+	for effect in effects:
+		var effect_type = effect.get("type", "")
+		var amount = effect.get("amount", 0)
+		
+		match effect_type:
+			"heal":
+				modify_hp(amount * quantity)
+				effects_applied.append("Cura: +%d HP" % (amount * quantity))
+			"nourish":
+				modify_food(amount * quantity)
+				effects_applied.append("Nutrimento: +%d Food" % (amount * quantity))
+			"hydrate":
+				modify_water(amount * quantity)
+				effects_applied.append("Idratazione: +%d Water" % (amount * quantity))
+			"restore_stamina":
+				# Placeholder per stamina quando implementata
+				effects_applied.append("Stamina: +%d (placeholder)" % (amount * quantity))
+			"add_radiation":
+				# Placeholder per radiazioni quando implementate
+				effects_applied.append("Radiazioni: +%d (placeholder)" % (amount * quantity))
+			"infection_chance", "poison_chance":
+				# Placeholder per effetti negativi probabilistici
+				var chance = effect.get("chance", 0.0)
+				effects_applied.append("Rischio %s: %.1f%%" % [effect_type.replace("_chance", ""), chance * 100])
+			_:
+				print("⚠️ Effetto non gestito: %s" % effect_type)
+	
+	if effects_applied.size() > 0:
+		print("⚡ Effetti applicati da %s (x%d): %s" % [item_data.get("name", "oggetto"), quantity, ", ".join(effects_applied)])
+	else:
+		print("⚡ Nessun effetto applicabile da %s" % item_data.get("name", "oggetto"))
+
+## Trova l'indice dello slot inventario contenente l'oggetto specificato
+## @param item_id: ID oggetto da cercare
+## @return: Indice slot (0-based) o -1 se non trovato
+func _find_inventory_slot(item_id: String) -> int:
+	for i in range(inventory.size()):
+		if inventory[i].id == item_id:
+			return i
+	return -1
+
+## Equipaggia un oggetto (arma o armatura)
+## @param item_id: ID oggetto da equipaggiare
+## @return: true se equipaggiato con successo, false altrimenti
+func equip_item(item_id: String) -> bool:
+	# Verifica che abbiamo l'oggetto
+	if not has_item(item_id):
+		print("⚠️ PlayerManager: Oggetto non disponibile per equipaggiamento: %s" % item_id)
+		return false
+	
+	# Ottieni dati oggetto
+	var item_data = DataManager.get_item_data(item_id)
+	if not item_data:
+		print("❌ PlayerManager: Dati oggetto non trovati: %s" % item_id)
+		return false
+	
+	var item_type = item_data.get("type", "unknown")
+	var item_name = item_data.get("name", item_id)
+	
+	# Equipaggia basandoti sul tipo
+	match item_type:
+		"weapon":
+			# Rimuovi arma equipaggiata precedente (se presente)
+			if not equipped_weapon.is_empty():
+				var old_weapon_name = equipped_weapon.get("name", "Arma precedente")
+				print("🔄 Disequipaggiando: %s" % old_weapon_name)
+				# Potresti voler rimettere l'arma precedente nell'inventario in futuro
+			
+			# Equipaggia nuova arma
+			equipped_weapon = item_data.duplicate()
+			print("⚔️ Arma equipaggiata: %s" % item_name)
+			
+		"armor":
+			# Rimuovi armatura equipaggiata precedente (se presente)
+			if not equipped_armor.is_empty():
+				var old_armor_name = equipped_armor.get("name", "Armatura precedente")
+				print("🔄 Disequipaggiando: %s" % old_armor_name)
+				# Potresti voler rimettere l'armatura precedente nell'inventario in futuro
+			
+			# Equipaggia nuova armatura
+			equipped_armor = item_data.duplicate()
+			print("🛡️ Armatura equipaggiata: %s" % item_name)
+			
+		_:
+			print("⚠️ PlayerManager: Tipo oggetto non equipaggiabile: %s (%s)" % [item_name, item_type])
+			return false
+	
+	# Rimuovi oggetto dall'inventario (è ora equipaggiato)
+	if not remove_item(item_id, 1):
+		print("❌ PlayerManager: Errore rimozione oggetto dopo equipaggiamento: %s" % item_id)
+		return false
+	
+	# Emetti segnali di aggiornamento
+	inventory_changed.emit()
+	
+	# Emetti messaggio narrativo
+	var narrative_message = _get_narrative_message_for_equip(item_data)
+	narrative_log_generated.emit(narrative_message)
+	
+	print("✅ Equipaggiato %s" % item_name)
+	return true
+
+## Genera messaggio narrativo per equipaggiamento
+func _get_narrative_message_for_equip(item_data: Dictionary) -> String:
+	var item_name = item_data.get("name", "oggetto")
+	var item_type = item_data.get("type", "")
+	
+	match item_type:
+		"weapon":
+			return "Afferri saldamente %s. Ti senti più sicuro con un'arma in mano." % item_name
+		"armor":
+			return "Indossi %s. La protezione aggiuntiva ti fa sentire più preparato." % item_name
+		_:
+			return "Hai equipaggiato: %s" % item_name
+
+## Emette messaggio narrativo per l'uso di oggetti
+func _emit_narrative_message_for_use(item_data: Dictionary, quantity: int) -> void:
+	var item_name = item_data.get("name", "oggetto")
+	var item_type = item_data.get("type", "")
+	var effects = item_data.get("effects", [])
+	
+	var narrative_message = ""
+	
+	match item_type:
+		"consumable":
+			# Messaggio specifico basato sugli effetti
+			var has_hydrate = false
+			var has_heal = false
+			var has_nourish = false
+			
+			for effect in effects:
+				match effect.get("type", ""):
+					"hydrate":
+						has_hydrate = true
+					"heal":
+						has_heal = true
+					"nourish":
+						has_nourish = true
+			
+			# Messaggi narrativi specifici
+			if has_hydrate and item_name.to_lower().contains("acqua"):
+				narrative_message = "Bevi un sorso d'acqua. Ti senti rinfrescato e l'arsura si placa."
+			elif has_heal and item_name.to_lower().contains("medicina"):
+				narrative_message = "Applichi le medicine alle tue ferite. Il dolore si attenua."
+			elif has_nourish and item_name.to_lower().contains("razione"):
+				narrative_message = "Mangi la razione militare. Non è appetitosa, ma placa la fame."
+			else:
+				# Messaggio generico
+				narrative_message = "Usi %s. Ti senti leggermente meglio." % item_name
+		_:
+			# Altri tipi di oggetti
+			narrative_message = "Hai usato: %s" % item_name
+	
+	# Emetti il messaggio narrativo
+	narrative_log_generated.emit(narrative_message)
+
+# ========================================
+# API RISORSE VITALI
+# ========================================
+
+## Modifica i punti vita del giocatore
+## @param amount: Quantità da aggiungere (negativo per danno)
+## @param allow_overheal: Se true, permette di superare max_hp
+func modify_hp(amount: int, allow_overheal: bool = false) -> void:
+	var old_hp = hp
+	hp += amount
+	
+	if not allow_overheal and hp > max_hp:
+		hp = max_hp
+	elif hp < 0:
+		hp = 0
+	
+	if hp != old_hp:
+		print("❤️ HP: %d → %d (%+d)" % [old_hp, hp, amount])
+		resources_changed.emit()
+
+## Modifica il livello di fame
+## @param amount: Quantità da aggiungere (negativo per perdere cibo)
+func modify_food(amount: int) -> void:
+	var old_food = food
+	food = clamp(food + amount, 0, max_food)
+	
+	if food != old_food:
+		print("🍖 Food: %d → %d (%+d)" % [old_food, food, amount])
+		resources_changed.emit()
+
+## Modifica il livello di sete
+## @param amount: Quantità da aggiungere (negativo per perdere acqua)
+func modify_water(amount: int) -> void:
+	var old_water = water
+	water = clamp(water + amount, 0, max_water)
+	
+	if water != old_water:
+		print("💧 Water: %d → %d (%+d)" % [old_water, water, amount])
+		resources_changed.emit()
+
+# ========================================
+# API STATISTICHE
+# ========================================
+
+## Modifica una statistica del personaggio
+## @param stat_name: Nome statistica ("forza", "agilita", etc.)
+## @param amount: Quantità da aggiungere (può essere negativo)
+func modify_stat(stat_name: String, amount: int) -> void:
+	if not stats.has(stat_name):
+		print("⚠️ PlayerManager: Statistica non riconosciuta: %s" % stat_name)
+		return
+	
+	var old_value = stats[stat_name]
+	stats[stat_name] = max(0, stats[stat_name] + amount)  # Min 0
+	
+	if stats[stat_name] != old_value:
+		print("📈 %s: %d → %d (%+d)" % [stat_name.capitalize(), old_value, stats[stat_name], amount])
+		stats_changed.emit()
+
+## Ottiene il valore di una statistica
+## @param stat_name: Nome statistica
+## @return: Valore corrente della statistica (0 se non esiste)
+func get_stat(stat_name: String) -> int:
+	return stats.get(stat_name, 0)
+
+# ========================================
+# API DEBUG E UTILITÀ
+# ========================================
+
+## Stampa un report completo dello stato del personaggio
+func print_character_status() -> void:
+	print("\n" + "=".repeat(40))
+	print("👤 PLAYER STATUS REPORT")
+	print("=".repeat(40))
+	print("❤️ HP: %d/%d (%.1f%%)" % [hp, max_hp, (float(hp)/max_hp)*100])
+	print("🍖 Food: %d/%d (%.1f%%)" % [food, max_food, (float(food)/max_food)*100])
+	print("💧 Water: %d/%d (%.1f%%)" % [water, max_water, (float(water)/max_water)*100])
+	print("\n📊 STATISTICHE:")
+	for stat_name in stats:
+		print("   %s: %d" % [stat_name.capitalize(), stats[stat_name]])
+	print("\n📦 INVENTARIO (%d oggetti):" % inventory.size())
+	for slot in inventory:
+		var portions_info = ""
+		if slot.instance_data.has("portions"):
+			portions_info = " (%d porzioni)" % slot.instance_data.portions
+		print("   %dx %s%s" % [slot.quantity, slot.id, portions_info])
+	print("=".repeat(40) + "\n")
+
+## Restituisce un Dictionary con tutto lo stato del personaggio (per salvataggio)
+## @return: Dictionary completo con tutti i dati del personaggio
+func get_save_data() -> Dictionary:
+	return {
+		"hp": hp,
+		"max_hp": max_hp,
+		"food": food,
+		"max_food": max_food,
+		"water": water,
+		"max_water": max_water,
+		"stats": stats.duplicate(),
+		"inventory": inventory.duplicate(true),
+		"equipped_weapon": equipped_weapon.duplicate(),
+		"equipped_armor": equipped_armor.duplicate(),
+		# M3.T1: Dati progressione per salvataggio
+		"experience": experience,
+		"experience_for_next_point": experience_for_next_point,
+		"available_stat_points": available_stat_points
+	}
+
+## Carica lo stato del personaggio da un Dictionary (per caricamento salvataggio)
+## @param save_data: Dictionary con dati del personaggio
+func load_save_data(save_data: Dictionary) -> void:
+	hp = save_data.get("hp", 100)
+	max_hp = save_data.get("max_hp", 100)
+	food = save_data.get("food", 100)
+	max_food = save_data.get("max_food", 100)
+	water = save_data.get("water", 100)
+	max_water = save_data.get("max_water", 100)
+	stats = save_data.get("stats", {})
+	inventory = save_data.get("inventory", [])
+	equipped_weapon = save_data.get("equipped_weapon", {})
+	equipped_armor = save_data.get("equipped_armor", {})
+	
+	# M3.T1: Carica dati progressione
+	experience = save_data.get("experience", 0)
+	experience_for_next_point = save_data.get("experience_for_next_point", 100)
+	available_stat_points = save_data.get("available_stat_points", 0)
+	
+	# Emetti segnali per aggiornare UI
+	resources_changed.emit()
+	stats_changed.emit()
+	inventory_changed.emit()
+	
+	print("✅ PlayerManager: Dati caricati da salvataggio (inclusa progressione)")
+
+# ========================================
+# API SISTEMA PROGRESSIONE (M3.T1)
+# ========================================
+
+## Aggiunge esperienza al personaggio e gestisce livellamento automatico
+## @param amount: Quantità di esperienza da aggiungere
+## @param reason: Motivo del guadagno (opzionale, per log narrativo)
+func add_experience(amount: int, reason: String = "") -> void:
+	if amount <= 0:
+		print("⚠️ PlayerManager: Quantità esperienza non valida: %d" % amount)
+		return
+	
+	# Incrementa esperienza
+	experience += amount
+	
+	# Messaggio narrativo base
+	var narrative_msg = "Guadagni %d punti esperienza." % amount
+	if reason != "":
+		narrative_msg += " (%s)" % reason
+	narrative_log_generated.emit(narrative_msg)
+	
+	print("⭐ Esperienza: +%d (totale: %d)" % [amount, experience])
+	
+	# Controlla se si ha abbastanza esperienza per nuovo punto statistica
+	while experience >= experience_for_next_point:
+		_level_up()
+
+## Gestisce il livellamento quando si raggiunge la soglia di esperienza
+func _level_up() -> void:
+	# Sottrai esperienza usata per livellamento
+	experience -= experience_for_next_point
+	
+	# Incrementa punti disponibili
+	available_stat_points += 1
+	
+	# Aumenta soglia per prossimo livellamento (progressione crescente)
+	experience_for_next_point = int(experience_for_next_point * 1.5)
+	
+	# Messaggio narrativo speciale per livellamento
+	var level_msg = "[color=yellow]Sei diventato più esperto! Hai un nuovo punto statistica da spendere.[/color]"
+	narrative_log_generated.emit(level_msg)
+	
+	print("🎉 LIVELLAMENTO! Punti disponibili: %d, prossima soglia: %d" % [available_stat_points, experience_for_next_point])
+	
+	# Emetti segnale per aggiornare UI statistiche
+	stats_changed.emit()
+
+## Spende un punto statistica per migliorare una statistica
+## @param stat_name: Nome della statistica da migliorare
+## @return: true se miglioramento riuscito, false altrimenti
+func improve_stat(stat_name: String) -> bool:
+	# Verifica punti disponibili
+	if available_stat_points <= 0:
+		print("⚠️ PlayerManager: Nessun punto statistica disponibile")
+		return false
+	
+	# Verifica che la statistica esista
+	if not stats.has(stat_name):
+		print("⚠️ PlayerManager: Statistica non riconosciuta per miglioramento: %s" % stat_name)
+		return false
+	
+	# Decrementa punti disponibili
+	available_stat_points -= 1
+	
+	# Incrementa statistica
+	var old_value = stats[stat_name]
+	stats[stat_name] += 1
+	
+	# Messaggio narrativo per miglioramento
+	var stat_display_name = stat_name.capitalize()
+	match stat_name:
+		"forza":
+			stat_display_name = "Forza"
+		"agilita":
+			stat_display_name = "Agilità"
+		"intelligenza":
+			stat_display_name = "Intelligenza"
+		"carisma":
+			stat_display_name = "Carisma"
+		"fortuna":
+			stat_display_name = "Fortuna"
+	
+	var improvement_msg = "[color=cyan]%s migliorata: %d → %d[/color]" % [stat_display_name, old_value, stats[stat_name]]
+	narrative_log_generated.emit(improvement_msg)
+	
+	print("📈 Statistica migliorata: %s %d → %d (punti rimanenti: %d)" % [
+		stat_name, old_value, stats[stat_name], available_stat_points
+	])
+	
+	# Emetti segnale per aggiornare UI
+	stats_changed.emit()
+	
+	return true
+
+## Restituisce se il giocatore ha punti statistica da spendere
+## @return: true se ha punti disponibili, false altrimenti
+func has_available_stat_points() -> bool:
+	return available_stat_points > 0
+
+## Ottiene informazioni complete sul sistema di progressione
+## @return: Dictionary con tutti i dati di progressione
+func get_progression_data() -> Dictionary:
+	return {
+		"experience": experience,
+		"experience_for_next_point": experience_for_next_point,
+		"available_stat_points": available_stat_points,
+		"experience_to_next_level": experience_for_next_point - experience
+	}
+
+# ========================================
+# SISTEMA SOPRAVVIVENZA (M3.T2)
+# ========================================
+
+## Applica penalità automatiche di sopravvivenza (collegato a TimeManager)
+## Viene chiamato ogni sera alle 19:00 dal segnale survival_penalty_tick
+func apply_survival_penalties() -> void:
+	print("💀 Applicazione penalità sopravvivenza notturne...")
+	
+	# PENALITÀ FAME: -10 food ogni notte
+	var food_loss = -10
+	modify_food(food_loss)
+	narrative_log_generated.emit("La fame ti consuma. Perdi %d punti cibo." % abs(food_loss))
+	
+	# PENALITÀ SETE: -15 water ogni notte
+	var water_loss = -15
+	modify_water(water_loss)
+	narrative_log_generated.emit("La sete si fa sentire. Perdi %d punti acqua." % abs(water_loss))
+	
+	# CONTROLLO STATO CRITICO: Se food o water sono a 0, danno HP
+	_check_critical_survival_damage()
+	
+	print("💀 Penalità sopravvivenza applicate: Food %d, Water %d" % [food_loss, water_loss])
+
+## Controlla se applicare danno critico per fame/sete azzerata
+func _check_critical_survival_damage() -> void:
+	var damage_taken = false
+	
+	# DANNO DA FAME CRITICA: Se food = 0, -20 HP
+	if food <= 0:
+		var hunger_damage = -20
+		modify_hp(hunger_damage)
+		narrative_log_generated.emit("[color=red]La fame estrema ti debilita gravemente! Perdi %d HP.[/color]" % abs(hunger_damage))
+		damage_taken = true
+		print("💀 FAME CRITICA: %d danni HP" % abs(hunger_damage))
+	
+	# DANNO DA SETE CRITICA: Se water = 0, -25 HP
+	if water <= 0:
+		var thirst_damage = -25
+		modify_hp(thirst_damage)
+		narrative_log_generated.emit("[color=red]La disidratazione ti uccide lentamente! Perdi %d HP.[/color]" % abs(thirst_damage))
+		damage_taken = true
+		print("💀 SETE CRITICA: %d danni HP" % abs(thirst_damage))
+	
+	# AVVISO GAME OVER se HP troppo bassi
+	if damage_taken and hp <= 25:
+		narrative_log_generated.emit("[color=yellow]⚠️ I tuoi HP sono criticamente bassi! Trova cibo e acqua subito![/color]")
+		print("⚠️ AVVISO: HP critici (%d), sopravvivenza in pericolo!" % hp)
+
+## Connette i segnali TimeManager per automazione sopravvivenza
+func _connect_time_manager_signals() -> void:
+	if not TimeManager:
+		print("⚠️ PlayerManager: TimeManager non disponibile per connessione segnali")
+		return
+	
+	# Connetti segnale penalità sopravvivenza (ogni sera alle 19:00)
+	if not TimeManager.survival_penalty_tick.is_connected(_on_survival_penalty_tick):
+		TimeManager.survival_penalty_tick.connect(_on_survival_penalty_tick)
+		print("✅ PlayerManager: Connesso a TimeManager.survival_penalty_tick")
+
+## Callback per segnale penalità sopravvivenza da TimeManager
+func _on_survival_penalty_tick() -> void:
+	print("⏰ PlayerManager: Ricevuto segnale penalità sopravvivenza")
+	apply_survival_penalties()
+
+# ========================================
+# API GESTIONE STATI PERSONAGGIO (M3.T3)
+# ========================================
+
+## Aggiunge uno stato al personaggio se non già presente
+## @param new_status: Stato da aggiungere al personaggio
+func add_status(new_status: Status) -> void:
+	# Controlla se lo stato è già presente
+	if new_status in active_statuses:
+		print("⚠️ PlayerManager: Stato %s già presente" % Status.keys()[new_status])
+		return
+	
+	# Aggiungi lo stato all'array
+	active_statuses.append(new_status)
+	
+	# Messaggio narrativo appropriato per ogni stato
+	var status_message = ""
+	match new_status:
+		Status.WOUNDED:
+			status_message = "Una ferita profonda inizia a sanguinare."
+		Status.SICK:
+			status_message = "Ti senti febbricitante."
+		Status.POISONED:
+			status_message = "Il veleno inizia a scorrere nelle tue vene."
+		Status.NORMAL:
+			status_message = "Ti senti in forma normale."
+	
+	# Emetti messaggio narrativo e segnali di aggiornamento
+	narrative_log_generated.emit(status_message)
+	stats_changed.emit()
+	
+	print("🩺 PlayerManager: Aggiunto stato %s" % Status.keys()[new_status])
+
+## Rimuove uno stato dal personaggio se presente
+## @param status_to_remove: Stato da rimuovere dal personaggio
+func remove_status(status_to_remove: Status) -> void:
+	# Controlla se lo stato è presente
+	if not status_to_remove in active_statuses:
+		print("⚠️ PlayerManager: Stato %s non presente" % Status.keys()[status_to_remove])
+		return
+	
+	# Rimuovi lo stato dall'array
+	active_statuses.erase(status_to_remove)
+	
+	# Messaggio narrativo di guarigione/rimozione
+	var recovery_message = ""
+	match status_to_remove:
+		Status.WOUNDED:
+			recovery_message = "Le tue ferite si sono rimarginate."
+		Status.SICK:
+			recovery_message = "Ti senti meglio, la febbre è passata."
+		Status.POISONED:
+			recovery_message = "Il veleno è stato neutralizzato."
+		Status.NORMAL:
+			recovery_message = "Mantieni la tua condizione normale."
+	
+	# Emetti messaggio narrativo e segnali di aggiornamento
+	narrative_log_generated.emit(recovery_message)
+	stats_changed.emit()
+	
+	print("🩺 PlayerManager: Rimosso stato %s" % Status.keys()[status_to_remove])
+
+## Rimuove tutti gli stati attivi e ripristina condizione normale
+func clear_all_statuses() -> void:
+	if active_statuses.is_empty():
+		print("ℹ️ PlayerManager: Nessuno stato da rimuovere, già normale")
+		return
+	
+	print("🩺 PlayerManager: Rimozione stati in corso...")
+	
+	# Approccio sicuro: rimuovi stati uno per uno invece di clear()
+	var count = active_statuses.size()
+	while not active_statuses.is_empty():
+		active_statuses.pop_back()
+	
+	print("🩺 PlayerManager: Rimossi %d stati attivi" % count)
+	
+	# Messaggio narrativo di ripristino completo
+	narrative_log_generated.emit("Ti senti completamente ristabilito, tutti i disturbi sono svaniti.")
+	stats_changed.emit()
+	
+	print("🩺 PlayerManager: Tutti gli stati rimossi, condizione normale ripristinata")
+
+# ========================================
+# SISTEMA SKILL CHECK (M3.T1 - FASE 1)
+# ========================================
+
+## Esegue un test di abilità D&D-style
+## @param stat_name: Nome della statistica da testare ("forza", "agilita", "intelligenza", "carisma", "fortuna")
+## @param difficulty: Classe di difficoltà del test (10=Facile, 15=Medio, 20=Difficile)
+## @param modifier: Modificatore situazionale aggiuntivo (default 0)
+## @return: Dictionary con risultato completo del test
+func skill_check(stat_name: String, difficulty: int, modifier: int = 0) -> Dictionary:
+	# Validazione parametri
+	if not stats.has(stat_name):
+		print("❌ PlayerManager: Statistica '%s' non trovata" % stat_name)
+		return {
+			"success": false,
+			"error": "Statistica non valida: %s" % stat_name,
+			"roll": 0,
+			"total": 0,
+			"difficulty": difficulty,
+			"stat_used": stat_name,
+			"stat_value": 0,
+			"modifier": modifier
+		}
+	
+	# Ottieni valore statistica e calcola modificatore D&D
+	var stat_value = stats[stat_name]
+	var stat_modifier = get_stat_modifier(stat_value)
+	
+	# Lancia 1d20
+	var roll = roll_d20()
+	
+	# Calcola totale: 1d20 + modificatore statistica + modificatore situazionale
+	var total = roll + stat_modifier + modifier
+	
+	# Determina successo
+	var success = total >= difficulty
+	
+	# Crea risultato completo
+	var result = {
+		"success": success,
+		"roll": roll,
+		"total": total,
+		"difficulty": difficulty,
+		"stat_used": stat_name,
+		"stat_value": stat_value,
+		"stat_modifier": stat_modifier,
+		"situational_modifier": modifier
+	}
+	
+	# Log del test per debug
+	print("🎲 Skill Check [%s]: %dd20=%d + stat_mod=%d + sit_mod=%d = %d vs DC%d → %s" % [
+		stat_name.to_upper(),
+		roll,
+		stat_modifier,
+		modifier,
+		total,
+		difficulty,
+		"SUCCESS" if success else "FAILURE"
+	])
+	
+	return result
+
+## Calcola il modificatore D&D per una statistica
+## Usa la formula standard D&D: (valore - 10) / 2 arrotondato per difetto
+## @param stat_value: Valore della statistica (3-18)
+## @return: Modificatore D&D (-4 a +4)
+func get_stat_modifier(stat_value: int) -> int:
+	return (stat_value - 10) / 2
+
+## Lancia un dado a 20 facce
+## @return: Valore casuale tra 1 e 20
+func roll_d20() -> int:
+	return randi_range(1, 20)
+
+## Applica le conseguenze di un skill check agli eventi
+## Questa funzione sarà utilizzata dall'EventManager per processare i risultati
+## @param check_result: Risultato del skill check da skill_check()
+## @param consequences: Dictionary con conseguenze successo/fallimento
+func apply_skill_check_result(check_result: Dictionary, consequences: Dictionary) -> void:
+	if not check_result.has("success"):
+		print("❌ PlayerManager: Risultato skill check non valido")
+		return
+	
+	# Seleziona conseguenze appropriate
+	var outcome = consequences.get("success" if check_result.success else "failure", {})
+	
+	# Applica modifiche risorse
+	if outcome.has("hp_change"):
+		modify_hp(outcome.hp_change)
+	
+	if outcome.has("food_change"):
+		modify_food(outcome.food_change)
+	
+	if outcome.has("water_change"):
+		modify_water(outcome.water_change)
+	
+	# Applica oggetti ottenuti
+	if outcome.has("items_gained"):
+		for item in outcome.items_gained:
+			add_item(item.id, item.get("quantity", 1))
+	
+	# Applica stati
+	if outcome.has("status_effects"):
+		for status_name in outcome.status_effects:
+			var status_enum = Status.get(status_name.to_upper())
+			if status_enum != null:
+				add_status(status_enum)
+	
+	# Messaggio narrativo
+	if outcome.has("narrative_text"):
+		narrative_log_generated.emit(outcome.narrative_text)
+	
+	print("✅ PlayerManager: Conseguenze skill check applicate")

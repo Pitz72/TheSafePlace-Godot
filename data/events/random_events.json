@@ -1,0 +1,1029 @@
+{
+  "PLAINS": [
+    {
+      "id": "plains_wild_dog_pack",
+      "title": "Branco di Cani Selvatici",
+      "description": "Un branco di cani randagi ti blocca la strada. Sembrano affamati e aggressivi.",
+      "choices": [
+        {
+          "text": "Combatti",
+          "skillCheck": { "stat": "forza", "difficulty": 12 },
+          "successText": "Riesci a scacciare il branco senza ferite gravi.",
+          "failureText": "I cani ti feriscono prima di fuggire.",
+          "penalty": { "type": "damage", "amount": 15 }
+        },
+        {
+          "text": "Offri del cibo",
+          "skillCheck": { "stat": "carisma", "difficulty": 10 },
+          "successText": "I cani accettano il cibo e si allontanano pacificamente.",
+          "failureText": "I cani prendono il cibo ma rimangono aggressivi.",
+          "penalty": { "type": "remove_item", "item_id": "ration_pack", "quantity": 1 }
+        }
+      ]
+    },
+    {
+      "id": "plains_old_scarecrow",
+      "title": "Vecchio Spaventapasseri",
+      "description": "In mezzo a un campo arido, noti uno spaventapasseri solitario. La sua figura contorta sembra quasi umana. Potrebbe nascondere qualcosa di utile o essere una trappola.",
+      "choices": [
+        {
+          "text": "Ispeziona con cautela",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 11 },
+          "successText": "Analizzando la struttura, noti un piccolo scomparto nascosto alla base. Dentro, trovi delle bende pulite e un pacchetto di fiammiferi.",
+          "failureText": "È solo un ammasso di stracci e paglia fradicia. Mentre frughi, un nido di insetti mutati ti assale, lasciandoti con qualche fastidiosa puntura.",
+          "reward": { "type": "items", "items": [{ "id": "bandages_clean", "quantity": 1 }, { "id": "matches", "quantity": 1 }] },
+          "penalty": { "type": "damage", "amount": 3 }
+        },
+        {
+          "text": "Ignoralo e prosegui",
+          "actionKey": "ignore",
+          "resultText": "Decidi che non vale la pena rischiare. Prosegui il tuo cammino, lasciandoti alle spalle la figura solitaria nel vento."
+        }
+      ]
+    },
+    {
+      "id": "plains_abandoned_vehicle",
+      "title": "Veicolo Abbandonato",
+      "description": "La carcassa arrugginita di un'auto è ferma sul ciglio di quella che un tempo era una strada. Il bagagliaio sembra chiuso ermeticamente.",
+      "choices": [
+        {
+          "text": "Forza il bagagliaio",
+          "skillCheck": { "stat": "forza", "difficulty": 13 },
+          "successText": "Con uno sforzo immane, riesci a scardinare il bagagliaio. Dentro, trovi dei rottami metallici e una tanica con un po' di carburante.",
+          "failureText": "Il meccanismo è saldato dalla ruggine. Non riesci ad aprirlo e lo sforzo ti lascia senza fiato e con una fitta alla schiena.",
+          "reward": { "type": "items", "items": [{ "id": "scrap_metal", "quantity": 3 }, { "id": "fuel_canister_small", "quantity": 1 }] },
+          "penalty": { "type": "status", "status": "WOUNDED" }
+        },
+        {
+          "text": "Controlla l'abitacolo",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 10 },
+          "successText": "Nel vano portaoggetti, dietro a carte ammuffite, trovi una vecchia mappa stradale della regione. Potrebbe rivelarsi preziosa.",
+          "failureText": "L'interno è stato completamente saccheggiato e vandalizzato. Non c'è rimasto assolutamente nulla di valore.",
+          "reward": { "type": "item", "item": { "id": "old_military_map", "quantity": 1 } }
+        }
+      ]
+    },
+    {
+      "id": "plains_strange_carcass",
+      "title": "Carcassa Misteriosa",
+      "description": "Vedi una carcassa di una creatura che non riconosci. È enorme, non assomiglia a nessun animale che tu abbia mai visto. Potrebbe essere una fonte di cibo o un nido di malattie.",
+      "choices": [
+        {
+          "text": "Recupera carne con cautela",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 12 },
+          "successText": "Analizzando la carcassa, noti che la carne vicino alle ossa è ancora buona e non sembra contaminata. Recuperi un bel pezzo.",
+          "failureText": "Mentre tagli la carne, liberi una sacca di gas putridi. L'odore nauseabondo ti investe e ti senti subito male.",
+          "reward": { "type": "item", "item": { "id": "meat_raw", "quantity": 3 } },
+          "penalty": { "type": "status", "status": "SICK" }
+        },
+        {
+          "text": "Mantieni le distanze",
+          "actionKey": "ignore",
+          "resultText": "L'istinto ti dice che il rischio è troppo alto. Prosegui, lasciando che la natura faccia il suo corso."
+        }
+      ]
+    },
+    {
+      "id": "plains_memorial_forgotten",
+      "title": "Monumento Dimenticato",
+      "description": "Trovi una piccola lapide di pietra grezza, incisa rozzamente. Dice: 'Hanno combattuto per un domani che non hanno mai visto'. Alla base, qualcuno ha lasciato un piccolo oggetto avvolto in un panno.",
+      "choices": [
+        {
+          "text": "Prendi l'oggetto",
+          "resultText": "Con rispetto, prendi l'offerta. È una bussola funzionante. Chiunque l'abbia lasciata voleva che aiutasse un altro viaggiatore.",
+          "reward": { "type": "item", "item": { "id": "fathers_compass", "quantity": 1 } }
+        },
+        {
+          "text": "Lascia una tua razione in segno di rispetto",
+          "skillCheck": { "stat": "carisma", "difficulty": 8 },
+          "successText": "Decidi di onorare il loro sacrificio. Lasci una delle tue razioni. Questo semplice gesto ti riempie di una strana determinazione.",
+          "failureText": "Vorresti onorarli, ma la tua fame è più forte. Tieni le tue scorte per te, sentendoti un po' in colpa.",
+          "penalty": { "type": "remove_item", "item_id": "ration_pack", "quantity": 1 },
+          "reward": { "type": "stat_boost", "stat": "carisma", "amount": 1, "duration": "permanent" }
+        }
+      ]
+    },
+    {
+      "id": "plains_dust_devil",
+      "title": "Diavolo di Polvere",
+      "description": "All'improvviso, un piccolo ma violento tornado di polvere si forma davanti a te, sollevando detriti e terra. Puoi tentare di attraversarlo o cercare di aggirarlo, perdendo tempo prezioso.",
+      "choices": [
+        {
+          "text": "Attraversalo di corsa",
+          "skillCheck": { "stat": "agilita", "difficulty": 13 },
+          "successText": "Con uno scatto fulmineo e i muscoli tesi, passi attraverso il vortice quasi indenne, sentendo solo il vento sferzarti il viso.",
+          "failureText": "Vieni investito in pieno. La polvere ti acceca e i detriti ti colpiscono, lasciandoti ammaccato, disorientato e con qualche graffio.",
+          "penalty": { "type": "damage", "amount": 10 }
+        },
+        {
+          "text": "Aggiralo perdendo tempo",
+          "actionKey": "ignore",
+          "resultText": "Non ne vale la pena. Fai un lungo giro, perdendo quasi un'ora di luce.",
+          "penalty": { "type": "time", "minutes": 60 }
+        }
+      ]
+    },
+    {
+      "id": "plains_radio_tower",
+      "title": "Torre Radio Solitaria",
+      "description": "Una torre di trasmissione arrugginita si erge solitaria contro il cielo. Alla sua base c'è un piccolo capanno di manutenzione con la porta socchiusa. Potrebbe contenere componenti utili.",
+      "choices": [
+        {
+          "text": "Esplora il capanno",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 10 },
+          "successText": "All'interno, trovi una cassetta degli attrezzi. Contiene delle parti elettroniche e un kit di riparazione di base.",
+          "failureText": "Il capanno è vuoto e pieno di polvere. Qualcuno è già passato di qui molto tempo fa.",
+          "reward": { "type": "items", "items": [{ "id": "electronic_parts", "quantity": 4 }, { "id": "repair_kit", "quantity": 1 }] }
+        },
+        {
+          "text": "Tenta di arrampicarti sulla torre",
+          "skillCheck": { "stat": "forza", "difficulty": 14 },
+          "successText": "Con fatica, riesci a salire abbastanza in alto da avere una visuale migliore. Noti un'anomalia sulla mappa in lontananza.",
+          "failureText": "Un piolo arrugginito cede sotto il tuo peso. Cadi da un paio di metri, facendoti male a una caviglia.",
+          "reward": { "type": "reveal_map_poi" },
+          "penalty": { "type": "status", "status": "WOUNDED" }
+        }
+      ]
+    },
+    {
+      "id": "plains_old_well",
+      "title": "Vecchio Pozzo",
+      "description": "Ti imbatti in un vecchio pozzo di pietra. Una corda logora pende al suo interno. Potrebbe esserci ancora dell'acqua sul fondo, ma sembra profondo e buio.",
+      "choices": [
+        {
+          "text": "Tira su il secchio",
+          "skillCheck": { "stat": "forza", "difficulty": 11 },
+          "successText": "La corda regge! Tiri su un secchio pieno di acqua fresca e pulita, filtrata dal terreno. Una vera fortuna.",
+          "failureText": "Mentre tiri, la corda si spezza. Il secchio precipita nel buio con un tonfo sordo. L'occasione è persa.",
+          "reward": { "type": "item", "item": { "id": "water_purified", "quantity": 3 } }
+        },
+        {
+          "text": "Lascia perdere",
+          "actionKey": "ignore",
+          "resultText": "Non ti fidi della vecchia corda. Meglio non rischiare di perdere tempo o di cadere dentro."
+        }
+      ]
+    },
+    {
+      "id": "plains_mirage",
+      "title": "Miraggio",
+      "description": "In lontananza, sotto il sole cocente, vedi quella che sembra un'oasi con acqua e palme. Potrebbe essere la tua salvezza, o solo un inganno della mente affaticata.",
+      "choices": [
+        {
+          "text": "Dirigiti verso l'oasi",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 12 },
+          "successText": "Ti avvicini e ti rendi conto che è solo un miraggio. Deluso, stai per andartene quando noti qualcosa di semi-sepolto nella sabbia dove avrebbe dovuto esserci l'acqua: una borraccia quasi piena!",
+          "failureText": "Cammini per quasi un'ora verso l'oasi, solo per vederla svanire nel nulla. Hai sprecato tempo ed energie preziose per un'illusione.",
+          "reward": { "type": "item", "item": { "id": "purified_water_bottle_large", "quantity": 1 } },
+          "penalty": { "type": "time", "minutes": 60 }
+        }
+      ]
+    },
+    {
+      "id": "plains_fissure",
+      "title": "Fenditura nel Terreno",
+      "description": "Una profonda crepa si apre nel terreno arido. È troppo larga per essere saltata facilmente. Puoi cercare un punto più stretto o provare a calarti al suo interno.",
+      "choices": [
+        {
+          "text": "Cerca un passaggio",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 10 },
+          "successText": "Dopo una breve ricerca, trovi un punto in cui le due sponde quasi si toccano, permettendoti di attraversare senza problemi.",
+          "failureText": "Giri a vuoto per un po', non trovando un passaggio sicuro. Perdi tempo e decidi di tornare indietro.",
+          "penalty": { "type": "time", "minutes": 30 }
+        },
+        {
+          "text": "Calati nella fenditura",
+          "skillCheck": { "stat": "agilita", "difficulty": 14 },
+          "successText": "Scendendo con attenzione, scopri che la fenditura porta a una piccola grotta nascosta. All'interno trovi i resti di un accampamento e un kit medico.",
+          "failureText": "Perdi la presa durante la discesa e scivoli, graffiandoti contro le rocce taglienti. Risali a fatica, ferito e senza aver trovato nulla.",
+          "reward": { "type": "item", "item": { "id": "medkit_field", "quantity": 1 } },
+          "penalty": { "type": "damage", "amount": 15 }
+        }
+      ]
+    },
+    {
+      "id": "plains_vulture_circle",
+      "title": "Cerchio di Avvoltoi",
+      "description": "Vedi un gruppo di avvoltoi mutati che volteggiano in cerchio nel cielo. Stanno chiaramente girando sopra a qualcosa. Potrebbe essere una preda recente o un altro sopravvissuto in difficoltà.",
+      "choices": [
+        {
+          "text": "Avvicinati per investigare",
+          "resultText": "Spaventando gli avvoltoi, scopri che stavano banchettando con la carcassa di un grosso animale. Recuperi della carne e una pelle robusta.",
+          "reward": { "type": "items", "items": [{ "id": "meat_raw", "quantity": 2 }, { "id": "animal_hide", "quantity": 1 }] }
+        },
+        {
+          "text": "Evita la zona",
+          "actionKey": "ignore",
+          "resultText": "Dove ci sono avvoltoi, spesso ci sono anche predatori più grandi. Decidi di non rischiare e cambi strada."
+        }
+      ]
+    }
+  ],
+  "FOREST": [
+    {
+      "id": "forest_wild_animal",
+      "title": "Animale Selvatico",
+      "description": "Un animale selvatico ti blocca il passaggio.",
+      "choices": [
+        {
+          "text": "Combatti",
+          "skillCheck": { "stat": "forza", "difficulty": 12 },
+          "successText": "Sconfiggi l'animale e ottieni carne fresca.",
+          "failureText": "L'animale ti ferisce prima di fuggire.",
+          "reward": { "type": "item", "item": { "id": "meat_raw", "quantity": 2 } },
+          "penalty": { "type": "damage", "amount": 5 }
+        },
+        {
+          "text": "Scappa",
+          "actionKey": "flee",
+          "resultText": "Riesci a scappare senza farti male."
+        }
+      ]
+    },
+    {
+      "id": "forest_strange_fungi",
+      "title": "Funghi Luminescenti",
+      "description": "Ai piedi di un albero contorto, vedi un gruppo di funghi che emettono una debole luminescenza verdastra. Potrebbero essere una scoperta alchemica o un veleno mortale.",
+      "choices": [
+        {
+          "text": "Raccogli i funghi",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 13 },
+          "successText": "La tua conoscenza delle piante post-cataclisma ti permette di identificarli come 'Spore di Luce', non commestibili ma utili per creare antidoti. Ne raccogli alcuni.",
+          "failureText": "Mentre li tocchi, i funghi rilasciano una nuvola di spore che ti entra nei polmoni, causandoti una tosse violenta e un senso di vertigine.",
+          "reward": { "type": "item", "item": { "id": "glowing_mushrooms", "quantity": 3 } },
+          "penalty": { "type": "status", "status": "POISONED" }
+        },
+        {
+          "text": "Evita i funghi",
+          "actionKey": "ignore",
+          "resultText": "L'aspetto è troppo innaturale. Decidi di non rischiare e ti allontani, lasciando che la foresta mantenga i suoi segreti."
+        }
+      ]
+    },
+    {
+      "id": "forest_hidden_trap",
+      "title": "Trappola per Animali",
+      "description": "La tua percezione affinata ti fa notare appena in tempo un filo metallico teso tra due alberi all'altezza della caviglia, quasi invisibile tra le foglie.",
+      "choices": [
+        {
+          "text": "Disattiva e recupera la trappola",
+          "skillCheck": { "stat": "agilita", "difficulty": 12 },
+          "successText": "Con mano ferma e movimenti precisi, riesci a disinnescare il meccanismo. Recuperi il filo metallico e un pezzo di metallo affilato usato come innesco.",
+          "failureText": "Scatti la trappola! Una tagliola di metallo arrugginito scatta, mancandoti per un soffio ma strappandoti i pantaloni e causandoti una brutta ferita alla gamba.",
+          "reward": { "type": "items", "items": [{ "id": "wire", "quantity": 2 }, { "id": "scrap_metal", "quantity": 1 }] },
+          "penalty": { "type": "status", "status": "WOUNDED" }
+        },
+        {
+          "text": "Aggira la trappola",
+          "actionKey": "ignore",
+          "resultText": "Non vuoi avere niente a che fare con questa trappola. Fai un lungo giro per evitarla, addentrandoti ancora di più nel fitto della foresta."
+        }
+      ]
+    },
+    {
+      "id": "forest_hermit_shelter",
+      "title": "Rifugio dell'Eremita",
+      "description": "Nascosto tra i rovi, trovi un piccolo rifugio di fortuna, chiaramente abitato fino a poco tempo fa. Un fuoco spento fuma ancora debolmente. Chi viveva qui potrebbe tornare da un momento all'altro.",
+      "choices": [
+        {
+          "text": "Fruga rapidamente in cerca di scorte",
+          "skillCheck": { "stat": "agilita", "difficulty": 11 },
+          "successText": "Ti muovi in fretta e in silenzio. Trovi un piccolo sacco contenente della carne essiccata e un antidoto a base di erbe. Te ne vai prima che qualcuno possa notarti.",
+          "failureText": "Mentre cerchi, fai cadere una pila di barattoli di latta. Il rumore rimbomba nella foresta silenziosa. Preoccupato, decidi di andartene a mani vuote.",
+          "reward": { "type": "items", "items": [{ "id": "meat_cooked", "quantity": 2 }, { "id": "antidote", "quantity": 1 }] }
+        },
+        {
+          "text": "Lascia un piccolo dono e vai via",
+          "actionKey": "leave_gift",
+          "resultText": "Decidi di non rubare a un altro sopravvissuto. Lasci una delle tue bende pulite sul tavolo, un gesto di solidarietà in un mondo spietato. Ti senti meglio con te stesso.",
+          "penalty": { "type": "remove_item", "item_id": "bandages_clean", "quantity": 1 },
+          "reward": { "type": "stat_boost", "stat": "carisma", "amount": 1, "duration": "permanent" }
+        }
+      ]
+    },
+    {
+      "id": "forest_ancient_tree",
+      "title": "Albero Antico",
+      "description": "Ti trovi di fronte a un albero maestoso, molto più grande e vecchio di tutti gli altri. La sua corteccia è coperta di strani simboli incisi, simili a quelli che hai visto nei documenti di tuo padre.",
+      "choices": [
+        {
+          "text": "Cerca una cavità nell'albero",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 14 },
+          "successText": "Noti che uno dei simboli è in realtà un meccanismo. Premendolo, si apre una piccola cavità nel tronco, rivelando un diario logoro e una fiala di liquido denso.",
+          "failureText": "L'albero è solido come la roccia. Non trovi nulla fuori posto, solo corteccia e muschio. Forse i simboli non significano niente.",
+          "reward": { "type": "items", "items": [{ "id": "herbal_antidote_strong", "quantity": 1 }, { "id": "researcher_journal_fragment", "quantity": 1 }] }
+        },
+        {
+          "text": "Riposa all'ombra dell'albero",
+          "actionKey": "rest",
+          "resultText": "Ti siedi ai piedi del gigante, sentendoti protetto dalla sua imponenza. Riposi per un'ora, recuperando un po' di energie.",
+          "reward": { "type": "stats", "hp": 5, "stamina": 10 },
+          "penalty": { "type": "time", "minutes": 60 }
+        }
+      ]
+    },
+    {
+      "id": "forest_stream",
+      "title": "Ruscello Limpido",
+      "description": "Il suono dell'acqua che scorre ti guida a un piccolo ruscello. L'acqua sembra pulita e fresca, un'anomalia in questo mondo inquinato.",
+      "choices": [
+        {
+          "text": "Bevi e riempi la borraccia",
+          "resultText": "L'acqua è fredda e deliziosa. Ti disseti completamente e riempi la tua scorta. È un piccolo miracolo.",
+          "reward": { "type": "full_hydrate" }
+        },
+        {
+          "text": "Segui il ruscello a monte",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 12 },
+          "successText": "Seguendo il corso d'acqua, arrivi alla sorgente, dove trovi un gruppo di erbe medicinali rare che crescono grazie all'acqua pura.",
+          "failureText": "Il sentiero diventa impervio e scivoloso. Perdi l'equilibrio e cadi, inzuppandoti e perdendo tempo senza trovare nulla.",
+          "reward": { "type": "item", "item": { "id": "medicinal_herbs", "quantity": 3 } },
+          "penalty": { "type": "time", "minutes": 30 }
+        }
+      ]
+    },
+    {
+      "id": "forest_spider_webs",
+      "title": "Ragnatele Giganti",
+      "description": "Il sentiero è bloccato da enormi e fitte ragnatele, spesse come corde. Sembrano deserte, ma non puoi esserne sicuro. Puoi provare a tagliarle o a trovare un'altra via.",
+      "choices": [
+        {
+          "text": "Taglia le ragnatele",
+          "skillCheck": { "stat": "forza", "difficulty": 12 },
+          "successText": "Usando il tuo coltello, riesci a farti strada attraverso le ragnatele appiccicose, anche se è un lavoro faticoso.",
+          "failureText": "Il tuo coltello si impiglia nelle fibre resistenti. Mentre cerchi di liberarlo, un ragno delle dimensioni di un pugno scende e ti morde.",
+          "penalty": { "type": "status", "status": "POISONED" }
+        },
+        {
+          "text": "Cerca un altro sentiero",
+          "actionKey": "ignore",
+          "resultText": "Decidi di non disturbare qualunque cosa abbia tessuto quelle trappole. Perdi tempo, ma eviti un potenziale pericolo.",
+          "penalty": { "type": "time", "minutes": 30 }
+        }
+      ]
+    },
+    {
+      "id": "forest_hunter_stand",
+      "title": "Postazione da Caccia",
+      "description": "Vedi una vecchia postazione da caccia in legno costruita su un albero. È in rovina, ma potrebbe ancora contenere qualcosa di utile lasciato da chi l'ha costruita.",
+      "choices": [
+        {
+          "text": "Sali per controllare",
+          "skillCheck": { "stat": "agilita", "difficulty": 11 },
+          "successText": "La struttura è più solida di quanto sembri. In cima, trovi una vecchia balestra e alcuni dardi, abbandonati ma ancora funzionanti.",
+          "failureText": "Un gradino marcio si spezza sotto il tuo peso. Cadi a terra, atterrando malamente e storcendoti una caviglia.",
+          "reward": { "type": "item", "item": { "id": "crossbow_repeater", "quantity": 1 } },
+          "penalty": { "type": "damage", "amount": 8 }
+        },
+        {
+          "text": "Ignorala",
+          "actionKey": "ignore",
+          "resultText": "Sembra troppo instabile per rischiare una caduta. Continui il tuo cammino."
+        }
+      ]
+    },
+    {
+      "id": "forest_bird_song",
+      "title": "Canto Inaspettato",
+      "description": "In una radura, senti il canto di un uccello. È un suono così normale e pre-catastrofe che ti fermi ad ascoltare, un momento di pace inaspettata.",
+      "choices": [
+        {
+          "text": "Goditi il momento",
+          "resultText": "Ti siedi per qualche minuto, lasciando che il canto lavi via un po' della tua stanchezza e della tua paura. Ti senti mentalmente rinvigorito.",
+          "reward": { "type": "stat_boost", "stat": "fortuna", "amount": 1, "duration": "short" }
+        },
+        {
+          "text": "Cerca di cacciare l'uccello",
+          "skillCheck": { "stat": "agilita", "difficulty": 15 },
+          "successText": "Con un lancio incredibilmente fortunato di una pietra, riesci a colpire l'uccello. È un pasto piccolo, ma facile.",
+          "failureText": "L'uccello si accorge di te e vola via, lasciandoti solo con il silenzio della foresta.",
+          "reward": { "type": "item", "item": { "id": "small_game_meat", "quantity": 1 } }
+        }
+      ]
+    },
+    {
+      "id": "forest_overgrown_path",
+      "title": "Sentiero Invaso",
+      "description": "Trovi quello che un tempo era un sentiero segnato, ora quasi completamente reclamato dalla foresta. Seguirlo potrebbe portarti a una scorciatoia o a perderti completamente.",
+      "choices": [
+        {
+          "text": "Segui il sentiero",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 12 },
+          "successText": "La tua abilità di orientamento ti permette di seguire le tracce quasi invisibili. Il sentiero ti fa risparmiare diverse ore di cammino.",
+          "failureText": "Ti perdi nel groviglio di vegetazione. Quando finalmente ritrovi la strada maestra, il sole è molto più basso nel cielo.",
+          "reward": { "type": "time_gain", "minutes": 120 },
+          "penalty": { "type": "time", "minutes": 120 }
+        },
+        {
+          "text": "Rimani sulla strada conosciuta",
+          "actionKey": "ignore",
+          "resultText": "Preferisci la certezza di un percorso più lungo alla possibilità di perderti. Continui per la tua strada."
+        }
+      ]
+    },
+    {
+      "id": "forest_fallen_log_bridge",
+      "title": "Ponte di Tronco",
+      "description": "Un enorme tronco caduto forma un ponte naturale sopra un piccolo crepaccio. È coperto di muschio e sembra scivoloso.",
+      "choices": [
+        {
+          "text": "Attraversa con attenzione",
+          "skillCheck": { "stat": "agilita", "difficulty": 10 },
+          "successText": "Attraversi il tronco con passo sicuro, raggiungendo l'altro lato senza problemi. Sull'altra sponda, trovi uno zaino abbandonato.",
+          "failureText": "Perdi l'equilibrio e scivoli, cadendo nel crepaccio. La caduta non è alta, ma atterri male e alcune delle tue provviste si danneggiano.",
+          "reward": { "type": "item", "item": { "id": "old_backpack", "quantity": 1 } },
+          "penalty": { "type": "item_damage", "chance": 0.5 }
+        }
+      ]
+    }
+  ],
+  "VILLAGE": [
+    {
+      "id": "village_locked_house",
+      "title": "Casa Sigillata",
+      "description": "Una delle poche case ancora in piedi è stata sbarrata dall'esterno con assi di legno. Senti un debole lamento provenire dall'interno, o forse è solo il vento.",
+      "choices": [
+        {
+          "text": "Forza la porta",
+          "skillCheck": { "stat": "forza", "difficulty": 14 },
+          "successText": "Con una spallata decisa, sfondi le assi. All'interno trovi un uomo anziano, debole ma vivo, intrappolato dai predoni. In segno di gratitudine, ti offre una vecchia pistola che teneva nascosta.",
+          "failureText": "La porta è rinforzata troppo bene. Il rumore che fai attira l'attenzione di una bestia mutata nelle vicinanze, che ti attacca.",
+          "reward": { "type": "item", "item": { "id": "weapon_pistol_old", "quantity": 1 } },
+          "penalty": { "type": "combat", "enemy_id": "beast_weak" }
+        },
+        {
+          "text": "Cerca un'altra via d'accesso",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 13 },
+          "successText": "Noti che la canna fumaria del camino è abbastanza larga. Ti arrampichi sul tetto e scendi all'interno. L'anziano, sorpreso, ti dona un kit medico.",
+          "failureText": "La casa è sigillata ermeticamente. Non c'è modo di entrare senza fare rumore e attirare attenzioni indesiderate.",
+          "reward": { "type": "item", "item": { "id": "medkit_field", "quantity": 1 } }
+        },
+        {
+          "text": "Vai via",
+          "actionKey": "ignore",
+          "resultText": "Non sono affari tuoi. I suoni di questo mondo sono pieni di sofferenza, e non puoi salvarli tutti. Prosegui."
+        }
+      ]
+    },
+    {
+      "id": "village_playground",
+      "title": "Parco Giochi Silenzioso",
+      "description": "Ti imbatti in un piccolo parco giochi. Un'altalena arrugginita cigola spinta dal vento. L'atmosfera è malinconica. Sotto l'altalena, noti un piccolo oggetto colorato.",
+      "choices": [
+        {
+          "text": "Raccogli l'oggetto",
+          "resultText": "È un piccolo carillon di legno, ancora funzionante. La melodia è triste ma bellissima. Un frammento di un'infanzia perduta.",
+          "reward": { "type": "item", "item": { "id": "carillon_of_lena", "quantity": 1 } }
+        },
+        {
+          "text": "Siediti sull'altalena per un momento",
+          "actionKey": "rest",
+          "resultText": "Ti siedi e ti dondoli lentamente, perso nei ricordi di un mondo che non c'è più. La pausa ti fa bene allo spirito, ma ti rende vulnerabile.",
+          "reward": { "type": "stat_boost", "stat": "fortuna", "amount": 1, "duration": "medium" },
+          "penalty": { "type": "ambush_chance", "chance": 0.2 }
+        }
+      ]
+    },
+    {
+      "id": "village_community_board",
+      "title": "Bacheca Comunitaria",
+      "description": "Vicino a quella che doveva essere la piazza del villaggio, c'è una bacheca di sughero, protetta da un vetro rotto. Ci sono ancora dei fogli appesi, sbiaditi dal tempo.",
+      "choices": [
+        {
+          "text": "Leggi i messaggi",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 10 },
+          "successText": "La maggior parte sono illeggibili, ma un messaggio spicca: 'SE QUALCUNO LEGGE: scorte di emergenza nella cantina della scuola. La chiave è sotto il vaso di fiori all'ingresso'.",
+          "failureText": "L'inchiostro è svanito, le parole sono macchie senza senso. Qualunque segreto custodissero, è andato perduto per sempre.",
+          "reward": { "type": "lore_clue", "clue_id": "school_cellar_key" }
+        },
+        {
+          "text": "Ignora la bacheca",
+          "actionKey": "ignore",
+          "resultText": "Sono solo pezzi di carta marcia. Non c'è nulla di utile per la tua sopravvivenza. Prosegui."
+        }
+      ]
+    },
+    {
+      "id": "village_vegetable_garden",
+      "title": "Orto Incolto",
+      "description": "Dietro una casa, scopri un piccolo orto, ora invaso dalle erbacce. Con un po' di fortuna, potresti trovare qualcosa di commestibile che è sopravvissuto.",
+      "choices": [
+        {
+          "text": "Cerca tra le erbacce",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 12 },
+          "successText": "Dopo aver estirpato diverse piante infestanti, trovi delle carote e delle patate deformi ma ancora buone. Un pasto assicurato.",
+          "failureText": "Trovi solo radici marce e insetti. Sembra che la terra qui sia diventata sterile.",
+          "reward": { "type": "items", "items": [{ "id": "root_vegetables", "quantity": 3 }] }
+        }
+      ]
+    },
+    {
+      "id": "village_water_pump",
+      "title": "Pompa dell'Acqua Manuale",
+      "description": "Al centro di una piccola piazza c'è una vecchia pompa dell'acqua in ferro battuto. Sembra arrugginita, ma potrebbe ancora pescare da una falda sotterranea pulita.",
+      "choices": [
+        {
+          "text": "Prova a pompare l'acqua",
+          "skillCheck": { "stat": "forza", "difficulty": 12 },
+          "successText": "Con grande sforzo, la maniglia si muove. Dopo alcuni cigolii, un fiotto di acqua fresca e pulita esce dal beccuccio!",
+          "failureText": "La pompa è completamente bloccata dalla ruggine. Tiri con tutta la tua forza, ma non si muove di un millimetro.",
+          "reward": { "type": "full_hydrate" }
+        }
+      ]
+    },
+    {
+      "id": "village_doghouse",
+      "title": "Cuccia Abbandonata",
+      "description": "Nel giardino di una casa c'è una cuccia di legno con una ciotola vuota accanto. Sulla cuccia è inciso un nome: 'Buddy'.",
+      "choices": [
+        {
+          "text": "Controlla dentro la cuccia",
+          "resultText": "All'interno, trovi un vecchio collare di cuoio e, nascosto sotto della paglia, un osso di gomma. Un'eco silenziosa di un'amicizia passata.",
+          "reward": { "type": "item", "item": { "id": "leather_straps", "quantity": 2 } }
+        }
+      ]
+    },
+    {
+      "id": "village_canned_food_cache",
+      "title": "Scorta Nascosta",
+      "description": "Mentre ispezioni una cucina, noti che una delle mattonelle del pavimento è leggermente rialzata. Potrebbe nascondere qualcosa.",
+      "choices": [
+        {
+          "text": "Solleva la mattonelle",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 13 },
+          "successText": "Facendo leva con il coltello, sollevi la mattonella. Sotto, trovi una piccola scorta di cibo in scatola, messa da parte per un'emergenza che, evidentemente, è arrivata.",
+          "failureText": "La mattonella è incastrata. Nel tentativo di forzarla, il tuo coltello si danneggia leggermente.",
+          "reward": { "type": "items", "items": [{ "id": "ration_pack", "quantity": 4 }] },
+          "penalty": { "type": "item_damage", "item": "equipped_weapon", "amount": 5 }
+        },
+        {
+          "text": "Lascia stare",
+          "actionKey": "ignore",
+          "resultText": "Potrebbe essere una trappola. Decidi di non rischiare e continui la tua ricerca altrove."
+        }
+      ]
+    },
+    {
+      "id": "village_wind_chimes",
+      "title": "Scacciapensieri Eolici",
+      "description": "Dal portico di una casa pendono degli scacciapensieri di bambù. Il vento produce una melodia dolce e rilassante, un suono quasi dimenticato.",
+      "choices": [
+        {
+          "text": "Fermati ad ascoltare",
+          "resultText": "Chiudi gli occhi e ti lasci cullare dal suono. Per un breve istante, la paura e l'ansia si placano, lasciando spazio a una calma inaspettata.",
+          "reward": { "type": "status_cure", "status": "STRESSED" }
+        }
+      ]
+    },
+    {
+      "id": "village_family_album",
+      "title": "Album di Famiglia",
+      "description": "Su un tavolo impolverato, trovi un album di fotografie. Ritrae una famiglia felice: compleanni, vacanze, momenti di vita quotidiana prima della fine del mondo.",
+      "choices": [
+        {
+          "text": "Sfoglia l'album",
+          "resultText": "Sfogliare quelle pagine ti riempie di una profonda malinconia, ma anche della determinazione di trovare un futuro dove momenti come quelli possano esistere di nuovo.",
+          "reward": { "type": "experience", "amount": 25 }
+        }
+      ]
+    },
+    {
+      "id": "village_scrawled_warning",
+      "title": "Avvertimento sul Muro",
+      "description": "Su un muro, qualcuno ha scritto con della vernice rossa sbiadita: 'NON FIDATEVI DELL'ACQUA DELLA CITTÀ. AVVELENA L'ANIMA'.",
+      "choices": [
+        {
+          "text": "Prendi nota dell'avvertimento",
+          "resultText": "Memorizzi l'avvertimento. Potrebbe essere la paranoia di un pazzo o un consiglio salvavita. Meglio essere prudenti.",
+          "reward": { "type": "lore_clue", "clue_id": "city_water_warning" }
+        }
+      ]
+    }
+  ],
+  "CITY": [
+    {
+      "id": "city_military_checkpoint",
+      "title": "Posto di Blocco Militare",
+      "description": "Ti imbatti nei resti di un posto di blocco dell'esercito. I sacchi di sabbia sono ancora in posizione, ma non c'è traccia dei soldati. Un veicolo blindato è ribaltato su un lato.",
+      "choices": [
+        {
+          "text": "Perquisci il veicolo blindato",
+          "skillCheck": { "stat": "forza", "difficulty": 15 },
+          "successText": "Riesci a forzare il portellone. All'interno trovi un kit medico militare e delle razioni da combattimento ancora sigillate.",
+          "failureText": "Il veicolo è troppo danneggiato. Mentre tenti di aprirlo, una lamiera tagliente ti ferisce al braccio.",
+          "reward": { "type": "items", "items": [{ "id": "medkit_military", "quantity": 1 }, { "id": "MRE_pack_military", "quantity": 2 }] },
+          "penalty": { "type": "damage", "amount": 12 }
+        },
+        {
+          "text": "Controlla i sacchi di sabbia",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 12 },
+          "successText": "Dietro uno dei sacchi, trovi una radio militare ancora funzionante e delle munizioni sparse.",
+          "failureText": "I sacchi sono vuoti e marciti. Non c'è nulla di utile qui.",
+          "reward": { "type": "items", "items": [{ "id": "military_radio", "quantity": 1 }, { "id": "ammo_rifle", "quantity": 15 }] }
+        },
+        {
+          "text": "Evita la zona",
+          "actionKey": "ignore",
+          "resultText": "I posti di blocco militari potrebbero essere ancora sorvegliati o minati. Meglio non rischiare."
+        }
+      ]
+    },
+    {
+      "id": "city_broken_pharmacy",
+      "title": "Farmacia Devastata",
+      "description": "La vetrina di una farmacia è completamente distrutta. All'interno, gli scaffali sono rovesciati e i medicinali sparsi ovunque. Potrebbe esserci ancora qualcosa di utile.",
+      "choices": [
+        {
+          "text": "Cerca tra i medicinali",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 13 },
+          "successText": "Tra le scatole danneggiate, trovi degli antibiotici ancora sigillati e delle bende sterili.",
+          "failureText": "La maggior parte dei medicinali è scaduta o contaminata. Trovi solo vetri rotti e polvere.",
+          "reward": { "type": "items", "items": [{ "id": "antibiotics", "quantity": 2 }, { "id": "bandages", "quantity": 5 }] }
+        },
+        {
+          "text": "Controlla il retrobottega",
+          "skillCheck": { "stat": "percezione", "difficulty": 14 },
+          "successText": "Nel retrobottega trovi una cassaforte aperta con morfina e altri farmaci di valore.",
+          "failureText": "Il retrobottega è crollato. Non riesci ad accedere senza rischiare di rimanere sepolto.",
+          "reward": { "type": "items", "items": [{ "id": "morphine", "quantity": 1 }, { "id": "painkillers", "quantity": 3 }] }
+        }
+      ]
+    },
+    {
+      "id": "city_subway_entrance",
+      "title": "Ingresso della Metropolitana",
+      "description": "Davanti a te si apre l'ingresso di una stazione della metropolitana. Le scale scendono nell'oscurità. Un cartello storto recita ancora 'Metro - Linea A'.",
+      "choices": [
+        {
+          "text": "Scendi nelle gallerie",
+          "skillCheck": { "stat": "coraggio", "difficulty": 15 },
+          "successText": "Nelle gallerie buie, trovi un rifugio improvvisato con scorte di cibo e una torcia funzionante.",
+          "failureText": "L'oscurità ti sopraffà. Senti rumori inquietanti e decidi di risalire rapidamente, ma non prima di esserti perso e aver sprecato tempo prezioso.",
+          "reward": { "type": "items", "items": [{ "id": "canned_food", "quantity": 4 }, { "id": "flashlight", "quantity": 1 }] },
+          "penalty": { "type": "time_loss", "hours": 2 }
+        },
+        {
+          "text": "Resta in superficie",
+          "actionKey": "ignore",
+          "resultText": "Le gallerie sotterranee sono troppo pericolose. Preferisci rimanere alla luce del sole."
+        }
+      ]
+    },
+    {
+      "id": "city_rooftop_access",
+      "title": "Accesso al Tetto",
+      "description": "Una scala antincendio ti permette di raggiungere il tetto di un palazzo. Da lassù potresti avere una vista migliore della zona e forse trovare qualcosa di utile.",
+      "choices": [
+        {
+          "text": "Sali sul tetto",
+          "skillCheck": { "stat": "agilità", "difficulty": 12 },
+          "successText": "Dal tetto hai una vista eccellente della zona. Noti anche un piccolo giardino pensile con delle piante commestibili.",
+          "failureText": "La scala è più arrugginita di quanto pensassi. Un gradino cede e cadi, ferendoti.",
+          "reward": { "type": "items", "items": [{ "id": "wild_herbs", "quantity": 3 }] },
+          "additional_reward": { "type": "map_reveal", "radius": 2 },
+          "penalty": { "type": "damage", "amount": 8 }
+        }
+      ]
+    },
+    {
+      "id": "city_bookstore",
+      "title": "Libreria Abbandonata",
+      "description": "Una piccola libreria indipendente. I libri sono sparsi ovunque, alcuni bruciati, altri miracolosamente intatti. Tra questi, potresti trovare informazioni utili.",
+      "choices": [
+        {
+          "text": "Cerca manuali di sopravvivenza",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 11 },
+          "successText": "Trovi un manuale di pronto soccorso e un libro sulla purificazione dell'acqua. Conoscenza preziosa.",
+          "failureText": "I libri utili sono tutti danneggiati dall'umidità. Trovi solo romanzi e poesie.",
+          "reward": { "type": "skill_book", "skill": "medicina", "bonus": 2 }
+        },
+        {
+          "text": "Sfoglia i libri di storia locale",
+          "resultText": "Tra le pagine di un libro sulla storia della città, trovi una mappa dettagliata dei tunnel sotterranei.",
+          "reward": { "type": "item", "item": { "id": "city_tunnel_map", "quantity": 1 } }
+        }
+      ]
+    },
+    {
+      "id": "city_department_store",
+      "title": "Grande Magazzino",
+      "description": "Passi davanti alla vetrina di un grande magazzino. All'interno, diversi manichini sono posizionati in pose innaturali. Per un istante, ti è sembrato che uno di loro abbia girato la testa per guardarti.",
+      "choices": [
+        {
+          "text": "Entra per investigare",
+          "skillCheck": { "stat": "fortuna", "difficulty": 13 },
+          "successText": "Con il cuore in gola, entri. I manichini sono immobili. Dietro a uno di essi, però, trovi il corpo di un saccheggiatore sfortunato, con il suo zaino ancora pieno di scorte.",
+          "failureText": "Non erano manichini. Erano un tipo di mutante incredibilmente abile nel mimetismo. Ti attaccano non appena varchi la soglia.",
+          "reward": { "type": "loot_backpack", "tier": "medium" },
+          "penalty": { "type": "combat", "enemy_id": "mutant_stealth_group" }
+        },
+        {
+          "text": "Accelera il passo",
+          "actionKey": "ignore",
+          "resultText": "Che sia la tua immaginazione o no, non hai intenzione di scoprirlo. Te ne vai il più in fretta possibile."
+        }
+      ]
+    },
+    {
+      "id": "city_police_station",
+      "title": "Stazione di Polizia",
+      "description": "L'edificio della polizia locale è parzialmente crollato, ma l'armeria potrebbe essere ancora accessibile. Le auto della polizia nel parcheggio sono rovesciate e bruciate.",
+      "choices": [
+        {
+          "text": "Cerca di accedere all'armeria",
+          "skillCheck": { "stat": "forza", "difficulty": 16 },
+          "successText": "Riesci a forzare la porta dell'armeria. All'interno trovi una pistola di servizio e delle munizioni.",
+          "failureText": "La porta è blindata e non riesci ad aprirla. Il rumore attira l'attenzione di creature ostili.",
+          "reward": { "type": "items", "items": [{ "id": "weapon_pistol_police", "quantity": 1 }, { "id": "ammo_pistol", "quantity": 24 }] },
+          "penalty": { "type": "encounter", "enemy_type": "scavenger_group" }
+        },
+        {
+          "text": "Perquisci le auto della polizia",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 10 },
+          "successText": "In una delle auto trovi un kit di pronto soccorso e una radio portatile ancora funzionante.",
+          "failureText": "Le auto sono completamente distrutte. Non c'è nulla di salvabile.",
+          "reward": { "type": "items", "items": [{ "id": "first_aid_kit", "quantity": 1 }, { "id": "portable_radio", "quantity": 1 }] }
+        }
+      ]
+    },
+    {
+      "id": "city_gas_station",
+      "title": "Stazione di Servizio",
+      "description": "Una vecchia stazione di servizio. Le pompe sono distrutte, ma il negozio potrebbe contenere ancora delle scorte. Un'auto abbandonata è ferma davanti a una delle pompe.",
+      "choices": [
+        {
+          "text": "Perquisci il negozio",
+          "skillCheck": { "stat": "percezione", "difficulty": 12 },
+          "successText": "Dietro il bancone trovi una scorta nascosta di snack e bevande energetiche.",
+          "failureText": "Il negozio è stato già saccheggiato. Gli scaffali sono vuoti.",
+          "reward": { "type": "items", "items": [{ "id": "energy_drink", "quantity": 3 }, { "id": "snack_bar", "quantity": 5 }] }
+        },
+        {
+          "text": "Controlla l'auto abbandonata",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 11 },
+          "successText": "Nel bagagliaio dell'auto trovi un kit di attrezzi e un contenitore di carburante mezzo pieno.",
+          "failureText": "L'auto è vuota, ma noti che qualcuno l'ha usata come rifugio temporaneo di recente.",
+          "reward": { "type": "items", "items": [{ "id": "tool_kit", "quantity": 1 }, { "id": "fuel_canister", "quantity": 1 }] }
+        }
+      ]
+    },
+    {
+      "id": "city_hospital_ruins",
+      "title": "Rovine dell'Ospedale",
+      "description": "I resti di un ospedale si ergono davanti a te. La maggior parte della struttura è crollata, ma alcune sezioni sembrano ancora accessibili. Potresti trovare forniture mediche preziose.",
+      "choices": [
+        {
+          "text": "Esplora il reparto farmaceutico",
+          "skillCheck": { "stat": "agilità", "difficulty": 14 },
+          "successText": "Navigando tra le macerie, raggiungi la farmacia dell'ospedale. Trovi antibiotici, antidolorifici e bende sterili.",
+          "failureText": "Il pavimento cede sotto i tuoi piedi. Cadi in una voragine e ti ferisci gravemente.",
+          "reward": { "type": "items", "items": [{ "id": "antibiotics_hospital", "quantity": 2 }, { "id": "morphine", "quantity": 1 }, { "id": "sterile_bandages", "quantity": 8 }] },
+          "penalty": { "type": "damage", "amount": 20 }
+        },
+        {
+          "text": "Cerca nel pronto soccorso",
+          "skillCheck": { "stat": "fortuna", "difficulty": 12 },
+          "successText": "Nel pronto soccorso trovi un defibrillatore portatile ancora funzionante e un kit chirurgico.",
+          "failureText": "Il pronto soccorso è completamente distrutto. Non c'è nulla di utilizzabile.",
+          "reward": { "type": "items", "items": [{ "id": "portable_defibrillator", "quantity": 1 }, { "id": "surgical_kit", "quantity": 1 }] }
+        }
+      ]
+    },
+    {
+      "id": "city_electronics_store",
+      "title": "Negozio di Elettronica",
+      "description": "Un negozio di elettronica con la vetrina sfondata. All'interno, la maggior parte dei dispositivi è danneggiata, ma potresti trovare componenti ancora utili.",
+      "choices": [
+        {
+          "text": "Cerca componenti elettronici",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 13 },
+          "successText": "Tra i dispositivi rotti, trovi delle batterie ancora cariche e alcuni circuiti integri.",
+          "failureText": "Tutto è troppo danneggiato per essere utile. Perdi tempo prezioso.",
+          "reward": { "type": "items", "items": [{ "id": "battery_pack", "quantity": 4 }, { "id": "electronic_components", "quantity": 2 }] }
+        },
+        {
+          "text": "Controlla il retrobottega",
+          "resultText": "Nel retrobottega trovi una radio a onde corte funzionante e un caricabatterie solare.",
+          "reward": { "type": "items", "items": [{ "id": "shortwave_radio", "quantity": 1 }, { "id": "solar_charger", "quantity": 1 }] }
+        }
+      ]
+    },
+    {
+      "id": "city_unique_webradio",
+      "isUnique": true,
+      "title": "Segnale Radio Fantasma",
+      "description": "Da un vecchio ricevitore radio in un negozio di elettronica in rovina, senti una voce metallica che ripete un messaggio in loop: '...safe...place...coordinate...tre-uno-quattro...uno-cinque-nove...'.",
+      "choices": [
+        {
+          "text": "Ascolta attentamente e annota",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 10 },
+          "successText": "Annoti le coordinate. Sembrano puntare a una zona remota delle montagne. Che sia il 'Safe Place' di cui parlava tuo padre?",
+          "failureText": "La trasmissione si interrompe con una scarica di statica prima che tu possa capire tutte le cifre. Un'occasione persa.",
+          "reward": { "type": "quest_update", "questId": "main_quest", "data": { "coordinates_found": true } }
+        }
+      ]
+    }
+  ],
+  "RIVER": [
+    {
+      "id": "river_fishing_spot",
+      "title": "Posto di Pesca Promettente",
+      "description": "Vedi un punto in cui l'acqua del fiume forma un'ansa calma e profonda. È il luogo ideale per provare a pescare qualcosa, anche se non sai cosa potrebbe abboccare.",
+      "choices": [
+        {
+          "text": "Pesca con equipaggiamento improvvisato",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 12 },
+          "successText": "Usando un pezzo di spago e un rottame affilato, riesci a catturare un paio di pesci dall'aspetto strano ma commestibile. Una buona fonte di proteine.",
+          "failureText": "Non abbocca nulla. Sprechi solo tempo prezioso e le tue mani sono umide e gelate.",
+          "reward": { "type": "item", "item": { "id": "mutant_fish", "quantity": 2 } },
+          "penalty": { "type": "time", "minutes": 45 }
+        },
+        {
+          "text": "Bevi direttamente dal fiume",
+          "actionKey": "drink",
+          "resultText": "Bevi l'acqua torbida. Ti disseti un po', ma senti subito un crampo allo stomaco. Non è stata una buona idea e ora ti senti debole.",
+          "effects": [
+            { "type": "hydrate", "amount": 25 },
+            { "type": "status", "status": "SICK" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "river_old_pier",
+      "title": "Vecchio Molo Fatiscente",
+      "description": "I resti di un molo di legno marcio si protendono sull'acqua. La maggior parte è crollata, ma una piccola parte sembra ancora percorribile. Potrebbe esserci qualcosa alla fine.",
+      "choices": [
+        {
+          "text": "Cammina fino alla fine del molo",
+          "skillCheck": { "stat": "agilita", "difficulty": 13 },
+          "successText": "Con passo leggero, raggiungi la fine del molo. Legata a un palo, trovi una vecchia cassetta degli attrezzi impermeabile. Al suo interno c'è un kit di riparazione.",
+          "failureText": "Un'asse marcia cede sotto il tuo peso. Cadi nell'acqua gelida e torbida, perdendo alcuni oggetti dal tuo zaino mentre torni a riva.",
+          "reward": { "type": "item", "item": { "id": "repair_kit_advanced", "quantity": 1 } },
+          "penalty": { "type": "lose_random_item" }
+        },
+        {
+          "text": "Rimani sulla riva",
+          "actionKey": "ignore",
+          "resultText": "Il rischio di un crollo è troppo alto. Decidi di non avventurarti sul molo."
+        }
+      ]
+    },
+    {
+      "id": "river_message_in_a_bottle",
+      "title": "Messaggio in Bottiglia",
+      "description": "Tra i detriti portati dalla corrente, noti una bottiglia di vetro verde sigillata con della cera. Al suo interno sembra esserci un pezzo di carta arrotolato.",
+      "choices": [
+        {
+          "text": "Recupera e apri la bottiglia",
+          "resultText": "Recuperi la bottiglia e rompi il sigillo. Il messaggio all'interno è una mappa disegnata a mano che indica un piccolo nascondiglio di provviste su quella sponda del fiume.",
+          "reward": { "type": "reveal_map_poi" }
+        }
+      ]
+    },
+    {
+      "id": "river_makeshift_filter",
+      "title": "Filtro d'Acqua Improvvisato",
+      "description": "Qualcuno ha costruito un rudimentale sistema di filtraggio con strati di sabbia, carbone e tessuto in una serie di contenitori. Sembra funzionante.",
+      "choices": [
+        {
+          "text": "Usa il filtro per purificare la tua acqua",
+          "skillCheck": { "stat": "intelligenza", "difficulty": 10 },
+          "successText": "Capisci il meccanismo e lo usi per filtrare l'acqua del fiume. Ottieni una buona scorta di acqua potabile.",
+          "failureText": "Il filtro è intasato o rotto. L'acqua che ne esce è più sporca di prima. È inutilizzabile.",
+          "reward": { "type": "item", "item": { "id": "water_purified", "quantity": 4 } }
+        }
+      ]
+    },
+    {
+      "id": "river_submerged_car",
+      "title": "Auto Sommersa",
+      "description": "Poco lontano dalla riva, in un punto dove l'acqua è bassa, vedi il tetto di un'auto quasi completamente sommersa. Il portellone posteriore è leggermente aperto.",
+      "choices": [
+        {
+          "text": "Immergiti per controllare",
+          "skillCheck": { "stat": "forza", "difficulty": 14 },
+          "successText": "Trattenendo il respiro, ti immergi e riesci ad aprire del tutto il portellone. All'interno, protetto in una cassa di plastica, trovi un pacco di munizioni e un giubbotto di kevlar.",
+          "failureText": "La corrente è più forte del previsto e la portiera è incastrata. Rischi di rimanere intrappolato e torni a riva ansimando, senza aver concluso nulla.",
+          "reward": { "type": "items", "items": [{ "id": "ammo_rifle", "quantity": 1 }, { "id": "armor_kevlar_damaged", "quantity": 1 }] },
+          "penalty": { "type": "status", "status": "SICK" }
+        },
+        {
+          "text": "Non entrare in acqua",
+          "actionKey": "ignore",
+          "resultText": "Entrare in quell'acqua torbida senza sapere cosa si nasconde è da pazzi. Continui lungo la riva."
+        }
+      ]
+    },
+    {
+      "id": "river_rapids",
+      "title": "Rapide Pericolose",
+      "description": "Il fiume si restringe e la corrente accelera, formando delle piccole ma insidiose rapide. Attraversare qui è veloce ma estremamente rischioso.",
+      "choices": [
+        {
+          "text": "Tenta l'attraversamento",
+          "skillCheck": { "stat": "agilita", "difficulty": 15 },
+          "successText": "Scegliendo attentamente dove mettere i piedi, riesci ad attraversare le rapide sfruttando la corrente a tuo vantaggio. Risparmi tempo prezioso.",
+          "failureText": "Un'onda anomala ti travolge. Vieni trascinato per diversi metri prima di riuscire ad aggrapparti alla riva, fradicio, ferito e più a valle di prima.",
+          "reward": { "type": "time_gain", "minutes": 90 },
+          "penalty": { "type": "damage", "amount": 15 }
+        },
+        {
+          "text": "Cerca un guado più sicuro",
+          "actionKey": "ignore",
+          "resultText": "Non sei un salmone. Decidi di camminare lungo la riva fino a trovare un punto più tranquillo, anche se ci vorrà più tempo.",
+          "penalty": { "type": "time", "minutes": 60 }
+        }
+      ]
+    },
+    {
+      "id": "river_strange_glow",
+      "title": "Bagliore Sottomarino",
+      "description": "Di notte, noti un debole bagliore pulsante provenire dal fondo del fiume. Potrebbe essere un minerale radioattivo o qualcosa di tecnologico ancora funzionante.",
+      "choices": [
+        {
+          "text": "Tuffati per recuperare l'oggetto",
+          "skillCheck": { "stat": "fortuna", "difficulty": 14 },
+          "successText": "Ti immergi e afferri l'oggetto. È un piccolo rilevatore geologico, ancora attivo. La sua luce ti aiuterà a trovare risorse. L'acqua però ti lascia addosso una strana sensazione.",
+          "failureText": "Il bagliore proviene da un nido di larve bioluminescenti e altamente tossiche. Il contatto con l'acqua ti provoca una brutta eruzione cutanea.",
+          "reward": { "type": "item", "item": { "id": "geiger_counter_simple", "quantity": 1 } },
+          "penalty": { "type": "status", "status": "POISONED" }
+        }
+      ]
+    },
+    {
+      "id": "river_skeletal_remains",
+      "title": "Resti sulla Riva",
+      "description": "Sulla riva fangosa, trovi lo scheletro di un sopravvissuto. La sua posizione suggerisce che sia morto di sfinimento mentre cercava di bere. Accanto a lui c'è il suo zaino.",
+      "choices": [
+        {
+          "text": "Perquisisci lo zaino",
+          "resultText": "Apri lo zaino. Dentro trovi un diario illeggibile, una bottiglia vuota e un ultimo pacchetto di razioni che non ha avuto la forza di aprire.",
+          "reward": { "type": "item", "item": { "id": "ration_pack", "quantity": 1 } }
+        }
+      ]
+    },
+    {
+      "id": "river_beaver_dam",
+      "title": "Diga di Castori Mutati",
+      "description": "Il fiume è bloccato da un'enorme diga costruita non con semplici tronchi, ma con rottami metallici, carcasse di auto e detriti urbani. È un'opera impressionante e inquietante.",
+      "choices": [
+        {
+          "text": "Smantella parte della diga per rottami",
+          "skillCheck": { "stat": "forza", "difficulty": 13 },
+          "successText": "Riesci a staccare alcuni pezzi di metallo utili senza far crollare la struttura. Un buon bottino.",
+          "failureText": "Mentre tiri una lamiera, provochi un piccolo crollo. La struttura instabile ti cade addosso, ferendoti.",
+          "reward": { "type": "item", "item": { "id": "scrap_metal", "quantity": 5 } },
+          "penalty": { "type": "damage", "amount": 12 }
+        },
+        {
+          "text": "Usa la diga per attraversare",
+          "actionKey": "cross",
+          "resultText": "La diga è sorprendentemente stabile. La usi come un ponte per attraversare il fiume facilmente.",
+          "reward": { "type": "shortcut" }
+        }
+      ]
+    },
+    {
+      "id": "river_clay_deposit",
+      "title": "Deposito di Argilla",
+      "description": "Lungo la sponda noti un ricco deposito di argilla rossastra. Con i materiali giusti, potresti usarla per purificare l'acqua o per altri scopi.",
+      "choices": [
+        {
+          "text": "Raccogli l'argilla",
+          "resultText": "Raccogli una buona quantità di argilla. Potrà tornarti utile.",
+          "reward": { "type": "item", "item": { "id": "clay_deposit", "quantity": 3 } }
+        }
+      ]
+    }
+  ],
+  "REST_STOP": [
+    {
+      "id": "rest_stop_day_interaction",
+      "title": "Un Momento di Pace",
+      "description": "Questo posto sembra relativamente sicuro. È un buon momento per riprendere fiato, riparare l'equipaggiamento o semplicemente riposare durante il giorno.",
+      "choices": [
+        {
+          "text": "Riposa (Recupera 10 HP e 15 Energia)",
+          "actionKey": "rest",
+          "resultText": "Ti siedi per un po', mangi qualcosa e ti rilassi. Ti senti un po' meglio.",
+          "reward": { "type": "stats", "hp": 10, "stamina": 15 }
+        },
+        {
+          "text": "Cerca materiali utili (Costa tempo)",
+          "actionKey": "search",
+          "skillCheck": { "stat": "percezione", "difficulty": 11 },
+          "successText": "Cerchi attentamente nei dintorni e trovi alcuni materiali di scarto utili per le riparazioni.",
+          "failureText": "Qualcuno è già passato di qui e ha preso tutto ciò che c'era di valore.",
+          "reward": { "type": "items", "items": [{ "id": "scrap_metal", "quantity": 2 }, { "id": "wood_plank", "quantity": 1 }] },
+          "isSearchAction": true
+        },
+        {
+          "text": "Ignora e vai avanti",
+          "actionKey": "ignore",
+          "resultText": "Non c'è tempo per riposare. Continui a muoverti."
+        }
+      ]
+    }
+  ]
+}
