@@ -15,6 +15,7 @@ class_name World
 
 # SEGNALI PER COMUNICAZIONE UI
 signal player_moved(new_position: Vector2i, terrain_type: String)
+signal narrative_message_sent()
 
 # REFERENZE NODI SCENA
 @onready var ascii_tilemap: TileMap = $AsciiTileMap
@@ -68,6 +69,20 @@ var movement_penalty: int = 0  # Penalità movimento (fiume)
 var map_data: Array[String] = []
 var map_width: int = 0
 var map_height: int = 0
+
+# Narrativa Montagne
+var mountain_fail_messages = [
+	"[color=orange]Quella montagna non sembra volersi spostare.[/color]",
+	"[color=orange]Anche con la rincorsa, non se ne parla.[/color]",
+	"[color=orange]La montagna ti guarda con aria di sfida. Tu declini educatamente.[/color]",
+	"[color=orange]Fisica: 1, Ottimismo: 0.[/color]"
+]
+
+# Narrativa Fiumi
+var river_crossing_messages = [
+	"[color=dodgerblue]L'acqua gelida ti toglie il fiato per un istante.[/color]",
+	"[color=dodgerblue]Guadare il fiume richiede uno sforzo notevole.[/color]"
+]
 
 # CAMERA SMOOTH TARGET (FIX SALTELLO)
 var target_camera_position: Vector2 = Vector2.ZERO
@@ -310,6 +325,9 @@ func _on_map_move(direction: Vector2i):
 		var destination_char = _get_char_at_position(new_position)
 		if destination_char == "~":
 			movement_penalty = 1  # Prossimo turno sarà saltato
+			var random_message = river_crossing_messages[randi() % river_crossing_messages.size()]
+			_add_movement_log(random_message)
+			narrative_message_sent.emit()
 			print("🌊 Attraversamento fiume - penalità 1 turno applicata")
 		
 		# Applica movimento
@@ -337,9 +355,19 @@ func _on_map_move(direction: Vector2i):
 		if new_position.x % 5 == 0 or new_position.y % 5 == 0:
 			print("🚶 Player: %s (%s)" % [str(new_position), destination_char])
 	else:
+		# Logica per movimento bloccato
+		var destination_char = _get_char_at_position(new_position)
+		if destination_char == "M":
+			# Messaggio ironico per le montagne
+			var random_message = mountain_fail_messages[randi() % mountain_fail_messages.size()]
+			_add_movement_log(random_message)
+			narrative_message_sent.emit()
+		else:
+			# Messaggio generico per altri ostacoli
+			var direction_name = direction_to_name.get(direction, "Direzione Sconosciuta")
+			_add_movement_log("Movimento bloccato verso %s: ostacolo invalicabile" % direction_name)
+
 		print("🚫 Movimento bloccato verso: %s" % str(new_position))
-		var direction_name = direction_to_name.get(direction, "Direzione Sconosciuta")
-		_add_movement_log("Movimento bloccato verso %s: ostacolo invalicabile" % direction_name)
 
 ## Aggiunge log di movimento al GameUI
 func _add_movement_log(message: String):
