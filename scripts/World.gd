@@ -14,7 +14,7 @@ class_name World
 # ============================================================================
 
 # SEGNALI PER COMUNICAZIONE UI
-signal player_moved(new_position: Vector2i, terrain_type: String)
+signal player_moved(direction: Vector2i, new_position: Vector2i, terrain_type: String)
 signal narrative_message_sent()
 
 # REFERENZE NODI SCENA
@@ -53,14 +53,6 @@ var char_to_terrain_name = {
 	"R": "Ristoro",
 	"S": "Punto di Partenza",
 	"E": "Destinazione"
-}
-
-# MAPPING DIREZIONI → NOMI (per log movimento)
-var direction_to_name = {
-	Vector2i(0, -1): "Nord",
-	Vector2i(0, 1): "Sud",
-	Vector2i(-1, 0): "Ovest",
-	Vector2i(1, 0): "Est"
 }
 
 # STATO PLAYER E MOVIMENTO
@@ -335,12 +327,10 @@ func _on_map_move(direction: Vector2i):
 		_update_player_position()
 		
 		# LOG MOVIMENTO CON DIREZIONE E TERRENO
-		var direction_name = direction_to_name.get(direction, "Direzione Sconosciuta")
 		var terrain_name = char_to_terrain_name.get(destination_char, "Terreno Sconosciuto")
-		_add_movement_log("Ti sposti verso %s, raggiungendo: %s" % [direction_name, terrain_name])
 		
 		# EMETTI SEGNALE PER AGGIORNAMENTO PANNELLO INFO
-		player_moved.emit(new_position, terrain_name)
+		player_moved.emit(direction, new_position, terrain_name)
 		
 		# AVANZAMENTO TEMPO: Ogni movimento = 30 minuti
 		if TimeManager:

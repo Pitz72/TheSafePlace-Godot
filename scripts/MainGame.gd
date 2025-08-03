@@ -31,6 +31,13 @@ var biome_entry_messages = {
 	"villaggio": {"text": "Un piccolo insediamento appare all'orizzonte.", "color": "sandybrown"}
 }
 
+var direction_to_name = {
+	Vector2i(0, -1): "Nord",
+	Vector2i(0, 1): "Sud",
+	Vector2i(-1, 0): "Ovest",
+	Vector2i(1, 0): "Est"
+}
+
 # Narrativa Atmosfera
 var atmosphere_timer: Timer
 var time_since_last_message: float = 0.0
@@ -82,8 +89,8 @@ func _process(delta):
 		time_since_last_message = 0.0 # Resetta il timer
 
 # Gestisce il movimento del giocatore e triggera eventi
-func _on_player_moved(position: Vector2i, terrain_type: String):
-	print("🚶 Giocatore mosso in posizione: %s, terreno: %s" % [str(position), terrain_type])
+func _on_player_moved(direction: Vector2i, new_position: Vector2i, terrain_type: String):
+	print("🚶 Giocatore mosso in posizione: %s, terreno: %s" % [str(new_position), terrain_type])
 	
 	# Incrementa contatore passi
 	steps_since_last_event += 1
@@ -91,14 +98,18 @@ func _on_player_moved(position: Vector2i, terrain_type: String):
 	# Mappa terreno a bioma per EventManager
 	var new_biome = _map_terrain_to_biome(terrain_type)
 
-	# Controlla se il bioma è cambiato per il messaggio narrativo
+	# Logica per messaggio di movimento
 	if new_biome != current_biome:
 		if biome_entry_messages.has(new_biome):
 			var msg_data = biome_entry_messages[new_biome]
 			player_manager.narrative_log_generated.emit("[color=%s]%s[/color]" % [msg_data.color, msg_data.text])
 			time_since_last_message = 0.0 # Resetta il timer atmosfera
 		current_biome = new_biome
-	
+	else:
+		# Se il bioma non è cambiato, logga il messaggio di movimento generico
+		var dir_name = direction_to_name.get(direction, "Direzione Sconosciuta")
+		player_manager.narrative_log_generated.emit("Ti sposti verso %s, raggiungendo: %s" % [dir_name, terrain_type])
+
 	# Verifica se può triggerare un evento
 	if _can_trigger_event(new_biome):
 		_attempt_event_trigger(new_biome)
