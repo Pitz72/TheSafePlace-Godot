@@ -22,6 +22,13 @@ var biome_probabilities = {
 	"montagne": 0.12
 }
 
+var direction_to_name = {
+	Vector2i(0, -1): "Nord",
+	Vector2i(0, 1): "Sud",
+	Vector2i(-1, 0): "Ovest",
+	Vector2i(1, 0): "Est"
+}
+
 func _ready():
 	print("🎮 MainGame inizializzato")
 	
@@ -34,9 +41,10 @@ func _ready():
 	# Connetti segnali se disponibili
 	if world and world.has_signal("player_moved"):
 		world.player_moved.connect(_on_player_moved)
+		# Nota: la connessione al segnale narrative_message_sent non è più necessaria con questa architettura
 		print("✅ Connesso a World.player_moved")
 	else:
-		print("⚠️ World.player_moved non disponibile")
+		print("⚠️ World o i suoi segnali non disponibili")
 	
 	if event_manager:
 		event_manager.event_triggered.connect(_on_event_triggered)
@@ -54,18 +62,29 @@ func _process(delta):
 	time_since_last_event += delta
 
 # Gestisce il movimento del giocatore e triggera eventi
-func _on_player_moved(position: Vector2i, terrain_type: String):
-	print("🚶 Giocatore mosso in posizione: %s, terreno: %s" % [str(position), terrain_type])
+func _on_player_moved(direction: Vector2i, new_position: Vector2i, terrain_type: String):
+	print("🚶 Giocatore mosso in posizione: %s, terreno: %s" % [str(new_position), terrain_type])
 	
 	# Incrementa contatore passi
 	steps_since_last_event += 1
 	
 	# Mappa terreno a bioma per EventManager
-	var current_biome = _map_terrain_to_biome(terrain_type)
+	var new_biome = _map_terrain_to_biome(terrain_type)
+
+	# Logica per messaggio di movimento
+	if new_biome != current_biome:
+		if biome_entry_messages.has(new_biome):
+			var msg_data = biome_entry_messages[new_biome]
+			player_manager.narrative_log_generated.emit("[color=%s]%s[/color]" % [msg_data.color, msg_data.text])
+		current_biome = new_biome
+	else:
+		# Se il bioma non è cambiato, logga il messaggio di movimento generico
+		var dir_name = direction_to_name.get(direction, "Direzione Sconosciuta")
+		player_manager.narrative_log_generated.emit("Ti sposti verso %s, raggiungendo: %s" % [dir_name, terrain_type])
 
 	# Verifica se può triggerare un evento
-	if _can_trigger_event(current_biome):
-		_attempt_event_trigger(current_biome)
+	if _can_trigger_event(new_biome):
+		_attempt_event_trigger(new_biome)
 	
 	print("📊 Passi dall'ultimo evento: %d, Cooldown: %.1fs" % [steps_since_last_event, time_since_last_event])
 

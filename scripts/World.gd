@@ -317,9 +317,7 @@ func _on_map_move(direction: Vector2i):
 		_update_player_position()
 		
 		# LOG MOVIMENTO CON DIREZIONE E TERRENO
-		var direction_name = direction_to_name.get(direction, "Direzione Sconosciuta")
 		var terrain_name = char_to_terrain_name.get(destination_char, "Terreno Sconosciuto")
-		_add_movement_log("Ti sposti verso %s, raggiungendo: %s" % [direction_name, terrain_name])
 		
 		# EMETTI SEGNALE PER AGGIORNAMENTO PANNELLO INFO
 		player_moved.emit(new_position, terrain_name)
