@@ -100,9 +100,6 @@ func _ready():
 	# Step 4: Aggiorna l'UI con valori iniziali
 	update_all_ui()
 	
-	# Step 4: Aggiungi messaggi di benvenuto
-	initialize_log_messages()
-	
 	# Step 5: Debug automatico viewport dopo inizializzazione
 	call_deferred("debug_world_viewport")
 	
@@ -216,17 +213,6 @@ func instantiate_world_scene():
 	else:
 		print("GameUI: ❌ ERRORE nel caricamento scena World.tscn")
 		push_error("GameUI: Impossibile caricare res://scenes/World.tscn")
-
-func initialize_log_messages():
-	"""Inizializza il diario con messaggi di benvenuto"""
-	add_log_message("═══ BENVENUTO IN THE SAFE PLACE ═══")
-	add_log_message("Un mondo post-apocalittico ti aspetta...")
-	add_log_message("— COMANDI PRINCIPALI —")
-	add_log_message("[L] Livella Personaggio quando hai punti disponibili")
-	add_log_message("Usa [WASD] per muoverti sulla mappa")
-	add_log_message("Premi [I] per attivare navigazione inventario")
-	add_log_message("Controlla le tue risorse nel pannello sinistro")
-	add_log_message("La sopravvivenza dipende dalle tue scelte")
 
 # ═══ CONNESSIONI SEGNALI PLAYERMANAGER ═══
 
