@@ -29,6 +29,15 @@ var direction_to_name = {
 	Vector2i(1, 0): "Est"
 }
 
+# Narrativa Biomi
+var current_biome: String = ""
+var biome_entry_messages = {
+	"foreste": {"text": "Entri in una fitta foresta. Gli alberi sussurrano segreti antichi.", "color": "green"},
+	"pianure": {"text": "Una vasta pianura si apre davanti a te. L'orizzonte sembra infinito.", "color": "goldenrod"},
+	"città": {"text": "Rovine di una città emergono dalla desolazione.", "color": "gray"},
+	"villaggio": {"text": "Un piccolo insediamento appare all'orizzonte.", "color": "sandybrown"}
+}
+
 func _ready():
 	print("🎮 MainGame inizializzato")
 	
