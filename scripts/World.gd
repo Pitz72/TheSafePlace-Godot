@@ -14,8 +14,7 @@ class_name World
 # ============================================================================
 
 # SEGNALI PER COMUNICAZIONE UI
-signal player_moved(direction: Vector2i, new_position: Vector2i, terrain_type: String)
-signal narrative_message_sent()
+signal player_moved(new_position: Vector2i, terrain_type: String)
 
 # REFERENZE NODI SCENA
 @onready var ascii_tilemap: TileMap = $AsciiTileMap
@@ -55,26 +54,20 @@ var char_to_terrain_name = {
 	"E": "Destinazione"
 }
 
+# MAPPING DIREZIONI → NOMI (per log movimento)
+var direction_to_name = {
+	Vector2i(0, -1): "Nord",
+	Vector2i(0, 1): "Sud",
+	Vector2i(-1, 0): "Ovest",
+	Vector2i(1, 0): "Est"
+}
+
 # STATO PLAYER E MOVIMENTO
 var player_pos: Vector2i = Vector2i(0, 0)
 var movement_penalty: int = 0  # Penalità movimento (fiume)
 var map_data: Array[String] = []
 var map_width: int = 0
 var map_height: int = 0
-
-# Narrativa Montagne
-var mountain_fail_messages = [
-	"[color=orange]Quella montagna non sembra volersi spostare.[/color]",
-	"[color=orange]Anche con la rincorsa, non se ne parla.[/color]",
-	"[color=orange]La montagna ti guarda con aria di sfida. Tu declini educatamente.[/color]",
-	"[color=orange]Fisica: 1, Ottimismo: 0.[/color]"
-]
-
-# Narrativa Fiumi
-var river_crossing_messages = [
-	"[color=dodgerblue]L'acqua gelida ti toglie il fiato per un istante.[/color]",
-	"[color=dodgerblue]Guadare il fiume richiede uno sforzo notevole.[/color]"
-]
 
 # CAMERA SMOOTH TARGET (FIX SALTELLO)
 var target_camera_position: Vector2 = Vector2.ZERO
@@ -317,9 +310,6 @@ func _on_map_move(direction: Vector2i):
 		var destination_char = _get_char_at_position(new_position)
 		if destination_char == "~":
 			movement_penalty = 1  # Prossimo turno sarà saltato
-			var random_message = river_crossing_messages[randi() % river_crossing_messages.size()]
-			_add_movement_log(random_message)
-			narrative_message_sent.emit()
 			print("🌊 Attraversamento fiume - penalità 1 turno applicata")
 		
 		# Applica movimento
@@ -327,10 +317,12 @@ func _on_map_move(direction: Vector2i):
 		_update_player_position()
 		
 		# LOG MOVIMENTO CON DIREZIONE E TERRENO
+		var direction_name = direction_to_name.get(direction, "Direzione Sconosciuta")
 		var terrain_name = char_to_terrain_name.get(destination_char, "Terreno Sconosciuto")
+		_add_movement_log("Ti sposti verso %s, raggiungendo: %s" % [direction_name, terrain_name])
 		
 		# EMETTI SEGNALE PER AGGIORNAMENTO PANNELLO INFO
-		player_moved.emit(direction, new_position, terrain_name)
+		player_moved.emit(new_position, terrain_name)
 		
 		# AVANZAMENTO TEMPO: Ogni movimento = 30 minuti
 		if TimeManager:
@@ -345,18 +337,9 @@ func _on_map_move(direction: Vector2i):
 		if new_position.x % 5 == 0 or new_position.y % 5 == 0:
 			print("🚶 Player: %s (%s)" % [str(new_position), destination_char])
 	else:
-		# Logica per movimento bloccato
-		var destination_char = _get_char_at_position(new_position)
-		if destination_char == "M":
-			# Messaggio ironico per le montagne
-			var random_message = mountain_fail_messages[randi() % mountain_fail_messages.size()]
-			_add_movement_log(random_message)
-			narrative_message_sent.emit()
-		else:
-			# Messaggio generico per altri ostacoli
-			_add_movement_log("Movimento bloccato: ostacolo invalicabile.")
-
 		print("🚫 Movimento bloccato verso: %s" % str(new_position))
+		var direction_name = direction_to_name.get(direction, "Direzione Sconosciuta")
+		_add_movement_log("Movimento bloccato verso %s: ostacolo invalicabile" % direction_name)
 
 ## Aggiunge log di movimento al GameUI
 func _add_movement_log(message: String):

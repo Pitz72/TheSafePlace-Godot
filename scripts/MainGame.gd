@@ -22,33 +22,6 @@ var biome_probabilities = {
 	"montagne": 0.12
 }
 
-# Narrativa Biomi
-var current_biome: String = ""
-var biome_entry_messages = {
-	"foreste": {"text": "Entri in una fitta foresta. Gli alberi sussurrano segreti antichi.", "color": "green"},
-	"pianure": {"text": "Una vasta pianura si apre davanti a te. L'orizzonte sembra infinito.", "color": "goldenrod"},
-	"città": {"text": "Rovine di una città emergono dalla desolazione.", "color": "gray"},
-	"villaggio": {"text": "Un piccolo insediamento appare all'orizzonte.", "color": "sandybrown"}
-}
-
-var direction_to_name = {
-	Vector2i(0, -1): "Nord",
-	Vector2i(0, 1): "Sud",
-	Vector2i(-1, 0): "Ovest",
-	Vector2i(1, 0): "Est"
-}
-
-# Narrativa Atmosfera
-var atmosphere_timer: Timer
-var time_since_last_message: float = 0.0
-var atmosphere_message_cooldown: float = 45.0  # Cooldown in secondi
-var atmosphere_messages = [
-	"Un silenzio innaturale ti circonda.",
-	"Il vento ulula tra le rovine in lontananza.",
-	"Per un attimo, hai la strana sensazione di essere osservato."
-]
-
-
 func _ready():
 	print("🎮 MainGame inizializzato")
 	
@@ -61,10 +34,9 @@ func _ready():
 	# Connetti segnali se disponibili
 	if world and world.has_signal("player_moved"):
 		world.player_moved.connect(_on_player_moved)
-		world.narrative_message_sent.connect(_on_world_narrative_message)
-		print("✅ Connesso a World.player_moved e World.narrative_message_sent")
+		print("✅ Connesso a World.player_moved")
 	else:
-		print("⚠️ World o i suoi segnali non disponibili")
+		print("⚠️ World.player_moved non disponibile")
 	
 	if event_manager:
 		event_manager.event_triggered.connect(_on_event_triggered)
@@ -80,39 +52,20 @@ func _ready():
 # Aggiorna il timer del cooldown eventi
 func _process(delta):
 	time_since_last_event += delta
-	time_since_last_message += delta
-
-	# Controlla se è il momento di un messaggio di atmosfera
-	if time_since_last_message >= atmosphere_message_cooldown:
-		var random_message = atmosphere_messages[randi() % atmosphere_messages.size()]
-		player_manager.narrative_log_generated.emit(random_message)
-		time_since_last_message = 0.0 # Resetta il timer
 
 # Gestisce il movimento del giocatore e triggera eventi
-func _on_player_moved(direction: Vector2i, new_position: Vector2i, terrain_type: String):
-	print("🚶 Giocatore mosso in posizione: %s, terreno: %s" % [str(new_position), terrain_type])
+func _on_player_moved(position: Vector2i, terrain_type: String):
+	print("🚶 Giocatore mosso in posizione: %s, terreno: %s" % [str(position), terrain_type])
 	
 	# Incrementa contatore passi
 	steps_since_last_event += 1
 	
 	# Mappa terreno a bioma per EventManager
-	var new_biome = _map_terrain_to_biome(terrain_type)
-
-	# Logica per messaggio di movimento
-	if new_biome != current_biome:
-		if biome_entry_messages.has(new_biome):
-			var msg_data = biome_entry_messages[new_biome]
-			player_manager.narrative_log_generated.emit("[color=%s]%s[/color]" % [msg_data.color, msg_data.text])
-			time_since_last_message = 0.0 # Resetta il timer atmosfera
-		current_biome = new_biome
-	else:
-		# Se il bioma non è cambiato, logga il messaggio di movimento generico
-		var dir_name = direction_to_name.get(direction, "Direzione Sconosciuta")
-		player_manager.narrative_log_generated.emit("Ti sposti verso %s, raggiungendo: %s" % [dir_name, terrain_type])
+	var current_biome = _map_terrain_to_biome(terrain_type)
 
 	# Verifica se può triggerare un evento
-	if _can_trigger_event(new_biome):
-		_attempt_event_trigger(new_biome)
+	if _can_trigger_event(current_biome):
+		_attempt_event_trigger(current_biome)
 	
 	print("📊 Passi dall'ultimo evento: %d, Cooldown: %.1fs" % [steps_since_last_event, time_since_last_event])
 
@@ -142,7 +95,6 @@ func _reset_cooldowns():
 # Gestisce l'evento triggerato dall'EventManager
 func _on_event_triggered(event_data: Dictionary):
 	print("🎯 Evento ricevuto: %s" % event_data.get("title", "Sconosciuto"))
-	time_since_last_message = 0.0 # Resetta il timer atmosfera
 	
 	# Passa l'evento al GameUI per la visualizzazione
 	if game_ui and game_ui.has_method("show_event_popup"):
@@ -182,6 +134,3 @@ func get_steps_until_next_event() -> int:
 
 func get_time_until_next_event() -> float:
 	return max(0.0, event_cooldown_time - time_since_last_event)
-
-func _on_world_narrative_message():
-	time_since_last_message = 0.0 # Resetta il timer atmosfera
