@@ -207,48 +207,46 @@ func connect_player_manager_signals():
 # ═══ CONNESSIONI SEGNALI INPUTMANAGER ═══
 
 func _connect_input_manager():
-	"""Connette i segnali InputManager per gestione input centralizzata"""
-	if not InputManager:
-		print("GameUI: ❌ Impossibile connettere segnali - InputManager non disponibile")
-		return
-	
-	# Connetti segnali InputManager
-	var signals_connected = 0
-	
-	if not InputManager.inventory_toggle.is_connected(_on_inventory_toggle):
-		InputManager.inventory_toggle.connect(_on_inventory_toggle)
-		signals_connected += 1
-		print("GameUI: ✅ Segnale inventory_toggle connesso")
-	
-	if not InputManager.inventory_navigate.is_connected(_on_inventory_navigate):
-		InputManager.inventory_navigate.connect(_on_inventory_navigate)
-		signals_connected += 1
-		print("GameUI: ✅ Segnale inventory_navigate connesso")
-	
-	if not InputManager.inventory_use_item.is_connected(_on_inventory_use_item):
-		InputManager.inventory_use_item.connect(_on_inventory_use_item)
-		signals_connected += 1
-		print("GameUI: ✅ Segnale inventory_use_item connesso")
-	
-	if not InputManager.action_cancel.is_connected(_on_action_cancel):
-		InputManager.action_cancel.connect(_on_action_cancel)
-		signals_connected += 1
-		print("GameUI: ✅ Segnale action_cancel connesso")
-	
-	if not InputManager.action_confirm.is_connected(_on_action_confirm):
-		InputManager.action_confirm.connect(_on_action_confirm)
-		signals_connected += 1
-		print("GameUI: ✅ Segnale action_confirm connesso")
-	
-	# M3.T1: Connetti segnale livellamento personaggio
-	if not InputManager.level_up_request.is_connected(_on_level_up_request):
-		InputManager.level_up_request.connect(_on_level_up_request)
-		signals_connected += 1
-		print("GameUI: ✅ Segnale level_up_request connesso")
-	
+    """Connette i segnali InputManager per gestione input centralizzata"""
+    if not InputManager:
+        print("GameUI: ❌ Impossibile connettere segnali - InputManager non disponibile")
+        return
 
-	
-	print("GameUI: ✅ Tutti i segnali InputManager connessi (%d/6)" % signals_connected)
+    # Connetti segnali InputManager
+    var signals_connected = 0
+
+    if not InputManager.inventory_toggle.is_connected(_on_inventory_toggle):
+        InputManager.inventory_toggle.connect(_on_inventory_toggle)
+        signals_connected += 1
+        print("GameUI: ✅ Segnale inventory_toggle connesso")
+
+    if not InputManager.inventory_navigate.is_connected(_on_inventory_navigate):
+        InputManager.inventory_navigate.connect(_on_inventory_navigate)
+        signals_connected += 1
+        print("GameUI: ✅ Segnale inventory_navigate connesso")
+
+    if not InputManager.inventory_use_item.is_connected(_on_inventory_use_item):
+        InputManager.inventory_use_item.connect(_on_inventory_use_item)
+        signals_connected += 1
+        print("GameUI: ✅ Segnale inventory_use_item connesso")
+
+    if not InputManager.action_cancel.is_connected(_on_action_cancel):
+        InputManager.action_cancel.connect(_on_action_cancel)
+        signals_connected += 1
+        print("GameUI: ✅ Segnale action_cancel connesso")
+
+    if not InputManager.action_confirm.is_connected(_on_action_confirm):
+        InputManager.action_confirm.connect(_on_action_confirm)
+        signals_connected += 1
+        print("GameUI: ✅ Segnale action_confirm connesso")
+
+    # M3.T1: Connetti segnale livellamento personaggio
+    if not InputManager.level_up_request.is_connected(_on_level_up_request):
+        InputManager.level_up_request.connect(_on_level_up_request)
+        signals_connected += 1
+        print("GameUI: ✅ Segnale level_up_request connesso")
+
+    print("GameUI: ✅ Tutti i segnali InputManager connessi (%d/6)" % signals_connected)
 
 # ═══ CONNESSIONI SEGNALI TIMEMANAGER (M3.T2) ═══
 
