@@ -188,13 +188,13 @@ func _handle_map_input(event: InputEvent) -> void:
 	var direction = Vector2i.ZERO
 	
 	# Movimento WASD + Frecce
-	if event.is_action_pressed("ui_up") or Input.is_key_pressed(KEY_W):
+	if event.is_action_pressed("ui_up"):
 		direction.y = -1
-	elif event.is_action_pressed("ui_down") or Input.is_key_pressed(KEY_S):
+	elif event.is_action_pressed("ui_down"):
 		direction.y = 1
-	elif event.is_action_pressed("ui_left") or Input.is_key_pressed(KEY_A):
+	elif event.is_action_pressed("ui_left"):
 		direction.x = -1
-	elif event.is_action_pressed("ui_right") or Input.is_key_pressed(KEY_D):
+	elif event.is_action_pressed("ui_right"):
 		direction.x = 1
 	
 	# Emetti segnale movimento se c'è una direzione
@@ -216,13 +216,13 @@ func _handle_inventory_input(event: InputEvent) -> void:
 	var direction = Vector2i.ZERO
 	
 	# Navigazione inventario WASD + Frecce
-	if event.is_action_pressed("ui_up") or Input.is_key_pressed(KEY_W):
+	if event.is_action_pressed("ui_up"):
 		direction.y = -1
-	elif event.is_action_pressed("ui_down") or Input.is_key_pressed(KEY_S):
+	elif event.is_action_pressed("ui_down"):
 		direction.y = 1
-	elif event.is_action_pressed("ui_left") or Input.is_key_pressed(KEY_A):
+	elif event.is_action_pressed("ui_left"):
 		direction.x = -1
-	elif event.is_action_pressed("ui_right") or Input.is_key_pressed(KEY_D):
+	elif event.is_action_pressed("ui_right"):
 		direction.x = 1
 	
 	# Emetti segnale navigazione se c'è una direzione
