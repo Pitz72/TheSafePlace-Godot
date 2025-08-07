@@ -51,6 +51,10 @@ func _ready():
 	world = get_node("World") if has_node("World") else null
 	game_ui = get_node("GameUI/GameUI") if has_node("GameUI/GameUI") else null
 	
+	# Orchestrazione: passa il riferimento del mondo alla UI per la minimappa
+	if game_ui and world:
+		game_ui.setup_minimap(world)
+
 	# Connetti segnali se disponibili
 	if world and world.has_signal("player_moved"):
 		world.player_moved.connect(_on_player_moved)
