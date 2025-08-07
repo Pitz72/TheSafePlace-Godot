@@ -23,6 +23,7 @@ PlayerManager="*res://scripts/managers/PlayerManager.gd"
 InputManager="*res://scripts/managers/InputManager.gd"
 TimeManager="*res://scripts/managers/TimeManager.gd"
 EventManager="*res://scripts/managers/EventManager.gd"
+CombatManager="*res://scripts/managers/CombatManager.gd"
 
 [gui]
 

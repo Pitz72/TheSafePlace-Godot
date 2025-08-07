@@ -162,6 +162,22 @@ func _add_starting_items() -> void:
 			print("   ⚠️ Oggetto di partenza non trovato: %s" % starting_item.item_id)
 
 # ========================================
+# API COMBATTIMENTO
+# ========================================
+
+## Restituisce un riepilogo dei dati del giocatore per il sistema di combattimento
+## @return: Dictionary con tutti i dati necessari per iniziare un combattimento
+func get_combat_snapshot() -> Dictionary:
+	return {
+		"hp": hp,
+		"max_hp": max_hp,
+		"stats": stats.duplicate(),
+		"equipped_weapon": equipped_weapon.duplicate(true),
+		"equipped_armor": equipped_armor.duplicate(true),
+		"active_statuses": active_statuses.duplicate()
+	}
+
+# ========================================
 # GENERAZIONE CASUALE PERSONAGGIO (M3.T3.5)
 # ========================================
 

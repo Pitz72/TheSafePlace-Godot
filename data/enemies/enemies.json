@@ -1,0 +1,17 @@
+{
+  "enemies": [
+    {
+      "id": "giant_rat_01",
+      "name": "Ratto Gigante",
+      "description": "Un ratto di dimensioni innaturali, reso aggressivo e famelico dalle anomalie della Zona.",
+      "stats": {
+        "max_hp": 10,
+        "attack_bonus": 2,
+        "damage_dice": "1d4",
+        "armor_class": 12
+      },
+      "abilities": [],
+      "xp_reward": 5
+    }
+  ]
+}

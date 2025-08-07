@@ -255,3 +255,20 @@ text = "[I] Inventario"
 [node name="Command3" type="Label" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel/CommandsPanel/CommandsVBox"]
 layout_mode = 2
 text = "[1-9] Usa oggetto"
+
+[node name="DebugPanel" type="PanelContainer" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel"]
+layout_mode = 2
+
+[node name="DebugVBox" type="VBoxContainer" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel/DebugPanel"]
+layout_mode = 2
+
+[node name="DebugTitle" type="Label" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel/DebugPanel/DebugVBox"]
+layout_mode = 2
+text = "═══ DEBUG ═══"
+horizontal_alignment = 1
+
+[node name="TestCombatButton" type="Button" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel/DebugPanel/DebugVBox"]
+layout_mode = 2
+text = "Test Combattimento"
+
+[connection signal="pressed" from="GameUI/MainLayout/ThreeColumnLayout/RightPanel/DebugPanel/DebugVBox/TestCombatButton" to="GameUI" method="_on_test_combat_button_pressed"]

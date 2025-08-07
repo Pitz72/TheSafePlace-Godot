@@ -29,6 +29,9 @@ var quest_items: Dictionary = {}
 ## Struttura: { "item_id": { dati_oggetto }, ... }
 var items: Dictionary = {}
 
+## Database Nemici
+var enemies_db: Dictionary = {}
+
 # ========================================
 # STATISTICHE DI CARICAMENTO
 # ========================================
@@ -74,6 +77,11 @@ func _load_all_data() -> void:
 	
 	# 3. UNIFICAZIONE OGGETTI
 	_merge_item_databases()
+
+	# 4. DATABASE NEMICI
+	enemies_db = _load_json_file("res://data/enemies/enemies.json")
+	if enemies_db.has("enemies"):
+		print("   • Nemici: %d" % enemies_db.enemies.size())
 	
 	print("📊 Caricamento completato:")
 	print("   • Oggetti unici: %d" % _count_items(unique_items))
@@ -249,6 +257,18 @@ func get_item_data(item_id: String) -> Dictionary:
 	
 	print("⚠️ DataManager: Oggetto non trovato: %s" % item_id)
 	return {}
+
+## Restituisce i dati di un nemico specifico
+## @param enemy_id: ID univoco del nemico
+## @return: Dictionary con dati nemico, o null se non trovato
+func get_enemy_data(enemy_id: String) -> Dictionary:
+	if enemies_db.has("enemies"):
+		for enemy in enemies_db.enemies:
+			if enemy.has("id") and enemy.id == enemy_id:
+				return enemy.duplicate(true) # Restituisce una copia per evitare modifiche al DB originale
+
+	print("⚠️ DataManager: Nemico non trovato: %s" % enemy_id)
+	return null
 
 ## Restituisce i dati di un livello di rarità
 ## @param rarity_name: Nome rarità (es. "COMMON", "EPIC", "LEGENDARY")

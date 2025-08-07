@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://c288qyw8ucfeo" path="res://scripts/MainGame.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://bkhciyfpfpjvu" path="res://scenes/ui/GameUI.tscn" id="2_h9c7k"]
 [ext_resource type="PackedScene" uid="uid://b2y4xvjsf0ycs" path="res://scenes/World.tscn" id="3_world"]
+[ext_resource type="PackedScene" uid="uid://c6wdeexi7g2f5" path="res://scenes/ui/popups/CombatUI.tscn" id="4_combat"]
 
 [node name="MainGame" type="Node"]
 script = ExtResource("1_script")
@@ -10,3 +11,5 @@ script = ExtResource("1_script")
 [node name="World" parent="." instance=ExtResource("3_world")]
 
 [node name="GameUI" parent="." instance=ExtResource("2_h9c7k")]
+
+[node name="CombatUI" parent="." instance=ExtResource("4_combat")]

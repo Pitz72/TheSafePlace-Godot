@@ -932,3 +932,84 @@ Questo file mantiene tutti i test manuali per prevenire regressioni durante lo s
 **Note:** Sistema eventi dinamico completo - immersione narrativa achieved - v0.2.5
 
 ═══════════════════════════════════════════════════════════════════════════════
+
+## ⚔️ MILESTONE 4: SISTEMA DI COMBATTIMENTO (v0.3.0 - In Sviluppo)
+
+### **TEST M4.T1.1: Inizializzazione del Sistema di Combattimento**
+**Obiettivo:** Verificare che il CombatManager si inizializzi e che il pulsante di debug sia visibile.
+**Procedura:**
+1. Avviare la scena MainGame.tscn.
+2. Controllare la console per il messaggio di inizializzazione del CombatManager.
+3. Verificare la presenza del pannello "DEBUG" e del pulsante "Test Combattimento" nella UI.
+
+**Risultati Attesi:**
+- ✅ Console mostra: "[CombatManager] Ready."
+- ✅ Il pannello DEBUG è visibile nella colonna di destra.
+- ✅ Il pulsante "Test Combattimento" è presente e cliccabile.
+- ✅ Nessun errore in console all'avvio.
+
+**Risultato Test:** [ ] PASS / [ ] FAIL
+
+### **TEST M4.T2.1: Attivazione e UI del Combattimento**
+**Obiettivo:** Verificare che il combattimento inizi correttamente e che la UI appaia.
+**Procedura:**
+1. Premere il pulsante "Test Combattimento".
+2. Osservare l'apparizione della UI di combattimento.
+3. Verificare che i dati iniziali siano corretti.
+
+**Risultati Attesi:**
+- ✅ La UI di combattimento appare come un popup sopra la UI principale.
+- ✅ Il nome del nemico ("Ratto Gigante") e i suoi HP sono visualizzati correttamente.
+- ✅ Gli HP del giocatore sono visualizzati correttamente.
+- ✅ Il log di combattimento mostra "Inizia il combattimento...".
+- ✅ Il pulsante "Attacca" è abilitato.
+
+**Risultato Test:** [ ] PASS / [ ] FAIL
+
+### **TEST M4.T1.2: Turno di Attacco del Giocatore**
+**Obiettivo:** Verificare che il giocatore possa attaccare e infliggere danno.
+**Procedura:**
+1. Iniziare un combattimento di test.
+2. Premere il pulsante "Attacca".
+3. Osservare il log di combattimento e gli HP del nemico.
+
+**Risultati Attesi:**
+- ✅ Il pulsante "Attacca" si disabilita temporaneamente dopo il click.
+- ✅ Il log riporta l'azione di attacco del giocatore.
+- ✅ Se l'attacco colpisce, il log riporta il danno inflitto.
+- ✅ Gli HP del nemico nella UI diminuiscono se viene colpito.
+- ✅ Il turno passa al nemico.
+
+**Risultato Test:** [ ] PASS / [ ] FAIL
+
+### **TEST M4.T1.3: Turno di Attacco del Nemico**
+**Obiettivo:** Verificare che il nemico contrattacchi dopo il turno del giocatore.
+**Procedura:**
+1. Eseguire un attacco del giocatore.
+2. Attendere la reazione del nemico (dovrebbe avvenire dopo un breve ritardo).
+3. Osservare il log di combattimento e gli HP del giocatore.
+
+**Risultati Attesi:**
+- ✅ Dopo l'attacco del giocatore, il log riporta l'attacco del nemico.
+- ✅ Se il nemico colpisce, il log riporta il danno subito.
+- ✅ Gli HP del giocatore nella UI diminuiscono se viene colpito.
+- ✅ Il turno torna al giocatore (il pulsante "Attacca" si riabilita).
+
+**Risultato Test:** [ ] PASS / [ ] FAIL
+
+### **TEST M4.T1.4: Vittoria in Combattimento**
+**Obiettivo:** Verificare la corretta gestione della vittoria.
+**Procedura:**
+1. Iniziare un combattimento di test.
+2. Continuare ad attaccare il nemico fino a sconfiggerlo (HP <= 0).
+3. Osservare il risultato finale.
+
+**Risultati Attesi:**
+- ✅ Quando gli HP del nemico arrivano a 0, il log annuncia la vittoria.
+- ✅ Il combattimento termina (il segnale `combat_ended("win")` viene emesso).
+- ✅ La UI di combattimento si chiude dopo un breve ritardo.
+- ✅ I controlli di gioco normali vengono ripristinati.
+
+**Risultato Test:** [ ] PASS / [ ] FAIL
+
+═══════════════════════════════════════════════════════════════════════════════
