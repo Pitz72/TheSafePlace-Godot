@@ -173,36 +173,36 @@ func verify_player_manager():
 # ═══ CONNESSIONI SEGNALI PLAYERMANAGER ═══
 
 func connect_player_manager_signals():
-	"""Connette tutti i segnali del PlayerManager per aggiornamenti automatici"""
-	if not PlayerManager:
-		print("GameUI: ❌ Impossibile connettere segnali - PlayerManager non disponibile")
-		return
-	
-	# Connetti i tre segnali principali
-	var signals_connected = 0
-	
-	if not PlayerManager.resources_changed.is_connected(_on_resources_changed):
-		PlayerManager.resources_changed.connect(_on_resources_changed)
-		signals_connected += 1
-		print("GameUI: ✅ Segnale resources_changed connesso")
-	
-	if not PlayerManager.stats_changed.is_connected(_on_stats_changed):
-		PlayerManager.stats_changed.connect(_on_stats_changed)
-		signals_connected += 1
-		print("GameUI: ✅ Segnale stats_changed connesso")
-	
-	if not PlayerManager.inventory_changed.is_connected(_on_inventory_changed):
-		PlayerManager.inventory_changed.connect(_on_inventory_changed)
-		signals_connected += 1
-		print("GameUI: ✅ Segnale inventory_changed connesso")
-	
-	# Nuovo segnale per messaggi narrativi
-	if not PlayerManager.narrative_log_generated.is_connected(add_log_message):
-		PlayerManager.narrative_log_generated.connect(add_log_message)
-		signals_connected += 1
-		print("GameUI: ✅ Segnale narrative_log_generated connesso")
-	
-	print("GameUI: ✅ Tutti i segnali PlayerManager connessi (%d/4)" % signals_connected)
+    """Connette tutti i segnali del PlayerManager per aggiornamenti automatici"""
+    if not PlayerManager:
+        print("GameUI: ❌ Impossibile connettere segnali - PlayerManager non disponibile")
+        return
+
+    # Connetti i tre segnali principali
+    var signals_connected = 0
+
+    if not PlayerManager.resources_changed.is_connected(_on_resources_changed):
+        PlayerManager.resources_changed.connect(_on_resources_changed)
+        signals_connected += 1
+        print("GameUI: ✅ Segnale resources_changed connesso")
+
+    if not PlayerManager.stats_changed.is_connected(_on_stats_changed):
+        PlayerManager.stats_changed.connect(_on_stats_changed)
+        signals_connected += 1
+        print("GameUI: ✅ Segnale stats_changed connesso")
+
+    if not PlayerManager.inventory_changed.is_connected(_on_inventory_changed):
+        PlayerManager.inventory_changed.connect(_on_inventory_changed)
+        signals_connected += 1
+        print("GameUI: ✅ Segnale inventory_changed connesso")
+
+    # Nuovo segnale per messaggi narrativi
+    if not PlayerManager.narrative_log_generated.is_connected(add_log_message):
+        PlayerManager.narrative_log_generated.connect(add_log_message)
+        signals_connected += 1
+        print("GameUI: ✅ Segnale narrative_log_generated connesso")
+
+    print("GameUI: ✅ Tutti i segnali PlayerManager connessi (%d/4)" % signals_connected)
 
 # ═══ CONNESSIONI SEGNALI INPUTMANAGER ═══
 
