@@ -268,7 +268,7 @@ func get_enemy_data(enemy_id: String) -> Dictionary:
 				return enemy.duplicate(true) # Restituisce una copia per evitare modifiche al DB originale
 
 	print("⚠️ DataManager: Nemico non trovato: %s" % enemy_id)
-	return null
+	return {}
 
 ## Restituisce i dati di un livello di rarità
 ## @param rarity_name: Nome rarità (es. "COMMON", "EPIC", "LEGENDARY")

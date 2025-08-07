@@ -71,91 +71,91 @@ func start_combat(enemy_id: String):
 
 ## Punto di ingresso per le azioni del giocatore. Chiamato dalla UI.
 func player_perform_attack():
-	if current_state != CombatState.ACTIVE or current_turn != CombatTurn.PLAYER:
-		print("⚠️ CombatManager: Attacco giocatore fuori turno.")
-		return
+    if current_state != CombatState.ACTIVE or current_turn != CombatTurn.PLAYER:
+        print("⚠️ CombatManager: Attacco giocatore fuori turno.")
+        return
 
-	emit_signal("combat_log_updated", "> Tu attacchi!")
+    emit_signal("combat_log_updated", "> Tu attacchi!")
 
-	var attack_result = _calculate_attack(player_data, enemy_data)
+    var attack_result = _calculate_attack(player_data, enemy_data)
 
-	if attack_result.hit:
-		emit_signal("combat_log_updated", "   Colpito! Infliggi %d danni." % attack_result.damage)
-		enemy_data.stats.hp -= attack_result.damage
-		emit_signal("enemy_health_changed", enemy_data.stats.hp)
-	else:
-		emit_signal("combat_log_updated", "   Mancato!")
+    if attack_result.hit:
+        emit_signal("combat_log_updated", "   Colpito! Infliggi %d danni." % attack_result.damage)
+        enemy_data.stats.hp -= attack_result.damage
+        emit_signal("enemy_health_changed", enemy_data.stats.hp)
+    else:
+        emit_signal("combat_log_updated", "   Mancato!")
 
-	if enemy_data.stats.hp <= 0:
-		emit_signal("combat_log_updated", "Hai sconfitto %s!" % enemy_data.name)
-		end_combat("win")
-		return
+    if enemy_data.stats.hp <= 0:
+        emit_signal("combat_log_updated", "Hai sconfitto %s!" % enemy_data.name)
+        end_combat("win")
+        return
 
-	current_turn = CombatTurn.ENEMY
-	emit_signal("turn_changed", "enemy")
+    current_turn = CombatTurn.ENEMY
+    emit_signal("turn_changed", "enemy")
 
-	get_tree().create_timer(1.0).timeout.connect(_execute_enemy_turn)
+    get_tree().create_timer(1.0).timeout.connect(_execute_enemy_turn)
 
 func _execute_enemy_turn():
-	if current_state != CombatState.ACTIVE or current_turn != CombatTurn.ENEMY:
-		return
+    if current_state != CombatState.ACTIVE or current_turn != CombatTurn.ENEMY:
+        return
 
-	emit_signal("combat_log_updated", "> %s attacca!" % enemy_data.name)
+    emit_signal("combat_log_updated", "> %s attacca!" % enemy_data.name)
 
-	var enemy_snapshot_as_attacker = { "stats": enemy_data.stats, "equipped_weapon": {}, "equipped_armor": {} }
-	var attack_result = _calculate_attack(enemy_snapshot_as_attacker, player_data)
+    var enemy_snapshot_as_attacker = { "stats": enemy_data.stats, "equipped_weapon": {}, "equipped_armor": {} }
+    var attack_result = _calculate_attack(enemy_snapshot_as_attacker, player_data)
 
-	if attack_result.hit:
-		emit_signal("combat_log_updated", "   Sei stato colpito! Subisci %d danni." % attack_result.damage)
-		player_data.hp -= attack_result.damage
-		emit_signal("player_health_changed", player_data.hp)
-	else:
-		emit_signal("combat_log_updated", "   %s ti ha mancato!" % enemy_data.name)
+    if attack_result.hit:
+        emit_signal("combat_log_updated", "   Sei stato colpito! Subisci %d danni." % attack_result.damage)
+        player_data.hp -= attack_result.damage
+        emit_signal("player_health_changed", player_data.hp)
+    else:
+        emit_signal("combat_log_updated", "   %s ti ha mancato!" % enemy_data.name)
 
-	if player_data.hp <= 0:
-		emit_signal("combat_log_updated", "Sei stato sconfitto!")
-		end_combat("lose")
-		return
+    if player_data.hp <= 0:
+        emit_signal("combat_log_updated", "Sei stato sconfitto!")
+        end_combat("lose")
+        return
 
-	current_turn = CombatTurn.PLAYER
-	emit_signal("turn_changed", "player")
+    current_turn = CombatTurn.PLAYER
+    emit_signal("turn_changed", "player")
 
 # ========================================
 # LOGICA DI COMBATTIMENTO (HELPERS)
 # ========================================
 
 func _calculate_attack(attacker: Dictionary, defender: Dictionary) -> Dictionary:
-	var attacker_stat_mod = _get_stat_modifier(attacker.stats.get("forza", 10))
-	var to_hit_roll = randi_range(1, 20)
-	var total_to_hit = to_hit_roll + attacker_stat_mod
+    var attacker_stat_mod = _get_stat_modifier(attacker.stats.get("forza", 10))
+    var to_hit_roll = randi_range(1, 20)
+    var total_to_hit = to_hit_roll + attacker_stat_mod
 
-	var defender_ac = defender.stats.get("armor_class", 10)
-	if not defender.equipped_armor.is_empty():
-		defender_ac = defender.equipped_armor.get("armor_class", defender_ac)
+    var defender_ac = defender.stats.get("armor_class", 10)
+    if not defender.equipped_armor.is_empty():
+        defender_ac = defender.equipped_armor.get("armor_class", defender_ac)
 
-	var result = { "hit": false, "damage": 0 }
+    var result = { "hit": false, "damage": 0 }
 
-	if total_to_hit >= defender_ac:
-		result.hit = true
-		var damage_dice = attacker.stats.get("damage_dice", "1d4")
-		if not attacker.equipped_weapon.is_empty():
-			damage_dice = attacker.equipped_weapon.get("damage_dice", damage_dice)
-		result.damage = _roll_dice(damage_dice)
+    if total_to_hit >= defender_ac:
+        result.hit = true
+        var damage_dice = attacker.stats.get("damage_dice", "1d4")
+        if not attacker.equipped_weapon.is_empty():
+            damage_dice = attacker.equipped_weapon.get("damage_dice", damage_dice)
+        result.damage = _roll_dice(damage_dice)
 
-	return result
+    return result
 
 func _roll_dice(dice_string: String) -> int:
-	var parts = dice_string.split("d")
-	if parts.size() != 2: return 1
-	var num_dice = int(parts[0])
-	var num_sides = int(parts[1])
-	var total = 0
-	for i in range(num_dice):
-		total += randi_range(1, num_sides)
-	return total
+    var parts = dice_string.split("d")
+    if parts.size() != 2: return 1
+    var num_dice = int(parts[0])
+    var num_sides = int(parts[1])
+    var total = 0
+    for i in range(num_dice):
+        total += randi_range(1, num_sides)
+    return total
 
 func _get_stat_modifier(stat_value: int) -> int:
-	return (stat_value - 10) / 2
+    return (stat_value - 10) / 2
 
 # Funzione per terminare il combattimento
 func end_combat(result):
