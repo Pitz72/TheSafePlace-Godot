@@ -21,6 +21,9 @@ const LevelUpPopup = preload("res://scenes/ui/popups/LevelUpPopup.tscn")
 ## Popup eventi di gioco (FASE 4)
 const EventPopup = preload("res://scenes/ui/popups/EventPopup.tscn")
 
+## Popup creazione personaggio
+const CharacterCreationPopup = preload("res://scenes/ui/popups/CharacterCreationPopup.tscn")
+
 # ═══ REFERENZE NODI UI - PERCORSI ESATTI ═══
 
 # Pannello Sopravvivenza (Left Panel)
@@ -77,6 +80,11 @@ var is_inventory_active: bool = false
 var event_popup_instance: Control = null
 var is_event_popup_active: bool = false
 
+# ═══ SISTEMA CREAZIONE PERSONAGGIO ═══
+
+var character_creation_popup_instance: CanvasLayer = null
+var is_character_creation_popup_active: bool = false
+
 # ═══ INIZIALIZZAZIONE PRINCIPALE ═══
 
 func _ready():
@@ -116,6 +124,9 @@ func _ready():
 	
 	# Force aggiornamento status dopo inizializzazione completa
 	call_deferred("_force_status_update")
+	
+	# Mostra la creazione del personaggio all'avvio
+	call_deferred("_open_character_creation_popup")
 
 # ═══ VERIFICA E SETUP INIZIALE ═══
 
@@ -981,6 +992,63 @@ func _on_level_up_popup_closed(popup_instance):
 
 
 # NOTA: _on_popup_closed() rimossa - ora usiamo _on_level_up_popup_closed() specifico
+
+# ═══ GESTIONE POPUP CREAZIONE PERSONAGGIO ═══
+
+func _open_character_creation_popup():
+	"""Crea e mostra il popup di creazione personaggio"""
+	print("GameUI: 👤 Apertura popup creazione personaggio")
+	
+	# Verifica se popup già attivo
+	if is_character_creation_popup_active:
+		print("GameUI: ⚠️ Popup creazione personaggio già attivo")
+		return
+	
+	# Step 1: Crea istanza popup
+	character_creation_popup_instance = CharacterCreationPopup.instantiate()
+	if not character_creation_popup_instance:
+		print("GameUI: ❌ Errore nella creazione istanza popup creazione personaggio")
+		return
+	
+	# Step 2: Aggiungi popup alla scena
+	add_child(character_creation_popup_instance)
+	
+	# Step 3: Connetti segnali per cleanup e accettazione
+	character_creation_popup_instance.popup_closed.connect(_on_character_creation_popup_closed)
+	character_creation_popup_instance.character_accepted.connect(_on_character_accepted)
+	
+	# Step 4: Mostra popup
+	character_creation_popup_instance.show_character_creation()
+	is_character_creation_popup_active = true
+	
+	print("✅ GameUI: Popup creazione personaggio creato e mostrato")
+
+func _on_character_creation_popup_closed():
+	"""Callback: cleanup quando popup creazione personaggio si chiude"""
+	print("GameUI: 👤 Cleanup popup creazione personaggio")
+	
+	if character_creation_popup_instance and is_instance_valid(character_creation_popup_instance):
+		character_creation_popup_instance.queue_free()
+		character_creation_popup_instance = null
+		print("✅ GameUI: Popup creazione personaggio rimosso dalla scena")
+	
+	is_character_creation_popup_active = false
+
+func _on_character_accepted():
+	"""Callback: personaggio accettato, finalizza inizializzazione"""
+	print("GameUI: 👤 Personaggio accettato, finalizzazione...")
+	
+	# Aggiungi oggetti di partenza usando la funzione esistente
+	if PlayerManager:
+		PlayerManager._add_starting_items()
+		print("GameUI: ✅ Oggetti di partenza aggiunti")
+		
+		# Aggiorna UI con i nuovi valori
+		update_all_ui()
+		print("GameUI: ✅ UI aggiornata con nuovo personaggio")
+	
+	# Il popup si chiuderà automaticamente
+	print("GameUI: ✅ Inizializzazione personaggio completata")
 
 func disable_world_movement():
 	"""Disabilita movimento nel world quando inventario è attivo"""

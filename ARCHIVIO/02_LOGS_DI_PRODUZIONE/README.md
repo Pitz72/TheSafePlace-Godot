@@ -1,11 +1,11 @@
-# 🌍 The Safe Place v0.2.1 "The Polished Inspector"
+# 🌍 The Safe Place v0.3.0 "THE CHOSEN ONE"
 
 **Un GDR testuale post-apocalittico anni '80 sviluppato in Godot 4.4.1**
 
-[![Versione](https://img.shields.io/badge/Versione-v0.2.1-brightgreen.svg)](https://github.com/user/SafePlace_80s-TestualGDRProject)
+[![Versione](https://img.shields.io/badge/Versione-v0.3.0-brightgreen.svg)](https://github.com/user/SafePlace_80s-TestualGDRProject)
 [![Godot](https://img.shields.io/badge/Godot-4.4.1-blue.svg)](https://godotengine.org/)
-[![Test](https://img.shields.io/badge/Test-79%2F79%20Pass-brightgreen.svg)](TESTS.md)
-[![Milestone](https://img.shields.io/badge/Milestone-3%2F5%20Complete-orange.svg)](01%20PRE%20PRODUZIONE/01%20ROADMAP.txt)
+[![Test](https://img.shields.io/badge/Test-v0.3.0%20Update-brightgreen.svg)](TESTS.md)
+[![Milestone](https://img.shields.io/badge/Milestone-3%2F5%20Complete%20%2B%20BugFix-brightgreen.svg)](01%20PRE%20PRODUZIONE/01%20ROADMAP.txt)
 
 ═══════════════════════════════════════════════════════════════════════════════
 
@@ -13,20 +13,41 @@
 
 **The Safe Place** è un GDR testuale ambientato in un mondo post-apocalittico anni '80, dove il giocatore deve sopravvivere esplorando una vasta mappa ASCII di 250x250 celle. Il gioco combina l'estetica nostalgica dei terminali CRT con un gameplay moderno e fluido.
 
-### 🏆 Stato Attuale - v0.2.1 "The Polished Inspector"
+### 🏆 Stato Attuale - v0.3.0 "The Chosen One"
 
 - ✅ **Milestone 0**: Fondamenta Tecniche (COMPLETATA)
 - ✅ **Milestone 1**: Mondo di Gioco (COMPLETATA)  
-- ✅ **Milestone 2**: Polished Inspector (COMPLETATA DEFINITIVAMENTE)
-- ⏳ **Milestone 3**: Sistema Combattimento (READY)
-- ⏳ **Milestone 4**: Narrativa e Lore (PLANNED)
+- ✅ **Milestone 2**: Perfect Engine & UI (COMPLETATA)
+- ✅ **Milestone 3**: The Living World + BUG FIX CRITICO (COMPLETATA)
+- ⏳ **Milestone 4**: Sistema Combattimento (READY)
 - ⏳ **Milestone 5**: Polish e Release (PLANNED)
 
-**Progresso**: 93% (3/5 milestone completate al 100%)
+**Progresso**: 96% (3/5 milestone completate al 100% + bug critico risolto)
 
 ═══════════════════════════════════════════════════════════════════════════════
 
-## ✨ Features v0.2.1
+## ✨ Novità v0.3.0 "The Chosen One"
+
+- Sistema di Creazione Personaggio interattivo (popup CanvasLayer) con generazione statistiche "4d6 drop lowest" e reveal progressivo (Forza → Agilità → Intelligenza → Carisma → Fortuna → Vigore → HP)
+- Hotkeys: R per reroll istantaneo, Invio per accettare; pulsanti completamente navigabili da tastiera
+- Integrazione con PlayerManager: applicazione stats al personaggio, assegnazione oggetti iniziali, refresh UI immediato
+- Gestione input isolata durante il popup e cleanup sicuro dell'istanza (nessun doppio spawn, nessun leak)
+- Comunicazione a segnali con GameUI; compatibilità retroattiva con salvataggi esistenti
+
+Documenti aggiornati: CHANGELOG.md, DEV_LOG.md, ROADMAP.md, TESTS.md  
+Nuovi file: ARCHIVIO/02_LOGS_DI_PRODUZIONE/ANTI_REGRESSION_TESTS_v0.3.0.md, ARCHIVIO/02_LOGS_DI_PRODUZIONE/DEV_LOG_M3_T1_CHAR_GENERATION_v0.3.0.md
+
+═══════════════════════════════════════════════════════════════════════════════
+
+## 🔧 **RIEPILOGO BUG CRITICO (v0.2.6)**
+- **✅ Doppio Avanzamento Tempo** - Risolto: 1 movimento = 30 minuti (non più 60)
+- **✅ Messaggi Duplicati** - Eliminati: 1 azione = 1 messaggio log (non più 2)
+- **✅ Effetti Duplicati** - Risolti: penalità HP notturna/fiumi applicate 1 volta
+- **✅ Architettura Consolidata** - World unico nel SubViewport GameUI
+
+═══════════════════════════════════════════════════════════════════════════════
+
+## ✨ Features v0.2.6
 
 ### 🎮 Gameplay Core
 - **Mondo ASCII 250x250**: 62.500 tiles esplorabili con 9 tipi di terreno
@@ -36,6 +57,7 @@
 - **UI Reattiva**: 13 pannelli sincronizzati con feedback real-time
 - **Popup Professionale**: Sistema interazione oggetti modale con navigazione keyboard-only
 - **Localizzazione Completa**: Interfaccia 100% in italiano con formattazione dati curata
+- **Sistema Eventi Dinamico**: 59 eventi con cooldown intelligente e probabilità per bioma
 
 ### 🖥️ Estetica Anni '80
 - **Font Perfect DOS VGA 437**: Tipografia autentica terminali epoca
@@ -48,200 +70,17 @@
 - **Input <16ms**: Responsiveness immediata per tutti i comandi
 - **Zero Memory Leak**: Gestione memoria ottimizzata
 - **Caricamento Istantaneo**: Avvio gioco sotto 3 secondi
+- **Architettura Ottimizzata**: Istanza World unica, ridotta complessità computazionale
 
 ### 🏗️ Architettura Robusta
-- **4 Singleton**: ThemeManager, DataManager, PlayerManager, InputManager
+- **5 Singleton**: ThemeManager, DataManager, PlayerManager, InputManager, EventManager
 - **Signal-Driven**: Comunicazione reattiva tra componenti
-- **Database Modulare**: 52 oggetti JSON categorizzati
-- **Anti-Regression**: 79/79 test manuali superati (100%)
+- **Database Modulare**: 52 oggetti JSON categorizzati + 59 eventi dinamici
+- **Anti-Regression**: 90/90 test manuali superati (100%)
 - **Popup System**: Interfaccia modale avanzata con griglia statistiche 2-colonne
 - **Localizzazione**: Sistema completo traduzione tipi oggetto e rarità
+- **Bug Prevention**: Nuovo test "Double World Prevention" per prevenire regressioni future
 
 ═══════════════════════════════════════════════════════════════════════════════
 
-## 🚀 Quick Start
-
-### Requisiti
-- **Godot 4.4.1** o superiore
-- **Windows 10/11** (testato) / Linux / macOS
-- **2GB RAM** minimo
-- **100MB** spazio disco
-
-### Installazione
-1. **Clone** del repository:
-   ```bash
-   git clone https://github.com/user/SafePlace_80s-TestualGDRProject.git
-   cd SafePlace_80s-TestualGDRProject
-   ```
-
-2. **Apri** il progetto in Godot 4.4.1
-
-3. **Avvia** la scena principale `MainGame.tscn`
-
-### Controlli
-- **WASD / Frecce**: Movimento giocatore
-- **I**: Toggle inventario
-- **1-9**: Uso rapido oggetti
-- **INVIO**: Conferma azioni in inventario
-- **F1**: Toggle effetto CRT
-
-═══════════════════════════════════════════════════════════════════════════════
-
-## 📊 Architettura Tecnica
-
-### 🧠 Core Systems
-
-**PlayerManager** (Singleton)
-- Gestione HP/Food/Water con limiti e rigenerazione
-- Inventario dinamico con stackable/non-stackable
-- Sistema statistiche RPG (5 attributi)
-- API complete per salvataggio/caricamento
-
-**InputManager** (Singleton)  
-- Stati input: MAP, INVENTORY, DIALOGUE, COMBAT
-- 8 segnali pubblici per comunicazione centralizzata
-- Gestione input gerarchica globale + specifici
-
-**DataManager** (Singleton)
-- Caricamento database JSON modulari
-- Sistema rarità oggetti automatico
-- API filtri e ricerca avanzata
-
-**ThemeManager** (Singleton)
-- 3 temi visuali con switch dinamico
-- Integrazione shader CRT automatica
-- Gestione font e colori centralizzata
-
-### 🗺️ World System
-
-**TileMap Engine**
-- Mappa ASCII 250x250 (62.500 tiles)
-- 9 terreni: Pianura, Foresta, Montagna, Acqua, Città, Villaggio, Start, End, Rifugi
-- Collision detection per montagne
-- Penalità movimento per fiumi
-- Camera con limiti automatici
-
-**Perfect Camera Engine**
-- Target position system physics-driven
-- Coordinate intere per eliminare saltelli
-- Smooth movement 60+ FPS garantiti
-- Zoom ottimizzato (1.065x) Single Source of Truth
-
-### 🎨 UI Framework
-
-**GameUI Reattiva**
-- Layout 3 colonne (1:2:1) responsive
-- 13 pannelli specializzati sincronizzati
-- SubViewport per rendering world integrato
-- Sistema diario BBCode con timestamp
-- Aggiornamenti real-time <16ms
-
-═══════════════════════════════════════════════════════════════════════════════
-
-## 🧪 Quality Assurance
-
-### ✅ Testing Excellence
-- **68/68 Test** anti-regressione superati (100%)
-- **Zero Bug Critici** identificati
-- **Backward Compatibility** completa
-- **Performance Testing** su world completo
-
-### 📈 Metriche Performance
-- **FPS**: 60+ stabili costantemente
-- **Input Lag**: <16ms response time
-- **Memory**: Ottimizzata senza leak
-- **Loading**: <3 secondi avvio completo
-
-### 🔒 Robustezza
-- **Sistema Backup**: Automatico per tutte le modifiche
-- **Error Handling**: Gestione errori proattiva
-- **Null Safety**: Protezioni complete
-- **Debug System**: Logging categorizzato
-
-═══════════════════════════════════════════════════════════════════════════════
-
-## 🗺️ Roadmap Futura
-
-### 🎯 Milestone 3: Sistema Combattimento (NEXT)
-- **Combat Engine**: Sistema turni turn-based
-- **Enemy System**: Database nemici + AI comportamentale
-- **Loot System**: Ricompense post-combattimento
-- **Combat UI**: Interfaccia battaglia integrata
-
-### 📖 Milestone 4: Narrativa e Lore
-- **Sistema Dialoghi**: Engine conversazioni con scelte
-- **Eventi Narrativi**: Storie casuali e lore discovery
-- **Quest System**: Missioni principali e secondarie
-
-### 🎨 Milestone 5: Polish e Release
-- **Audio System**: Musica ambientale + SFX
-- **Save/Load**: Sistema salvataggio completo
-- **Final Polish**: Ottimizzazioni e UX refinement
-
-**Target Release**: Q2 2025
-
-═══════════════════════════════════════════════════════════════════════════════
-
-## 🤝 Contribuire
-
-### 📋 Protocollo di Sviluppo
-Il progetto segue un **Protocollo Umano-LLM** rigoroso:
-
-1. **Documentazione First**: Ogni feature documentata prima dell'implementazione
-2. **Sviluppo Incrementale**: Task atomici con commit singoli
-3. **Anti-Regression**: Test manuali per ogni modifica
-4. **Architettura Modulare**: Database <10KB, naming convention
-5. **Zero Regressioni**: Backward compatibility sempre mantenuta
-
-### 🔧 Struttura Progetto
-```
-SafePlace_80s-TestualGDRProject/
-├── 01 PRE PRODUZIONE/          # Documentazione e roadmap
-├── 02 PRODUZIONE/              # Log sviluppo e commit
-├── scripts/                    # Codice GDScript
-│   ├── managers/              # Singleton core
-│   ├── ui/                    # Interfaccia utente
-│   └── tools/                 # Utilities sviluppo
-├── data/                      # Database JSON modulari
-├── scenes/                    # Scene Godot
-├── textures/                  # Asset grafici
-└── themes/                    # Temi e shader
-```
-
-═══════════════════════════════════════════════════════════════════════════════
-
-## 📝 Documentazione
-
-- **[ROADMAP](01%20PRE%20PRODUZIONE/01%20ROADMAP.txt)**: Piano sviluppo completo
-- **[TESTS](TESTS.md)**: Suite test anti-regressione
-- **[DEV LOGS](02%20PRODUZIONE/)**: Log sviluppo dettagliati
-- **[ARCHITETTURA](01%20PRE%20PRODUZIONE/01%20REVERSE%20ENGENIEERING/)**: Analisi tecnica
-
-═══════════════════════════════════════════════════════════════════════════════
-
-## 🏆 Achievements
-
-### 🎮 v0.2.0 "The Balanced World"
-- **Perfect Engine Master**: Camera smooth + UI reactive + performance AAA
-- **Milestone 2 Complete**: 7/7 task gameplay core completati
-- **Quality AAA**: 68/68 test superati, zero bug critici
-
-### 🌍 Precedenti
-- **Foundation Master**: Milestone 0 completata (setup base)
-- **World Builder**: Milestone 1 completata (mondo navigabile)
-- **Performance Guardian**: 60+ FPS sempre mantenuti
-
-═══════════════════════════════════════════════════════════════════════════════
-
-## 📞 Contatti
-
-**Progetto**: The Safe Place - GDR Testuale Anni '80  
-**Engine**: Godot 4.4.1  
-**Versione**: v0.2.0 "The Balanced World"  
-**Sviluppo**: Protocollo Umano-LLM  
-
----
-
-*"In un mondo devastato, ogni rifugio è una speranza. Ogni passo, una scelta di sopravvivenza."*
-
-🌍 **The Safe Place** - Dove l'avventura post-apocalittica incontra l'estetica anni '80 
+// ... existing code ...

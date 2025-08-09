@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cb3f2g4h1qx2m"]
 
-[ext_resource type="Theme" uid="uid://c32qdm6x7e0ku" path="res://themes/main_theme.tres" id="1_levelup"]
+[ext_resource type="Theme" path="res://themes/main_theme.tres" id="1_levelup"]
 [ext_resource type="Script" path="res://scripts/ui/popups/LevelUpPopup.gd" id="2_levelup"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_levelup"]
@@ -185,4 +185,4 @@ size_flags_horizontal = 4
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
-text = "Chiudi" 
+text = "Chiudi"

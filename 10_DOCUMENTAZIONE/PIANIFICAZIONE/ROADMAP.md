@@ -1,8 +1,8 @@
 # Roadmap Tecnica - The Safe Place
 
-**VERSIONE ATTUALE:** `v0.2.6 "The Orderly Bookcase"`
-**DATA ULTIMO AGGIORNAMENTO:** 2025-08-02
-**STATO GENERALE:** Milestone 0-3 Complete. Inizio pianificazione Milestone 4.
+**VERSIONE ATTUALE:** `v0.3.0 "The Chosen One"`
+**DATA ULTIMO AGGIORNAMENTO:** 2025-01-28
+**STATO GENERALE:** Milestone 0-3 Complete + Nuovo sistema di creazione personaggio. Inizio pianificazione Milestone 4.
 
 ---
 
@@ -53,7 +53,7 @@ Questa sezione documenta le funzionalità consolidate e verificate nel codice so
 
 ---
 
-### **✅ MILESTONE 3: THE LIVING WORLD**
+### **✅ MILESTONE 3: THE LIVING WORLD + BUG FIX CRITICO v0.2.6**
 - **M3.T1: Generazione Personaggio**
   - **Implementazione:** `PlayerManager.gd` contiene la funzione `_generate_initial_stats()` che usa una logica "4d6 drop lowest" con vincoli tematici per creare personaggi unici a ogni partita. Gli HP massimi sono calcolati dinamicamente dal Vigore.
   - **Stato:** COMPLETATO.
@@ -69,6 +69,15 @@ Questa sezione documenta le funzionalità consolidate e verificate nel codice so
 - **M3.T4: Sistema di Eventi Dinamici**
   - **Implementazione:** `EventManager.gd` (Singleton) carica eventi da `data/events/`, li attiva in base alla probabilità del bioma in cui si muove il giocatore. Gestisce le scelte e gli skill check (chiamando `PlayerManager.skill_check`). L'integrazione avviene in `MainGame.gd`.
   - **Stato:** COMPLETATO.
+
+- **M3.BUG-FIX: Doppio Avanzamento Tempo (CRITICO - v0.2.6)**
+  - **Problema Risolto:** Due istanze separate di `World.tscn` causavano doppio avanzamento tempo (60 min invece di 30), messaggi duplicati nel log, e penalità duplicate per HP notturna e attraversamento fiumi.
+  - **Soluzione Implementata:** 
+    - Rimossa istanza duplicata da `MainGame.tscn`
+    - Consolidata architettura con World unico nel SubViewport di GameUI
+    - Refactoring `MainGame.gd` per connessione dinamica segnali via `GameUI.get_world_scene()`
+    - Nuovo test anti-regressione "Double World Prevention"
+  - **Stato:** RISOLTO DEFINITIVAMENTE - v0.2.6 "No More Double Steps"
 
 ---
 

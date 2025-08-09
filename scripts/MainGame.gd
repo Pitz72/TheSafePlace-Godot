@@ -25,10 +25,11 @@ var biome_probabilities = {
 # Narrativa Biomi
 var current_biome: String = ""
 var biome_entry_messages = {
-	"foreste": {"text": "Entri in una fitta foresta. Gli alberi sussurrano segreti antichi.", "color": "green"},
-	"pianure": {"text": "Una vasta pianura si apre davanti a te. L'orizzonte sembra infinito.", "color": "goldenrod"},
-	"città": {"text": "Rovine di una città emergono dalla desolazione.", "color": "gray"},
-	"villaggio": {"text": "Un piccolo insediamento appare all'orizzonte.", "color": "sandybrown"}
+	"foreste": {"text": "Entri in una fitta foresta. Gli alberi sussurrano segreti antichi.", "color": "#34672a"},
+	"pianure": {"text": "Una vasta pianura si apre davanti a te. L'orizzonte sembra infinito.", "color": "#a5c9a5"},
+	"città": {"text": "Rovine di una città emergono dalla desolazione.", "color": "#c9c9c9"},
+	"villaggio": {"text": "Un piccolo insediamento appare all'orizzonte.", "color": "#c9a57b"},
+	"fiumi": {"text": "Raggiungi le sponde di un fiume. L'acqua scorre lenta e scura.", "color": "#1e7ba8"}
 }
 
 # Narrativa Atmosfera
@@ -48,16 +49,24 @@ func _ready():
 	# Ottieni riferimenti ai manager
 	event_manager = EventManager
 	player_manager = PlayerManager
-	world = get_node("World") if has_node("World") else null
+	# Recupera GameUI e l'istanza di World creata al suo interno (SubViewport)
 	game_ui = get_node("GameUI/GameUI") if has_node("GameUI/GameUI") else null
+	world = null
 	
-	# Connetti segnali se disponibili
-	if world and world.has_signal("player_moved"):
-		world.player_moved.connect(_on_player_moved)
-		world.narrative_message_sent.connect(_on_world_narrative_message)
-		print("✅ Connesso a World.player_moved e World.narrative_message_sent")
+	# Connetti ai segnali del World instanziato da GameUI (se/quando disponibile)
+	if game_ui and game_ui.has_method("get_world_scene"):
+		world = game_ui.get_world_scene()
+		if world and world.has_signal("player_moved"):
+			if not world.player_moved.is_connected(_on_player_moved):
+				world.player_moved.connect(_on_player_moved)
+			if not world.narrative_message_sent.is_connected(_on_world_narrative_message):
+				world.narrative_message_sent.connect(_on_world_narrative_message)
+			print("✅ Connesso a World.player_moved e World.narrative_message_sent (via GameUI)")
+		else:
+			print("⏳ World non ancora disponibile dal GameUI, riprovo a connettere...")
+			call_deferred("_try_connect_world_signals")
 	else:
-		print("⚠️ World o i suoi segnali non disponibili")
+		print("⚠️ GameUI o metodo get_world_scene non disponibile")
 	
 	if event_manager:
 		event_manager.event_triggered.connect(_on_event_triggered)
@@ -69,6 +78,21 @@ func _ready():
 	player_manager.narrative_log_generated.emit("[color=yellow]Il viaggio inizia ora. Che la fortuna ti accompagni.[/color]")
 
 	print("🎯 MainGame pronto per gestire eventi durante il gameplay")
+
+# Tenta di connettere i segnali del World istanziato da GameUI in modo differito
+func _try_connect_world_signals():
+	if not game_ui or not game_ui.has_method("get_world_scene"):
+		return
+	var w = game_ui.get_world_scene()
+	if w and w.has_signal("player_moved"):
+		world = w
+		if not world.player_moved.is_connected(_on_player_moved):
+			world.player_moved.connect(_on_player_moved)
+		if not world.narrative_message_sent.is_connected(_on_world_narrative_message):
+			world.narrative_message_sent.connect(_on_world_narrative_message)
+		print("✅ Connesso a World.player_moved e World.narrative_message_sent (via GameUI, deferred)")
+	else:
+		call_deferred("_try_connect_world_signals")
 
 # Aggiorna il timer del cooldown eventi
 func _process(delta):
@@ -153,17 +177,21 @@ func force_trigger_event(target_biome: String = ""):
 func _map_terrain_to_biome(terrain_type: String) -> String:
 	match terrain_type:
 		"Foresta":
-			return "forest"
+			return "foreste"
 		"Pianura":
-			return "plains"
+			return "pianure"
 		"Montagna":
-			return "mountains"
-		"Città", "Villaggio", "Ristoro":
-			return "urban"
+			return "montagne"
+		"Città":
+			return "città"
+		"Villaggio":
+			return "villaggio"
+		"Ristoro":
+			return "villaggio"  # Ristoro considerato come villaggio
 		"Fiume":
-			return "plains"  # Fiume considerato come pianura
+			return "fiumi"  # Fiume ora ha il suo bioma
 		_:
-			return "plains"  # Default
+			return "pianure"  # Default
 
 # Funzioni di utilità per debug
 func get_steps_until_next_event() -> int:

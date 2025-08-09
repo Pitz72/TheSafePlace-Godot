@@ -37,15 +37,17 @@ Il gioco si svolge in un ciclo continuo di azioni e conseguenze:
 
 ### 3.3. Progressione del Personaggio
 
+-   **Creazione Iniziale**: All'avvio di una nuova partita, viene presentato un sistema di creazione personaggio interattivo. Le statistiche vengono generate usando il metodo "4d6 drop lowest" con vincoli tematici per "The Survivor", creando personaggi bilanciati ma unici. Il sistema presenta una rivelazione progressiva delle statistiche (Forza → Agilità → Intelligenza → Carisma → Fortuna → Vigore → HP) con possibilità di rigenerare il set completo.
+
 -   **Punti Esperienza (EXP)**: Guadagnati tramite combattimenti, eventi e scelte narrative.
 -   **Statistiche Primarie**: Il giocatore può spendere punti (ottenuti con l'EXP) per migliorare 6 statistiche di base:
-    -   `Potenza`: Influenza il combattimento corpo a corpo.
+    -   `Forza`: Influenza il combattimento corpo a corpo e capacità di carico.
     -   `Agilità`: Influenza la difesa e l'iniziativa.
     -   `Vigore`: Influenza i punti vita e la resistenza.
-    -   `Percezione`: Aiuta a trovare oggetti e notare dettagli.
-    -   `Adattamento`: Migliora la sopravvivenza e la resistenza agli elementi.
+    -   `Intelligenza`: Aiuta nella risoluzione di puzzle e skill check tecnici.
     -   `Carisma`: Influenza le interazioni con altri personaggi.
--   **Statistiche Derivate**: Le statistiche primarie influenzano i valori di combattimento come HP, bonus attacco, classe difesa, etc.
+    -   `Fortuna`: Influenza eventi casuali e probabilità di successo generale.
+-   **Statistiche Derivate**: Le statistiche primarie influenzano i valori di combattimento come HP (calcolato dal Vigore), bonus attacco, classe difesa, etc.
 
 ### 3.4. Inventario e Oggetti
 
@@ -58,4 +60,4 @@ Il gioco si svolge in un ciclo continuo di azioni e conseguenze:
 
 -   **Trama Lineare in un Mondo Aperto**: Il gioco racconta una storia lineare ("Ultimo's Journey") ma la presenta in modo dinamico.
 -   **Pacing Intelligente**: Un sistema di gestione del ritmo narrativo decide quando è il momento migliore per presentare un evento della trama, basandosi sulle azioni del giocatore.
--   **Scelte e Conseguenze**: Le scelte del giocatore durante gli eventi narrativi hanno un impatto permanente, sbloccando `lore_flag` che influenzano gli eventi futuri. 
+-   **Scelte e Conseguenze**: Le scelte del giocatore durante gli eventi narrativi hanno un impatto permanente, sbloccando `lore_flag` che influenzano gli eventi futuri.

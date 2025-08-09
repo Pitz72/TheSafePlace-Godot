@@ -80,9 +80,54 @@ var mountain_fail_messages = [
 
 # Narrativa Fiumi
 var river_crossing_messages = [
-	"[color=dodgerblue]L'acqua gelida ti toglie il fiato per un istante.[/color]",
-	"[color=dodgerblue]Guadare il fiume richiede uno sforzo notevole.[/color]"
+	"[color=#1e7ba8]L'acqua gelida ti toglie il fiato per un istante.[/color]",
+	"[color=#1e7ba8]Guadare il fiume richiede uno sforzo notevole.[/color]"
 ]
+
+# Nuovi messaggi di successo attraversamento fiume
+var river_success_messages = [
+	"[color=#1e7ba8]Con un balzo agile, superi il fiume senza bagnarti i piedi.[/color]",
+	"[color=#1e7ba8]Attraversi il corso d'acqua con sorprendente destrezza.[/color]",
+	"[color=#1e7ba8]L'azione è stata completata con successo.[/color]",
+	"[color=#1e7ba8]Tutto procede secondo i piani.[/color]"
+]
+
+# Messaggi di fallimento skill check fiume
+var river_failure_messages = [
+	"[color=red]L'azione non è riuscita come previsto.[/color]",
+	"[color=red]Qualcosa è andato storto.[/color]"
+]
+
+func _handle_river_crossing() -> void:
+	"""Gestisce narrativa e skill check per attraversamento fiume secondo nuove regole"""
+	if PlayerManager:
+		# 1) Messaggio di attraversamento base (blu), sempre
+		var base_msg = river_crossing_messages[randi() % river_crossing_messages.size()]
+		PlayerManager.narrative_log_generated.emit(base_msg)
+		
+		# 2) Skill check leggero: di giorno molto facile, di notte leggermente più difficile
+		var is_night = TimeManager and TimeManager.is_night()
+		var dc = 7 if is_night else 5  # DC estremamente bassa
+		# Usa AGILITÀ come stat di default per il guado
+		var result = PlayerManager.skill_check("agilita", dc, 0)
+		
+		if result.get("success", false):
+			# Messaggio di successo extra (blu)
+			var ok_msg = river_success_messages[randi() % river_success_messages.size()]
+			PlayerManager.narrative_log_generated.emit(ok_msg)
+		else:
+			# Fallimento: piccolissima chance di perdere 1-2 HP (più probabile di notte)
+			# Probabilità: giorno 5%, notte 12%
+			var chance = 0.12 if is_night else 0.05
+			var damage = 0
+			if randf() < chance:
+				# 70% → 1 HP, 30% → 2 HP
+				damage = 1 if randf() < 0.7 else 2
+				PlayerManager.modify_hp(-damage)
+				PlayerManager.narrative_log_generated.emit("[color=red]Perdi %d HP durante l'attraversamento del fiume.[/color]" % damage)
+			# Messaggio rosso di fallimento narrativo (sempre mostrato sul fallimento)
+			var fail_msg = river_failure_messages[randi() % river_failure_messages.size()]
+			PlayerManager.narrative_log_generated.emit(fail_msg)
 
 # CAMERA SMOOTH TARGET (FIX SALTELLO)
 var target_camera_position: Vector2 = Vector2.ZERO
@@ -313,7 +358,9 @@ func _on_map_move(direction: Vector2i):
 	if movement_penalty > 0:
 		movement_penalty -= 1
 		print("⏳ Penalità movimento: resta %d turni" % movement_penalty)
-		_add_movement_log("Penalità movimento: resta %d turni" % movement_penalty)
+		if PlayerManager:
+			PlayerManager.narrative_log_generated.emit("Penalità movimento: resta %d turni" % movement_penalty)
+			narrative_message_sent.emit()
 		return  # Salta turno
 	
 	# Calcola nuova posizione basata su direzione InputManager
@@ -325,8 +372,7 @@ func _on_map_move(direction: Vector2i):
 		var destination_char = _get_char_at_position(new_position)
 		if destination_char == "~":
 			movement_penalty = 1  # Prossimo turno sarà saltato
-			var random_message = river_crossing_messages[randi() % river_crossing_messages.size()]
-			_add_movement_log(random_message)
+			_handle_river_crossing()
 			narrative_message_sent.emit()
 			print("🌊 Attraversamento fiume - penalità 1 turno applicata")
 		
@@ -334,10 +380,10 @@ func _on_map_move(direction: Vector2i):
 		player_pos = new_position
 		_update_player_position()
 		
-		# LOG MOVIMENTO CON DIREZIONE E TERRENO
+		# LOG MOVIMENTO CON DIREZIONE E TERRENO (solo per stato UI, NESSUN LOG [MONDO])
 		var direction_name = direction_to_name.get(direction, "Direzione Sconosciuta")
 		var terrain_name = char_to_terrain_name.get(destination_char, "Terreno Sconosciuto")
-		_add_movement_log("Ti sposti verso %s, raggiungendo: %s" % [direction_name, terrain_name])
+		# (disattivato) _add_movement_log("Ti sposti verso %s, raggiungendo: %s" % [direction_name, terrain_name])
 		
 		# EMETTI SEGNALE PER AGGIORNAMENTO PANNELLO INFO
 		player_moved.emit(new_position, terrain_name)
@@ -345,12 +391,9 @@ func _on_map_move(direction: Vector2i):
 		# AVANZAMENTO TEMPO: Ogni movimento = 30 minuti
 		if TimeManager:
 			TimeManager.advance_time_by_moves(1)
-			
-			# PENALITÀ HP MOVIMENTO NOTTURNO
-			if TimeManager.is_night() and PlayerManager:
-				PlayerManager.modify_hp(-2)  # Piccola penalità HP notturna
-				_add_movement_log("[color=#ff6666]Il buio rende il viaggio più pericoloso (-2 HP)[/color]")
-		
+			# (Regola aggiornata) Nessuna penalità HP generica per movimento notturno
+			# La difficoltà notturna è gestita nello skill check del fiume
+
 		# Log movimento (solo per posizioni significative)
 		if new_position.x % 5 == 0 or new_position.y % 5 == 0:
 			print("🚶 Player: %s (%s)" % [str(new_position), destination_char])
@@ -360,12 +403,14 @@ func _on_map_move(direction: Vector2i):
 		if destination_char == "M":
 			# Messaggio ironico per le montagne
 			var random_message = mountain_fail_messages[randi() % mountain_fail_messages.size()]
-			_add_movement_log(random_message)
+			if PlayerManager:
+				PlayerManager.narrative_log_generated.emit(random_message)
 			narrative_message_sent.emit()
 		else:
 			# Messaggio generico per altri ostacoli
 			var direction_name = direction_to_name.get(direction, "Direzione Sconosciuta")
-			_add_movement_log("Movimento bloccato verso %s: ostacolo invalicabile" % direction_name)
+			if PlayerManager:
+				PlayerManager.narrative_log_generated.emit("Movimento bloccato verso %s: ostacolo invalicabile" % direction_name)
 
 		print("🚫 Movimento bloccato verso: %s" % str(new_position))
 

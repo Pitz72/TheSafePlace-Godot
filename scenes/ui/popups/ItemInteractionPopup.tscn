@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bf4f6g7j2qw8m"]
 
-[ext_resource type="Theme" uid="uid://c32qdm6x7e0ku" path="res://themes/main_theme.tres" id="1_5j8k9"]
+[ext_resource type="Theme" path="res://themes/main_theme.tres" id="1_5j8k9"]
 [ext_resource type="Script" path="res://scripts/ui/popups/ItemInteractionPopup.gd" id="2_k8m4n"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
@@ -96,4 +96,4 @@ layout_mode = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
-text = "Chiudi" 
+text = "Chiudi"
