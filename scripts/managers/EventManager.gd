@@ -336,7 +336,11 @@ func _apply_penalty(penalty_data: Dictionary):
 						PlayerManager.add_status(status_enum)
 			"time":
 				if penalty_data.has("minutes"):
-					TimeManager.advance_time_by_minutes(penalty_data.minutes)
+					var minutes_to_advance = penalty_data.get("minutes", 0)
+					if minutes_to_advance > 0:
+						# Ogni mossa equivale a 30 minuti. Calcoliamo il numero di mosse.
+						var moves = int(ceil(float(minutes_to_advance) / 30.0))
+						TimeManager.advance_time_by_moves(moves)
 			"remove_item":
 				if penalty_data.has("item_id") and penalty_data.has("quantity"):
 					PlayerManager.remove_item(penalty_data.item_id, penalty_data.quantity)
