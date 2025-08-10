@@ -55,32 +55,17 @@ func _ready():
 func _load_and_cache_events():
 	print("[EventManager] Caricamento eventi...")
 	
-	# Carica eventi random
-	var random_events = data_manager.load_json_file("data/events/random_events.json")
-	if random_events:
-		print("   ✅ Caricato: random_events.json")
-		# Itera attraverso ogni bioma nel file
-		for biome_key in random_events.keys():
-			var events_array = random_events[biome_key]
-			if events_array is Array:
-				for event in events_array:
-					if event.has("id"):
-						# Aggiungi il bioma all'evento per il processing
-						event["biome"] = _normalize_biome_name(biome_key)
-						cached_events[event["id"]] = event
-						_add_event_to_biome_pool(event)
+	# Svuota cache per ricarichi futuri
+	cached_events.clear()
+	biome_event_pools.clear()
 	
-	# Carica eventi unici
-	var unique_events = data_manager.load_json_file("data/events/unique_events.json")
-	if unique_events:
-		print("   ✅ Caricato: unique_events.json")
-		# Gestisce la struttura con chiave "UNIQUE"
-		if unique_events.has("UNIQUE") and unique_events["UNIQUE"] is Array:
-			for event in unique_events["UNIQUE"]:
-				if event.has("id"):
-					event["biome"] = "unique"
-					cached_events[event["id"]] = event
-					_add_event_to_biome_pool(event)
+	# Tracciamento ID per evitare duplicati tra fonti diverse
+	var seen_ids: Dictionary = {}
+	
+	# 1) Carica eventi modulari per bioma dalla cartella data/events/biomes
+	_load_events_from_biomes_dir(seen_ids)
+	
+	# 2) Gli eventi unici sono ora caricati tramite unique_events.json nella directory biomes
 	
 	print("[EventManager] Caricati ", cached_events.size(), " eventi totali")
 	for biome in biome_event_pools.keys():
@@ -114,8 +99,94 @@ func _add_event_to_biome_pool(event: Dictionary):
 	var biome = event["biome"]
 	if not biome_event_pools.has(biome):
 		biome_event_pools[biome] = []
+	
+	# Normalizza l'evento prima di aggiungerlo al pool
+	var normalized_event = _normalize_event_schema(event)
+	biome_event_pools[biome].append(normalized_event)
+
+# Normalizza lo schema degli eventi da formato legacy a formato moderno
+func _normalize_event_schema(event: Dictionary) -> Dictionary:
+	var normalized = event.duplicate(true)
+	
+	# Normalizza le scelte
+	if normalized.has("choices"):
+		for choice in normalized["choices"]:
+			_normalize_choice_schema(choice)
+	
+	return normalized
+
+# Normalizza una singola scelta da formato legacy a formato moderno
+func _normalize_choice_schema(choice: Dictionary):
+	# Converte skillCheck -> skill_check
+	if choice.has("skillCheck"):
+		choice["skill_check"] = choice["skillCheck"]
+		choice.erase("skillCheck")
+	
+	# Se ha skill_check, gestisce reward/penalty -> consequences_success/failure
+	if choice.has("skill_check"):
+		if choice.has("reward"):
+			choice["consequences_success"] = _convert_legacy_consequence(choice["reward"])
+			choice.erase("reward")
 		
-	biome_event_pools[biome].append(event)
+		if choice.has("penalty"):
+			choice["consequences_failure"] = _convert_legacy_consequence(choice["penalty"])
+			choice.erase("penalty")
+		
+		# Gestisce successText e failureText (per futura implementazione UI)
+		if choice.has("successText"):
+			if not choice.has("consequences_success"):
+				choice["consequences_success"] = {}
+			choice["consequences_success"]["narrative_text"] = choice["successText"]
+			choice.erase("successText")
+		
+		if choice.has("failureText"):
+			if not choice.has("consequences_failure"):
+				choice["consequences_failure"] = {}
+			choice["consequences_failure"]["narrative_text"] = choice["failureText"]
+			choice.erase("failureText")
+	else:
+		# Senza skill_check, converte reward/penalty -> consequences
+		if choice.has("reward"):
+			choice["consequences"] = _convert_legacy_consequence(choice["reward"])
+			choice.erase("reward")
+		elif choice.has("penalty"):
+			choice["consequences"] = _convert_legacy_consequence(choice["penalty"])
+			choice.erase("penalty")
+
+# Converte una conseguenza legacy nel formato moderno
+func _convert_legacy_consequence(legacy_consequence: Dictionary) -> Dictionary:
+	var modern_consequence = {}
+	
+	match legacy_consequence.get("type", ""):
+		"damage":
+			modern_consequence["hp_change"] = -legacy_consequence.get("amount", 0)
+		"heal":
+			modern_consequence["hp_change"] = legacy_consequence.get("amount", 0)
+		"item":
+			var item = legacy_consequence.get("item", {})
+			modern_consequence["items_gained"] = [item]
+		"items":
+			modern_consequence["items_gained"] = legacy_consequence.get("items", [])
+		"status":
+			modern_consequence["status_effects"] = [legacy_consequence.get("status", "")]
+		"stats":
+			# Per modifiche dirette alle risorse
+			if legacy_consequence.has("hp"):
+				modern_consequence["hp_change"] = legacy_consequence["hp"]
+			if legacy_consequence.has("food"):
+				modern_consequence["food_change"] = legacy_consequence["food"]
+			if legacy_consequence.has("water"):
+				modern_consequence["water_change"] = legacy_consequence["water"]
+		"full_hydrate":
+			modern_consequence["water_change"] = 999  # Valore alto per idratazione completa
+		"remove_item":
+			# TODO: Implementare rimozione oggetti se necessario
+			pass
+		_:
+			# Per tipi sconosciuti o complessi, mantieni la struttura originale
+			modern_consequence = legacy_consequence.duplicate(true)
+	
+	return modern_consequence
 
 # Funzione principale: triggera un evento casuale per il bioma specificato
 func trigger_random_event(biome: String) -> Dictionary:
@@ -261,3 +332,38 @@ func _get_events_per_biome_count() -> Dictionary:
 # ═══════════════════════════════════════════════════════════════════════════════
 # GESTIONE SCELTE EVENTI UI (FASE 4)
 # ═══════════════════════════════════════════════════════════════════════════════
+
+func _load_events_from_biomes_dir(seen_ids: Dictionary) -> void:
+	var dir := DirAccess.open("res://data/events/biomes")
+	if dir == null:
+		print("[EventManager] ⚠️ Cartella eventi per bioma non trovata, fallback al file legacy se disponibile")
+		return
+	
+	dir.list_dir_begin()
+	var file_name := dir.get_next()
+	while file_name != "":
+		if not dir.current_is_dir() and file_name.ends_with(".json"):
+			var rel_path := "data/events/biomes/" + file_name
+			var json_obj := data_manager.load_json_file(rel_path)
+			if json_obj:
+				print("   ✅ Caricato: ", file_name)
+				for biome_key in json_obj.keys():
+					var events_array = json_obj[biome_key]
+					if events_array is Array:
+						for event in events_array:
+							if event.has("id"):
+								var ev_id: String = event["id"]
+								if seen_ids.has(ev_id):
+									continue
+								event["biome"] = _normalize_biome_name(biome_key)
+								cached_events[ev_id] = event
+								_add_event_to_biome_pool(event)
+								seen_ids[ev_id] = true
+		file_name = dir.get_next()
+	dir.list_dir_end()
+
+# Funzione rimossa: _load_unique_events
+# Gli eventi unici sono ora caricati tramite unique_events.json nella directory biomes
+
+# Funzione rimossa: _load_rest_stop_events
+# Gli eventi REST_STOP sono ora caricati tramite rest_stop_events.json nella directory biomes

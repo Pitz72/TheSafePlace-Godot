@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="The Safe Place v0.3.4 - To have a giant backpack"
-config/description="Un GDR di sopravvivenza post-apocalittico ispirato ai terminali anni 80 - Sistema inventario espanso e gestione oggetti ottimizzata"
+config/name="The Safe Place v0.3.5 - Colors and Separation"
+config/description="Un GDR di sopravvivenza post-apocalittico ispirato ai terminali anni 80 - Sistema eventi modulare e architettura separata"
 run/main_scene="res://scenes/MainGame.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
 

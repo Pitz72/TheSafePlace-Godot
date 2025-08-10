@@ -10,7 +10,7 @@ extends Node
 var event_cooldown_time: float = 30.0  # 30 secondi tra eventi
 var time_since_last_event: float = 0.0
 var steps_since_last_event: int = 0
-var steps_threshold: int = 5  # Minimo 5 passi prima di nuovo evento
+var steps_threshold: int = 10  # Minimo 10 passi prima di nuovo evento
 
 # Probabilità eventi per bioma
 var biome_probabilities = {
@@ -140,16 +140,19 @@ func _on_player_moved(position: Vector2i, terrain_type: String):
 	if _can_trigger_event(new_biome):
 		_attempt_event_trigger(new_biome)
 	
-	print("📊 Passi dall'ultimo evento: %d, Cooldown: %.1fs" % [steps_since_last_event, time_since_last_event])
+	print("📊 Passi dall'ultimo evento: %d" % [steps_since_last_event])
 
 # Verifica se può triggerare un evento (cooldown + passi)
 func _can_trigger_event(_biome: String) -> bool:
-	var time_ok = time_since_last_event >= event_cooldown_time
-	var steps_ok = steps_since_last_event >= steps_threshold
-	return time_ok and steps_ok
+	# Regola attuale: solo numero di passi, niente cooldown temporale
+	return steps_since_last_event >= steps_threshold
 
 # Tenta di triggerare un evento basato su probabilità bioma
 func _attempt_event_trigger(biome: String):
+	# Disattiva completamente gli eventi nel bioma Ristoro
+	if biome == "ristoro":
+		print("⛔ Evento disattivato per bioma: ristoro")
+		return
 	var trigger_chance = biome_probabilities.get(biome, 0.1)
 	
 	if randf() <= trigger_chance:

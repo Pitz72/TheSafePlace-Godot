@@ -85,5 +85,5 @@ Tutti i contenuti narrativi e di gameplay:
 - I contenuti di gioco vanno in `04_CONTENUTI_DI_GIOCO/`
 
 ---
-*Ultimo aggiornamento: Dicembre 2024*
-*Versione progetto: v0.3.2 "The Importance of Choices"*
+*Ultimo aggiornamento: 28 Gennaio 2025*
+*Versione progetto: v0.3.5 "Colors and Separation"*

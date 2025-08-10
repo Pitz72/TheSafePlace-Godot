@@ -1079,7 +1079,9 @@ func apply_skill_check_result(check_result: Dictionary, consequences: Dictionary
 	# Applica oggetti ottenuti
 	if outcome.has("items_gained"):
 		for item in outcome.items_gained:
-			add_item(item.id, item.get("quantity", 1))
+			if item.has("id"):
+				add_item(item.id, item.get("quantity", 1))
+				print("📦 Oggetto ottenuto: %dx %s" % [item.get("quantity", 1), item.id])
 	
 	# Applica stati
 	if outcome.has("status_effects"):

@@ -673,7 +673,8 @@ const CATEGORY_COLORS = {
 	"crafting_material": "#95a5a6", # Grigio per materiali
 	"quest": "#9b59b6",        # Viola per oggetti missione
 	"ammo": "#e67e22",         # Arancione scuro per munizioni
-	"tool": "#2ecc71"          # Verde per strumenti
+	"tool": "#2ecc71",         # Verde per strumenti
+	"accessory": "#e74c3c"     # Rosso scuro per accessori
 }
 
 func get_category_color(item_id: String) -> String:
@@ -685,7 +686,8 @@ func get_category_color(item_id: String) -> String:
 	if not item_data:
 		return "#00FF40"  # Verde di default
 	
-	var category = item_data.get("category", "unknown")
+	# Usa "category" se presente, altrimenti ricade su "type" (coerente con i JSON dati)
+	var category = item_data.get("category", item_data.get("type", "unknown"))
 	return CATEGORY_COLORS.get(category, "#00FF40")  # Verde di default se categoria sconosciuta
 
 func clear_inventory_display():
