@@ -1199,10 +1199,15 @@ func _initialize_event_system():
 			EventManager.event_triggered.connect(_on_event_triggered)
 			print("GameUI: ✅ Segnale event_triggered connesso")
 		
-		# Connetti segnale per risultati eventi
+		# Connetti segnale per risultati eventi (DEPRECATED, ma mantenuto per compatibilità)
 		if not EventManager.event_completed.is_connected(_on_event_completed):
 			EventManager.event_completed.connect(_on_event_completed)
 			print("GameUI: ✅ Segnale event_completed connesso")
+
+		# Connetti nuovo segnale per risoluzione scelte (M3.T4.3)
+		if not EventManager.event_choice_resolved.is_connected(_on_event_choice_resolved):
+			EventManager.event_choice_resolved.connect(_on_event_choice_resolved)
+			print("GameUI: ✅ Segnale event_choice_resolved connesso")
 	else:
 		print("GameUI: ⚠️ EventManager non disponibile")
 	
@@ -1249,6 +1254,40 @@ func _on_event_completed(event_id: String, choice_index: int, choice_data: Dicti
 	add_log_message(log_message)
 	
 	# Aggiorna UI se ci sono cambiamenti
+	update_all_ui()
+
+## Gestisce la risoluzione della scelta di un evento (M3.T4.3)
+func _on_event_choice_resolved(result_text: String, narrative_log: String, skill_check_details: Dictionary):
+	print("GameUI: 🎭 Risoluzione scelta evento ricevuta.")
+
+	# 1. Aggiungi il log narrativo principale al diario
+	add_log_message(narrative_log)
+
+	# 2. Aggiungi i dettagli dello skill check (se presenti)
+	if not skill_check_details.is_empty():
+		var stat_name = skill_check_details.get("stat_used", "sconosciuta").capitalize()
+		var roll = skill_check_details.get("roll", 0)
+		var modifier = skill_check_details.get("modifier", 0)
+		var total = skill_check_details.get("total", 0)
+		var difficulty = skill_check_details.get("difficulty", 0)
+		var success = skill_check_details.get("success", false)
+
+		var success_str = "[color=green]SUCCESSO[/color]" if success else "[color=red]FALLIMENTO[/color]"
+		var modifier_str = "+%d" % modifier if modifier >= 0 else str(modifier)
+
+		var details_log = "Test di %s: %d (%s) = %d vs %d - %s" % [
+			stat_name,
+			roll,
+			modifier_str,
+			total,
+			difficulty,
+			success_str
+		]
+
+		# Aggiungi al diario con un colore diverso per distinguerlo
+		add_log_message("[color=gray]%s[/color]" % details_log)
+
+	# 3. Aggiorna l'intera UI per riflettere eventuali cambiamenti (oggetti, HP, etc.)
 	update_all_ui()
 
 ## Crea istanza popup eventi

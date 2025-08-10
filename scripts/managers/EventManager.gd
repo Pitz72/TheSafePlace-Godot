@@ -6,8 +6,9 @@ extends Node
 
 # Segnali per comunicazione con altri sistemi
 signal event_triggered(event_data: Dictionary)
-signal event_completed(event_id: String, choice_index: int, result: Dictionary, skill_check_result)
-signal skill_check_performed(stat_name: String, result: Dictionary)
+signal event_completed(event_id: String, choice_index: int, result: Dictionary, skill_check_result) # DEPRECATED: Verrà rimosso in favore di event_choice_resolved
+signal skill_check_performed(stat_name: String, result: Dictionary) # DEPRECATED: Logica ora interna a SkillCheckManager
+signal event_choice_resolved(result_text: String, narrative_log: String, skill_check_details: Dictionary)
 
 # Riferimenti ai manager
 @onready var player_manager: PlayerManager
@@ -226,63 +227,75 @@ func trigger_random_event(biome: String) -> Dictionary:
 		"biome": biome
 	}
 
-# Processa la scelta del giocatore per un evento
-func process_event_choice(event_id: String, choice_index: String) -> Dictionary:
+# Processa la scelta del giocatore per un evento (Logica riscritta per M3.T4.3)
+func process_event_choice(event_id: String, choice_index: String) -> void:
 	print("[EventManager] Processing scelta evento: ", event_id, " - scelta index: ", choice_index)
 	
 	# Trova l'evento
 	if not cached_events.has(event_id):
 		print("[EventManager] ERRORE: Evento non trovato: ", event_id)
-		return {"success": false, "error": "event_not_found"}
+		return
 	
 	var event = cached_events[event_id]
 	var choices = event.get("choices", [])
-	
-	# Converti choice_index in intero
 	var choice_idx = choice_index.to_int()
 	
 	# Verifica che l'indice sia valido
 	if choice_idx < 0 or choice_idx >= choices.size():
-		print("[EventManager] ERRORE: Indice scelta non valido: ", choice_idx, " (max: ", choices.size() - 1, ")")
-		return {"success": false, "error": "choice_index_invalid"}
-	
-	# Ottieni la scelta selezionata
-	var selected_choice = choices[choice_idx]
-	
-	# Processa skill check se presente
-	var skill_check_result = null
-	if selected_choice.has("skill_check"):
-		skill_check_result = _process_skill_check(selected_choice["skill_check"])
-		print("[EventManager] Risultato skill check: ", skill_check_result)
-	
-	# Determina le conseguenze da applicare
-	var consequences_to_apply = {}
-	
-	if skill_check_result:
-		# Usa conseguenze basate su successo/fallimento skill check
-		if skill_check_result["success"]:
-			consequences_to_apply = selected_choice.get("consequences_success", {})
+		print("[EventManager] ERRORE: Indice scelta non valido: ", choice_idx)
+		return
+
+	# 1. Estrai la scelta specifica
+	var choice = choices[choice_idx]
+
+	# 2. Crea le variabili di risultato
+	var result_text = ""
+	var narrative_log = ""
+	var skill_check_details = {}
+
+	# 3. Controlla se è richiesto uno Skill Check
+	if choice.has("skillCheck"):
+		# È una scelta basata su abilità
+		var check_data = choice.skillCheck
+		skill_check_details = SkillCheckManager.perform_check(check_data.stat, check_data.difficulty)
+
+		if skill_check_details.success:
+			result_text = choice.get("successText", "Successo!")
+			# Applica la ricompensa
+			if choice.has("reward"):
+				var reward_data = choice.reward
+				var transaction = {"add": []}
+				if reward_data.get("type") == "item":
+					transaction.add.append(reward_data.item)
+				elif reward_data.get("type") == "items":
+					transaction.add.append_array(reward_data.items)
+
+				if not transaction.add.is_empty():
+					PlayerManager.apply_item_transaction(transaction)
 		else:
-			consequences_to_apply = selected_choice.get("consequences_failure", {})
+			result_text = choice.get("failureText", "Fallimento.")
+			# Applica la penalità
+			if choice.has("penalty"):
+				_apply_penalty(choice.penalty)
 	else:
-		# Usa conseguenze dirette
-		consequences_to_apply = selected_choice.get("consequences", {})
-	
-	# Applica le conseguenze
-	if not consequences_to_apply.is_empty():
-		_apply_event_consequences(consequences_to_apply)
-	
-	# Emetti segnale completamento
-	event_completed.emit(event_id, choice_idx, selected_choice, skill_check_result)
-	
-	return {
-		"success": true,
-		"event_id": event_id,
-		"choice_index": choice_idx,
-		"choice_data": selected_choice,
-		"skill_check_result": skill_check_result,
-		"consequences_applied": consequences_to_apply
-	}
+		# È una scelta diretta, senza tiro di dado
+		result_text = choice.get("resultText", "Azione completata.")
+		if choice.has("reward"):
+			var reward_data = choice.reward
+			var transaction = {"add": []}
+			if reward_data.get("type") == "item":
+				transaction.add.append(reward_data.item)
+			elif reward_data.get("type") == "items":
+				transaction.add.append_array(reward_data.items)
+
+			if not transaction.add.is_empty():
+				PlayerManager.apply_item_transaction(transaction)
+
+	# 4. Costruisci il Log Narrativo
+	narrative_log = result_text
+
+	# 5. Emetti il Segnale Finale
+	event_choice_resolved.emit(result_text, narrative_log, skill_check_details)
 
 # Processa un skill check
 func _process_skill_check(skill_check_data: Dictionary) -> Dictionary:
@@ -306,6 +319,27 @@ func _apply_event_consequences(consequences: Dictionary):
 	
 	# Usa la funzione del PlayerManager per applicare le conseguenze
 	player_manager.apply_skill_check_result({}, consequences)
+
+## Gestisce l'applicazione di una penalità da un evento.
+## Creato per M3.T4.3 per centralizzare la logica delle penalità.
+func _apply_penalty(penalty_data: Dictionary):
+	if penalty_data.has("type"):
+		match penalty_data.type:
+			"damage":
+				if penalty_data.has("amount"):
+					PlayerManager.modify_hp(-penalty_data.amount)
+			"status":
+				if penalty_data.has("status"):
+					# Converti la stringa dello stato (es. "WOUNDED") nell'enum del PlayerManager
+					var status_enum = PlayerManager.Status.get(penalty_data.status.to_upper())
+					if status_enum != null:
+						PlayerManager.add_status(status_enum)
+			"time":
+				if penalty_data.has("minutes"):
+					TimeManager.advance_time_by_minutes(penalty_data.minutes)
+			"remove_item":
+				if penalty_data.has("item_id") and penalty_data.has("quantity"):
+					PlayerManager.remove_item(penalty_data.item_id, penalty_data.quantity)
 
 # Ottieni eventi disponibili per un bioma
 func get_events_for_biome(biome: String) -> Array:
