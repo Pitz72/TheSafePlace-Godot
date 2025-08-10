@@ -58,8 +58,8 @@ Tutti i contenuti narrativi e di gameplay:
   - `roadmap-eventi-temp.md` - Roadmap temporanea eventi
 
 - **📁 mappe/**
-  - `mappa_ascii_gdr.txt` - Mappa principale del gioco
-  - `mappa_ascii_gdr_old_backup.txt` - Backup mappa precedente
+  - *Cartella riservata per future mappe di gioco*
+  - *Nota: I file mappa principali sono nella root del progetto per compatibilità con Godot*
 
 ## 🧭 Come Navigare la Documentazione
 

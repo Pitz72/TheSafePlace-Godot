@@ -234,6 +234,7 @@ text = "Armatura: Nessuna"
 
 [node name="CommandsPanel" type="PanelContainer" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel"]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="CommandsVBox" type="VBoxContainer" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel/CommandsPanel"]
 layout_mode = 2
