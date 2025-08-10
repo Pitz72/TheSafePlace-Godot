@@ -7,6 +7,69 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
+## [v0.3.2] - 2025-01-28 "THE IMPORTANCE OF CHOICES"
+
+### ✨ NUOVE FEATURES
+- **Sistema Skill Check Completo** - Implementazione completa dei test di abilità negli eventi con risultati dettagliati
+- **Navigazione Keyboard Completa** - Controllo totale da tastiera per popup eventi: ↑/↓ o W/S per navigare, ENTER/SPACE per selezionare, 1-5 per scelta rapida, ESC per chiudere
+- **Visualizzazione Risultati Skill Check** - Display dettagliato nel diario di viaggio con statistica usata, dado lanciato, totale, difficoltà e esito (successo/fallimento)
+- **Miglioramenti UI EventPopup** - Dimensioni aumentate, text wrapping automatico, formattazione migliorata per skill check e pulsanti
+
+### 🔧 RISOLTI
+- **Bug Critico: "Invalid access to property or key 'id'"** - Risolto errore negli eventi utilizzando indici delle scelte invece di ID inesistenti
+- **Mancanza Risultati Skill Check** - Implementata trasmissione e visualizzazione completa dei risultati dei test di abilità
+- **Navigazione Limitata Eventi** - Aggiunta navigazione completa da tastiera con hotkey numeriche
+
+### 🏗️ MODIFICHE ARCHITETTURALI
+- **EventManager.gd** - Aggiornato signal `event_completed` per includere `skill_check_result`, utilizzo indici scelte invece di ID
+- **GameUI.gd** - Modificata funzione `_on_event_completed` per ricevere e visualizzare risultati skill check dettagliati
+- **EventPopup.gd** - Implementata navigazione keyboard completa con stati di selezione e hotkey numeriche
+- **EventPopup.tscn** - Migliorato layout con dimensioni aumentate, text wrapping e formattazione pulsanti
+
+### 📁 FILES MODIFICATI
+- `scripts/managers/EventManager.gd` - Correzione gestione scelte eventi e aggiunta skill_check_result al signal
+- `scripts/ui/GameUI.gd` - Aggiornamento gestione eventi completati con visualizzazione skill check
+- `scripts/ui/popups/EventPopup.gd` - Implementazione navigazione keyboard completa
+- `scenes/ui/popups/EventPopup.tscn` - Miglioramenti layout e formattazione
+- `project.godot` - Aggiornamento nome progetto con nuova versione
+
+### 🎯 RISULTATO
+- **Sistema Eventi Robusto**: Eliminati tutti gli errori critici del sistema eventi
+- **UX Migliorata**: Navigazione completa da tastiera per accessibilità totale
+- **Feedback Dettagliato**: Visualizzazione completa risultati skill check nel diario
+- **Stabilità Garantita**: Zero errori runtime nel sistema eventi
+
+### 🧪 QUALITÀ & TESTING
+- **Error Handling Completo** - Gestione robusta di tutti i casi edge negli eventi
+- **Backward Compatibility** - Mantenuta compatibilità con eventi esistenti
+- **Performance Ottimizzate** - Nessun impatto performance con le nuove funzionalità
+- **Documentazione Completa** - Creato documento `CORREZIONI_SISTEMA_EVENTI.md` con dettagli tecnici
+
+### 🎯 ACHIEVEMENT UNLOCKED
+**"The Importance of Choices"** - Sistema eventi con skill check completo che rende ogni scelta significativa e ogni risultato visibile
+
+---
+
+## [v0.3.1] - 2025-01-28 "SHELTER NARRATIVE FIX"
+
+### 🔧 RISOLTI
+- **Bug Narrativo: Tile 'R' (Ristoro) mostra messaggio di villaggio** - Risolto il problema che causava la visualizzazione del messaggio "Un piccolo insediamento appare all'orizzonte." quando il player entrava in un tile Rest Stop
+
+### 🏗️ MODIFICHE ARCHITETTURALI
+- **Nuovo Bioma "ristoro"** - Creato bioma dedicato per i Rest Stop con messaggio narrativo appropriato
+- **Mapping Terreno-Bioma Aggiornato** - Corretto il mapping da "Ristoro" → "villaggio" a "Ristoro" → "ristoro"
+- **Sistema Eventi Bilanciato** - Aggiunta probabilità eventi 0.25 per il bioma ristoro
+
+### 📁 FILES MODIFICATI
+- `scripts/MainGame.gd` - Aggiornato biome_entry_messages, biome_probabilities e _map_terrain_to_biome()
+
+### 🎯 RISULTATO
+- **Messaggio Narrativo Corretto**: "Scorgi un rifugio abbandonato. Le sue mura potrebbero offrirti riparo."
+- **Coerenza Visuale**: Colore messaggio #ffdd00 coerente con il colore del tile 'R'
+- **Funzionalità Eventi Preservata**: Sistema eventi mantiene probabilità appropriata per Rest Stop
+
+---
+
 ## [v0.3.0] - 2025-01-28 "THE CHOSEN ONE"
 
 ### ✨ NUOVE FEATURES

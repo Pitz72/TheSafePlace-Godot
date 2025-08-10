@@ -20,10 +20,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -300.0
-offset_top = -200.0
-offset_right = 300.0
-offset_bottom = 200.0
+offset_left = -400.0
+offset_top = -250.0
+offset_right = 400.0
+offset_bottom = 250.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -55,6 +55,7 @@ bbcode_enabled = true
 text = "Descrizione dell'evento che sta accadendo..."
 fit_content = true
 scroll_active = false
+autowrap_mode = 3
 
 [node name="HSeparator2" type="HSeparator" parent="BackgroundPanel/VBoxContainer"]
 layout_mode = 2
@@ -75,4 +76,4 @@ layout_mode = 2
 
 [node name="CloseButton" type="Button" parent="BackgroundPanel/VBoxContainer"]
 layout_mode = 2
-text = "Chiudi [ESC]"
+text = "Chiudi [ESC] | Naviga [↑↓/WS] | Seleziona [ENTER/SPACE] | Scelta rapida [1-5]"

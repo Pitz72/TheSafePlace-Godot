@@ -60,7 +60,7 @@ var max_water: int = 100
 # ========================================
 
 ## Statistiche del personaggio
-## Chiavi: "forza", "agilita", "intelligenza", "carisma", "fortuna"
+## Chiavi: "forza", "agilita", "intelligenza", "carisma", "fortuna", "vigore"
 var stats: Dictionary = {}
 
 # ========================================
@@ -380,7 +380,6 @@ func use_item(item_id: String, quantity: int = 1) -> bool:
 	
 	# GESTIONE PORZIONI: Se l'oggetto ha porzioni, decrementa invece di rimuovere
 	if has_portions:
-		var current_portions = item_slot.instance_data.portions
 		item_slot.instance_data.portions -= 1
 		
 		print("🍽️ Usata porzione di %s (%d porzioni rimanenti)" % [item_name, item_slot.instance_data.portions])
@@ -531,7 +530,7 @@ func _get_narrative_message_for_equip(item_data: Dictionary) -> String:
 			return "Hai equipaggiato: %s" % item_name
 
 ## Emette messaggio narrativo per l'uso di oggetti
-func _emit_narrative_message_for_use(item_data: Dictionary, quantity: int) -> void:
+func _emit_narrative_message_for_use(item_data: Dictionary, _quantity: int) -> void:
 	var item_name = item_data.get("name", "oggetto")
 	var item_type = item_data.get("type", "")
 	var effects = item_data.get("effects", [])
@@ -1029,7 +1028,7 @@ func skill_check(stat_name: String, difficulty: int, modifier: int = 0) -> Dicti
 ## @param stat_value: Valore della statistica (3-18)
 ## @return: Modificatore D&D (-4 a +4)
 func get_stat_modifier(stat_value: int) -> int:
-	return (stat_value - 10) / 2
+	return int((stat_value - 10) / 2.0)
 
 ## Lancia un dado a 20 facce
 ## @return: Valore casuale tra 1 e 20

@@ -19,7 +19,8 @@ var biome_probabilities = {
 	"villaggi": 0.20,
 	"città": 0.30,
 	"fiumi": 0.18,
-	"montagne": 0.12
+	"montagne": 0.12,
+	"ristoro": 0.25
 }
 
 # Narrativa Biomi
@@ -29,7 +30,8 @@ var biome_entry_messages = {
 	"pianure": {"text": "Una vasta pianura si apre davanti a te. L'orizzonte sembra infinito.", "color": "#a5c9a5"},
 	"città": {"text": "Rovine di una città emergono dalla desolazione.", "color": "#c9c9c9"},
 	"villaggio": {"text": "Un piccolo insediamento appare all'orizzonte.", "color": "#c9a57b"},
-	"fiumi": {"text": "Raggiungi le sponde di un fiume. L'acqua scorre lenta e scura.", "color": "#1e7ba8"}
+	"fiumi": {"text": "Raggiungi le sponde di un fiume. L'acqua scorre lenta e scura.", "color": "#1e7ba8"},
+	"ristoro": {"text": "Scorgi un rifugio abbandonato. Le sue mura potrebbero offrirti riparo.", "color": "#ffdd00"}
 }
 
 # Narrativa Atmosfera
@@ -130,7 +132,7 @@ func _on_player_moved(position: Vector2i, terrain_type: String):
 	print("📊 Passi dall'ultimo evento: %d, Cooldown: %.1fs" % [steps_since_last_event, time_since_last_event])
 
 # Verifica se può triggerare un evento (cooldown + passi)
-func _can_trigger_event(biome: String) -> bool:
+func _can_trigger_event(_biome: String) -> bool:
 	var time_ok = time_since_last_event >= event_cooldown_time
 	var steps_ok = steps_since_last_event >= steps_threshold
 	return time_ok and steps_ok
@@ -187,7 +189,7 @@ func _map_terrain_to_biome(terrain_type: String) -> String:
 		"Villaggio":
 			return "villaggio"
 		"Ristoro":
-			return "villaggio"  # Ristoro considerato come villaggio
+			return "ristoro"  # Ristoro ora ha il suo bioma specifico
 		"Fiume":
 			return "fiumi"  # Fiume ora ha il suo bioma
 		_:

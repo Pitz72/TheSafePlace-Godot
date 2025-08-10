@@ -1,9 +1,9 @@
 # 📋 DEV LOG - The Safe Place
 
 **📅 DATA:** 2025-01-28  
-**🎯 TARGET:** Versione v0.3.0 "The Chosen One" CONSOLIDATA
+**🎯 TARGET:** Versione v0.3.2 "The Importance of Choices" CONSOLIDATA
 **🔀 BRANCH:** godot-port  
-**📦 VERSIONE:** v0.3.0 "The Chosen One"
+**📦 VERSIONE:** v0.3.2 "The Importance of Choices"
 
 **Progetto:** The Safe Place - GDR Testuale Anni 80  
 **Engine:** Godot 4.4.1  
@@ -32,6 +32,43 @@
 ---
 
 ## 🏆 **VERSIONI RILASCIATE**
+
+### **✅ v0.3.2 "The Importance of Choices" - 2025-01-28**
+**MAJOR RELEASE - Sistema Eventi con Skill Check Completo**
+
+**🎯 FEATURES PRINCIPALI:**
+- ✅ **Sistema Skill Check Completo** - Visualizzazione dettagliata risultati nel diario
+- ✅ **Navigazione Keyboard Totale** - Controllo completo da tastiera per eventi
+- ✅ **UI EventPopup Migliorata** - Layout ottimizzato e text wrapping
+- ✅ **Bug Fix Critico** - Risolto errore "Invalid access to property 'id'"
+
+**🔧 CORREZIONI TECNICHE:**
+- EventManager.gd: Utilizzo indici scelte invece di ID inesistenti
+- GameUI.gd: Visualizzazione skill check con colori e dettagli
+- EventPopup.gd: Navigazione ↑/↓/W/S, ENTER/SPACE, 1-5, ESC
+- EventPopup.tscn: Dimensioni aumentate e formattazione migliorata
+
+**🎯 RISULTATO:** Sistema eventi robusto, accessibile e user-friendly
+
+---
+
+### **✅ v0.3.1 "Shelter Narrative Fix" - 2025-01-28**
+**HOTFIX - Correzione Messaggio Narrativo Rest Stop**
+
+**🔧 BUG RISOLTO:**
+- Tile 'R' (Ristoro) mostrava erroneamente messaggio di villaggio
+- Creato bioma dedicato "ristoro" con messaggio appropriato
+- Aggiornato mapping terreno-bioma e probabilità eventi
+
+**📁 FILE MODIFICATO:**
+- `scripts/MainGame.gd` - biome_entry_messages, biome_probabilities, _map_terrain_to_biome()
+
+**🎯 RISULTATO:**
+- Messaggio corretto: "Scorgi un rifugio abbandonato. Le sue mura potrebbero offrirti riparo."
+- Coerenza visuale con colore #ffdd00 del tile 'R'
+- Sistema eventi preservato con probabilità 0.25 per ristoro
+
+---
 
 ### **✅ v0.3.0 "The Chosen One" - 2025-01-28**
 **MILESTONE FEATURE - Sistema di Creazione del Personaggio**

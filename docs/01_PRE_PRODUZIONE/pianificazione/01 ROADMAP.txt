@@ -1,6 +1,6 @@
 📋 ROADMAP - The Safe Place (GDR Testuale Anni 80)
 
-🎯 VERSIONE CORRENTE: v0.2.5 "When things happen"
+🎯 VERSIONE CORRENTE: v0.3.2 "The Importance of Choices"
 📅 ULTIMO AGGIORNAMENTO: 2025-01-28
 🎮 TARGET: Godot 4.4.1 Engine
 

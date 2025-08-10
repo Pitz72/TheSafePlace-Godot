@@ -1204,11 +1204,25 @@ func _on_event_triggered(event_data: Dictionary):
 		print("GameUI: ✅ Popup evento mostrato")
 
 ## Gestisce completamento di un evento
-func _on_event_completed(event_id: String, choice_index: int, result: Dictionary):
+func _on_event_completed(event_id: String, choice_index: int, choice_data: Dictionary, skill_check_result):
 	print("GameUI: 🎭 Evento completato: ", event_id, " scelta: ", choice_index)
 	
-	# Aggiungi messaggio al log
-	var log_message = "[color=yellow]Evento:[/color] " + result.get("message", "Evento completato")
+	# Crea messaggio per il log basato sulla scelta
+	var choice_text = choice_data.get("text", "Scelta sconosciuta")
+	var log_message = "[color=yellow]Evento:[/color] " + choice_text
+	
+	# Aggiungi risultato skill check se presente
+	if skill_check_result != null:
+		var stat_name = skill_check_result.get("stat_used", "sconosciuta")
+		var roll = skill_check_result.get("roll", 0)
+		var total = skill_check_result.get("total", 0)
+		var difficulty = skill_check_result.get("difficulty", 0)
+		var success = skill_check_result.get("success", false)
+		
+		var result_text = "[color=green]SUCCESSO[/color]" if success else "[color=red]FALLIMENTO[/color]"
+		var skill_message = "[color=cyan]Skill Check:[/color] %s (1d20+mod=%d vs DC %d) - %s" % [stat_name.capitalize(), total, difficulty, result_text]
+		add_log_message(skill_message)
+	
 	add_log_message(log_message)
 	
 	# Aggiorna UI se ci sono cambiamenti

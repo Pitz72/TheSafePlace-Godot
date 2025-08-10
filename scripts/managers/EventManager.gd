@@ -6,7 +6,7 @@ extends Node
 
 # Segnali per comunicazione con altri sistemi
 signal event_triggered(event_data: Dictionary)
-signal event_completed(event_id: String, choice_index: int, result: Dictionary)
+signal event_completed(event_id: String, choice_index: int, result: Dictionary, skill_check_result)
 signal skill_check_performed(stat_name: String, result: Dictionary)
 
 # Riferimenti ai manager
@@ -156,8 +156,8 @@ func trigger_random_event(biome: String) -> Dictionary:
 	}
 
 # Processa la scelta del giocatore per un evento
-func process_event_choice(event_id: String, choice_id: String) -> Dictionary:
-	print("[EventManager] Processing scelta evento: ", event_id, " - scelta: ", choice_id)
+func process_event_choice(event_id: String, choice_index: String) -> Dictionary:
+	print("[EventManager] Processing scelta evento: ", event_id, " - scelta index: ", choice_index)
 	
 	# Trova l'evento
 	if not cached_events.has(event_id):
@@ -165,17 +165,18 @@ func process_event_choice(event_id: String, choice_id: String) -> Dictionary:
 		return {"success": false, "error": "event_not_found"}
 	
 	var event = cached_events[event_id]
+	var choices = event.get("choices", [])
 	
-	# Trova la scelta
-	var selected_choice = null
-	for choice in event.get("choices", []):
-		if choice["id"] == choice_id:
-			selected_choice = choice
-			break
+	# Converti choice_index in intero
+	var choice_idx = choice_index.to_int()
 	
-	if not selected_choice:
-		print("[EventManager] ERRORE: Scelta non trovata: ", choice_id)
-		return {"success": false, "error": "choice_not_found"}
+	# Verifica che l'indice sia valido
+	if choice_idx < 0 or choice_idx >= choices.size():
+		print("[EventManager] ERRORE: Indice scelta non valido: ", choice_idx, " (max: ", choices.size() - 1, ")")
+		return {"success": false, "error": "choice_index_invalid"}
+	
+	# Ottieni la scelta selezionata
+	var selected_choice = choices[choice_idx]
 	
 	# Processa skill check se presente
 	var skill_check_result = null
@@ -201,12 +202,13 @@ func process_event_choice(event_id: String, choice_id: String) -> Dictionary:
 		_apply_event_consequences(consequences_to_apply)
 	
 	# Emetti segnale completamento
-	event_completed.emit(event_id, choice_id)
+	event_completed.emit(event_id, choice_idx, selected_choice, skill_check_result)
 	
 	return {
 		"success": true,
 		"event_id": event_id,
-		"choice_id": choice_id,
+		"choice_index": choice_idx,
+		"choice_data": selected_choice,
 		"skill_check_result": skill_check_result,
 		"consequences_applied": consequences_to_apply
 	}
