@@ -212,7 +212,7 @@ func _setup_camera():
 # PHYSICS PROCESS - CAMERA SMOOTH UPDATE (FIX SALTELLO)
 # ============================================================================
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	"""Aggiorna camera smoothly ogni frame per evitare saltelli"""
 	if camera != null:
 		# Calcola posizione target (sempre a coordinate intere per evitare arrotondamenti)
@@ -263,25 +263,23 @@ func _convert_map_to_world():
 	"""Converte mappa ASCII in TileMap con tiles per S/E"""
 	# Debug rimosso per ridurre log
 	
-	var tiles_placed = 0
 	var start_found = false
 	
 	for y in range(map_height):
 		var row = map_data[y]
 		for x in range(min(row.length(), map_width)):
-			var char = row[x]
+			var map_char = row[x]
 			
 			# GESTIONE START/END COME TILES (non più nodi BBCode)
-			if char == "S":
+			if map_char == "S":
 				if not start_found:
 					player_pos = Vector2i(x, y)
 					start_found = true
 					# Debug rimosso per ridurre log
 			
 			# TUTTI I CARATTERI (inclusi S/E) DIVENTANO TILES
-			var source_id = char_to_tile_id.get(char, 0)  # Default: pianura
+			var source_id = char_to_tile_id.get(map_char, 0)  # Default: pianura
 			ascii_tilemap.set_cell(0, Vector2i(x, y), source_id, Vector2i(0, 0))
-			tiles_placed += 1
 	
 	# Debug rimosso per ridurre log
 	# Debug rimosso per ridurre log
@@ -303,13 +301,13 @@ func _update_player_position():
 		return
 	
 	# Posiziona player in coordinate mondo (centrato nella tile)
-	var world_pos = Vector2(player_pos.x * TILE_SIZE + TILE_SIZE/2, player_pos.y * TILE_SIZE + TILE_SIZE/2)
+	var world_pos = Vector2(player_pos.x * TILE_SIZE + TILE_SIZE/2.0, player_pos.y * TILE_SIZE + TILE_SIZE/2.0)
 	player_character.position = world_pos
 	
 	# Ridimensiona sprite per adattarsi alle tile (16x16 pixel)
 	if player_character.texture != null:
 		var texture_size = player_character.texture.get_size()
-		var scale_factor = Vector2(TILE_SIZE / texture_size.x, TILE_SIZE / texture_size.y)
+		var scale_factor = Vector2(float(TILE_SIZE) / texture_size.x, float(TILE_SIZE) / texture_size.y)
 		player_character.scale = scale_factor
 		# Debug rimosso per ridurre log
 	
@@ -392,7 +390,6 @@ func _on_map_move(direction: Vector2i):
 		_update_player_position()
 		
 		# LOG MOVIMENTO CON DIREZIONE E TERRENO (solo per stato UI, NESSUN LOG [MONDO])
-		var direction_name = direction_to_name.get(direction, "Direzione Sconosciuta")
 		var terrain_name = char_to_terrain_name.get(destination_char, "Terreno Sconosciuto")
 		# (disattivato) _add_movement_log("Ti sposti verso %s, raggiungendo: %s" % [direction_name, terrain_name])
 		
@@ -491,8 +488,8 @@ func is_river_crossing() -> bool:
 
 func get_current_terrain_name() -> String:
 	"""API pubblica: nome terreno corrente"""
-	var char = _get_char_at_position(player_pos)
-	return char_to_terrain_name.get(char, "Terreno Sconosciuto")
+	var terrain_char = _get_char_at_position(player_pos)
+	return char_to_terrain_name.get(terrain_char, "Terreno Sconosciuto")
 
 # ============================================================================
 # DEBUG E INFORMAZIONI

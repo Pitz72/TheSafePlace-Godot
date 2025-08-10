@@ -19,7 +19,7 @@ const ItemInteractionPopup = preload("res://scenes/ui/popups/ItemInteractionPopu
 const LevelUpPopup = preload("res://scenes/ui/popups/LevelUpPopup.tscn")
 
 ## Popup eventi di gioco (FASE 4)
-const EventPopup = preload("res://scenes/ui/popups/EventPopup.tscn")
+const EventPopupScene = preload("res://scenes/ui/popups/EventPopup.tscn")
 
 ## Popup creazione personaggio
 const CharacterCreationPopup = preload("res://scenes/ui/popups/CharacterCreationPopup.tscn")
@@ -1238,7 +1238,6 @@ func _on_event_completed(event_id: String, choice_index: int, choice_data: Dicti
 	# Aggiungi risultato skill check se presente
 	if skill_check_result != null:
 		var stat_name = skill_check_result.get("stat_used", "sconosciuta")
-		var roll = skill_check_result.get("roll", 0)
 		var total = skill_check_result.get("total", 0)
 		var difficulty = skill_check_result.get("difficulty", 0)
 		var success = skill_check_result.get("success", false)
@@ -1256,7 +1255,7 @@ func _on_event_completed(event_id: String, choice_index: int, choice_data: Dicti
 func _create_event_popup():
 	print("GameUI: 🎭 Creazione popup eventi...")
 	
-	event_popup_instance = EventPopup.instantiate()
+	event_popup_instance = EventPopupScene.instantiate()
 	
 	# Aggiungi alla scena
 	add_child(event_popup_instance)

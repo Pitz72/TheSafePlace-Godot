@@ -856,7 +856,7 @@ func _calculate_current_level() -> int:
 		return 5
 	else:
 		# Per livelli alti, approssimazione
-		return 5 + int((experience - 1318) / 600)  # Incremento di ~600 EXP per livello
+		return 5 + int((experience - 1318) / 600.0)  # Incremento di ~600 EXP per livello
 
 ## Calcola la soglia di esperienza richiesta per raggiungere un livello specifico
 ## @param target_level: Livello target per cui calcolare la soglia

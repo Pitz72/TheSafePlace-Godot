@@ -305,7 +305,7 @@ func _build_stats_pairs() -> Array[Dictionary]:
 	return pairs
 
 ## Genera le azioni disponibili dinamicamente in base al tipo di oggetto (sistema Label-based)
-func _generate_action_buttons(item: Dictionary) -> void:
+func _generate_action_buttons(_item: Dictionary) -> void:
 	# Debug rimosso per ridurre log
 	
 	# Reset array azioni disponibili
