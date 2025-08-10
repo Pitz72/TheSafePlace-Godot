@@ -703,9 +703,12 @@ func add_inventory_item_to_display_with_selection(item: Dictionary, is_selected:
 	item_label.fit_content = true
 	item_label.scroll_active = false
 	
+	# HOTFIX: Usa .get("id") per evitare crash se un oggetto non ha un ID.
+	var item_id = item.get("id", "oggetto_sconosciuto")
+
 	# Ottieni dati oggetto dal DataManager (usando il nuovo campo "id")
-	var item_data = DataManager.get_item_data(item.id)
-	var item_name = item_data.get("name", item.id) if item_data else item.id
+	var item_data = DataManager.get_item_data(item_id)
+	var item_name = item_data.get("name", item_id) if item_data else item_id
 	
 	# Calcola numero posizione oggetto nella lista (1-based per display)
 	var item_index = -1
@@ -740,7 +743,7 @@ func add_inventory_item_to_display_with_selection(item: Dictionary, is_selected:
 			base_text = "%s %s" % [number_marker, item_name]
 	
 	# Ottieni colore per categoria
-	var category_color = get_category_color(item.id)
+	var category_color = get_category_color(item_id)
 	
 	# Applica indicatore selezione con evidenziazione forte e colore categoria
 	if is_selected:

@@ -479,7 +479,8 @@ func _apply_consumable_effects(item_data: Dictionary, quantity: int) -> void:
 ## @return: Indice slot (0-based) o -1 se non trovato
 func _find_inventory_slot(item_id: String) -> int:
 	for i in range(inventory.size()):
-		if inventory[i].id == item_id:
+		# HOTFIX: Usa .get("id") per evitare crash se un oggetto non ha un ID.
+		if inventory[i].get("id") == item_id:
 			return i
 	return -1
 
