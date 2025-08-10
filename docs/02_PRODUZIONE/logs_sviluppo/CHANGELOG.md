@@ -7,6 +7,45 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
+## [v0.3.3] - 2025-01-28 "EVERY STEP IS AN EXPERIENCE"
+
+### ✨ NUOVE FEATURES
+- **Sistema Esperienza Automatica** - Guadagno esperienza automatico per ogni passo sulla mappa (5-10 punti di giorno, 5-15 di notte)
+- **Bilanciamento Giorno/Notte** - Bonus esperienza notturno per compensare la maggiore difficoltà del movimento al buio
+- **Messaggio Startup Informativo** - Nuovo messaggio giallo all'avvio: "Ogni passo sarà un'esperienza che ti renderà più forte."
+- **Ottimizzazione Diario** - Rimossi messaggi di esperienza dal diario per eliminare spam, mantenuti solo i livellamenti
+
+### 🔧 MIGLIORAMENTI
+- **Integrazione TimeManager** - Utilizzo di `TimeManager.is_night()` per logica dinamica esperienza
+- **Categorizzazione Esperienza** - Esperienza da movimento classificata come "esplorazione"
+- **Log Console Ottimizzato** - Esperienza tracciata in console per debug senza intasare il diario
+- **Feedback Progressione** - Preservati messaggi importanti per nuovi punti statistica
+
+### 🏗️ MODIFICHE ARCHITETTURALI
+- **MainGame.gd** - Aggiunta logica esperienza bilanciata in `_on_player_moved()` e messaggio startup
+- **PlayerManager.gd** - Modificata `add_experience()` per rimuovere messaggi narrativi mantenendo log console
+
+### 📁 FILES MODIFICATI
+- `scripts/MainGame.gd` - Implementazione sistema esperienza automatica con bilanciamento temporale
+- `scripts/managers/PlayerManager.gd` - Ottimizzazione gestione messaggi esperienza
+
+### 🎯 RISULTATO
+- **Progressione Fluida**: Ogni movimento contribuisce alla crescita del personaggio
+- **UX Ottimizzata**: Diario pulito senza spam, feedback appropriato
+- **Bilanciamento Dinamico**: Notte più rewarding per maggiore difficoltà
+- **Integrazione Perfetta**: Zero regressioni, compatibilità completa
+
+### 🧪 QUALITÀ & TESTING
+- **Performance Ottimizzate** - Calcoli leggeri senza overhead
+- **Backward Compatibility** - Nessun breaking change sui sistemi esistenti
+- **Error Handling** - Gestione robusta valori casuali e stati
+- **Maintainability** - Codice pulito e ben documentato
+
+### 🎯 ACHIEVEMENT UNLOCKED
+**"Every step is an experience"** - Sistema di progressione automatica che rende ogni movimento significativo per la crescita del personaggio
+
+---
+
 ## [v0.3.2] - 2025-01-28 "THE IMPORTANCE OF CHOICES"
 
 ### ✨ NUOVE FEATURES

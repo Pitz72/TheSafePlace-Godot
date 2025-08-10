@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="The Safe Place v0.3.2 - The Importance of Choices"
-config/description="Un GDR di sopravvivenza post-apocalittico ispirato ai terminali anni 80 - Sistema eventi con skill check completo"
+config/name="The Safe Place v0.3.3 - Every step is an experience"
+config/description="Un GDR di sopravvivenza post-apocalittico ispirato ai terminali anni 80 - Sistema esperienza automatica con progressione fluida"
 run/main_scene="res://scenes/MainGame.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
 

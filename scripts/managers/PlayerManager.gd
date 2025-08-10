@@ -719,13 +719,10 @@ func add_experience(amount: int, reason: String = "") -> void:
 	# Incrementa esperienza
 	experience += amount
 	
-	# Messaggio narrativo base
-	var narrative_msg = "Guadagni %d punti esperienza." % amount
-	if reason != "":
-		narrative_msg += " (%s)" % reason
-	narrative_log_generated.emit(narrative_msg)
-	
+	# Log solo in console per evitare spam nel diario
 	print("⭐ Esperienza: +%d (totale: %d)" % [amount, experience])
+	if reason != "":
+		print("   Motivo: %s" % reason)
 	
 	# Controlla se si ha abbastanza esperienza per nuovo punto statistica
 	while experience >= experience_for_next_point:

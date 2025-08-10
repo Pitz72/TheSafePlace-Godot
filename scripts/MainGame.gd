@@ -77,8 +77,9 @@ func _ready():
 	# Emetti messaggi di benvenuto iniziali
 	player_manager.narrative_log_generated.emit("[color=yellow]La sopravvivenza dipende dalle tue scelte.[/color]")
 	player_manager.narrative_log_generated.emit("[color=yellow]Ogni passo è una decisione. Muoviti con [WASD] o le frecce.[/color]")
+	player_manager.narrative_log_generated.emit("[color=yellow]Ogni passo sarà un'esperienza che ti renderà più forte.[/color]")
 	player_manager.narrative_log_generated.emit("[color=yellow]Il viaggio inizia ora. Che la fortuna ti accompagni.[/color]")
-
+	
 	print("🎯 MainGame pronto per gestire eventi durante il gameplay")
 
 # Tenta di connettere i segnali del World istanziato da GameUI in modo differito
@@ -113,6 +114,16 @@ func _on_player_moved(position: Vector2i, terrain_type: String):
 	
 	# Incrementa contatore passi
 	steps_since_last_event += 1
+	
+	# Guadagna esperienza per il movimento (5-10 di giorno, 5-15 di notte)
+	var exp_gained: int
+	if TimeManager.is_night():
+		exp_gained = randi_range(5, 15)  # Più esperienza di notte per la difficoltà
+	else:
+		exp_gained = randi_range(5, 10)  # Esperienza normale di giorno
+	
+	# Aggiungi esperienza (i messaggi sono gestiti internamente da PlayerManager)
+	player_manager.add_experience(exp_gained, "esplorazione")
 	
 	# Mappa terreno a bioma per EventManager
 	var new_biome = _map_terrain_to_biome(terrain_type)

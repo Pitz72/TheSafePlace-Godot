@@ -950,14 +950,12 @@ func _on_level_up_request():
 	"""Callback: richiesta apertura popup livellamento (comando [L])"""
 	print("GameUI: 🏆 Richiesta livellamento personaggio")
 	
-	# Verifica se PlayerManager ha punti disponibili
-	if not PlayerManager or not PlayerManager.has_available_stat_points():
-		var no_points_msg = "Non hai ancora abbastanza esperienza per migliorare."
-		add_log_message(no_points_msg)
-		print("GameUI: ⚠️ Nessun punto statistica disponibile")
+	# Verifica se PlayerManager è disponibile
+	if not PlayerManager:
+		print("GameUI: ❌ PlayerManager non disponibile")
 		return
 	
-	# Crea e mostra popup livellamento
+	# Crea e mostra popup livellamento (sempre, anche senza punti)
 	_open_level_up_popup()
 
 func _open_level_up_popup():

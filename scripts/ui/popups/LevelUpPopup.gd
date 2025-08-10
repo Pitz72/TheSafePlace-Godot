@@ -79,14 +79,10 @@ func _ready() -> void:
 # FUNZIONE PUBBLICA PRINCIPALE
 # ========================================
 
-## Mostra il popup di livellamento se ci sono punti disponibili
+## Mostra il popup di livellamento (sempre, anche senza punti disponibili)
 func show_level_up_popup() -> void:
 	if not PlayerManager:
 		print("❌ LevelUpPopup: PlayerManager non disponibile")
-		return
-	
-	if not PlayerManager.has_available_stat_points():
-		print("⚠️ LevelUpPopup: Nessun punto statistica disponibile")
 		return
 	
 	print("🏆 LevelUpPopup: Apertura popup livellamento")
@@ -287,4 +283,4 @@ func _update_visual_selection() -> void:
 			# Bottone chiudi selezionato
 			selected_button.text = "[bgcolor=#00FF40][color=#000000]Chiudi[/color][/bgcolor]"
 	
-	print("🎨 LevelUpPopup: Selezione aggiornata - Index: %d" % selected_stat_index) 
+	print("🎨 LevelUpPopup: Selezione aggiornata - Index: %d" % selected_stat_index)

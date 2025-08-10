@@ -1,4 +1,4 @@
-# 🏠 The Safe Place v0.3.2 "The Importance of Choices"
+# 🏠 The Safe Place v0.3.3 "Every step is an experience"
 
 *Un GDR testuale in stile retro computer sviluppato in Godot*
 
@@ -16,7 +16,7 @@
 
 ## 🚀 Stato del Progetto
 
-**Versione Attuale**: v0.3.2 "The Importance of Choices"
+**Versione Attuale**: v0.3.3 "Every step is an experience"
 
 ### ✅ Sistemi Implementati
 - ✅ Core Engine e World Manager
