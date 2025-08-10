@@ -1,4 +1,4 @@
-# 🏠 The Safe Place v0.3.3 "Every step is an experience"
+# 🏠 The Safe Place v0.3.4 "To have a giant backpack"
 
 *Un GDR testuale in stile retro computer sviluppato in Godot*
 
@@ -16,7 +16,7 @@
 
 ## 🚀 Stato del Progetto
 
-**Versione Attuale**: v0.3.3 "Every step is an experience"
+**Versione Attuale**: v0.3.4 "To have a giant backpack"
 
 ### ✅ Sistemi Implementati
 - ✅ Core Engine e World Manager
@@ -95,7 +95,9 @@ Progetto in sviluppo - Licenza da definire
 
 ## 🏷️ Tag e Versioni
 
-- `v0.3.2` - The Importance of Choices (Corrente)
+- `v0.3.4` - To have a giant backpack (Corrente)
+- `v0.3.3` - Every step is an experience
+- `v0.3.2` - The Importance of Choices
 - `v0.3.0` - The Chosen One
 - `v0.2.6` - No More Double Steps
 - `v0.2.5` - When Things Happen
@@ -108,7 +110,7 @@ Progetto in sviluppo - Licenza da definire
 *Sviluppato con ❤️ e l'assistenza di Claude AI*
 
 [![Godot Engine](https://img.shields.io/badge/Godot-4.4.1-blue.svg)](https://godotengine.org/)
-[![Version](https://img.shields.io/badge/Version-v0.3.2-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-v0.3.4-green.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Active%20Development-brightgreen.svg)](01%20ROADMAP.txt)
 
@@ -118,7 +120,7 @@ Progetto in sviluppo - Licenza da definire
 
 **The Safe Place** è un GDR testuale ambientato negli anni '80 che combina l'estetica retrò dei monitor CRT con meccaniche di gioco moderne. Il giocatore esplora un mondo post-apocalittico alla ricerca di un rifugio sicuro, affrontando eventi dinamici, gestendo risorse vitali e prendendo decisioni che influenzano la sopravvivenza.
 
-### **🎯 Caratteristiche Principali v0.3.2**
+### **🎯 Caratteristiche Principali v0.3.4**
 
 - **🖥️ Estetica CRT Autentica:** Shader personalizzati con scanlines, curvatura e effetti vintage
 - **🎮 Sistema Eventi Completo:** Eventi dinamici con skill check, navigazione keyboard totale

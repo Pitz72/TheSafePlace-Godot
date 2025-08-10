@@ -62,6 +62,10 @@
       "damage": { "min": 8, "max": 18, "bonus": 2 },
       "ammo_type": "ammo_rifle"
     },
+
+
+
+
     "combat_shotgun_tactical": {
       "id": "combat_shotgun_tactical",
       "name": "Fucile a Pompa da Combattimento",
@@ -128,15 +132,53 @@
       "rarity": "LEGENDARY",
       "slot": "main_hand",
       "weight": 1.5,
-      "value": 1200,
+      "value": 2000,
+      "stackable": false,
+      "durability": 70,
+      "maxDurability": 70,
+      "damage": { "min": 18, "max": 25, "bonus": 8 },
+      "effects": [
+        { "type": "bleeding_edge", "chance": 0.7 },
+        { "type": "armor_piercing", "amount": 0.8 }
+      ]
+    },
+    "power_fist_industrial": {
+      "id": "power_fist_industrial",
+      "name": "Pugno Potenziato Industriale",
+      "nameShort": "Pugno Potenziato",
+      "description": "Un guanto industriale modificato con un sistema pneumatico per rilasciare colpi dalla forza devastante. Lento ma potente.",
+      "type": "weapon",
+      "rarity": "RARE",
+      "slot": "main_hand",
+      "weight": 3.0,
+      "value": 500,
       "stackable": false,
       "durability": 80,
       "maxDurability": 80,
-      "damage": { "min": 12, "max": 25, "bonus": 8 },
+      "damage": { "min": 10, "max": 28, "bonus": 3 },
       "effects": [
-        { "type": "armor_ignore", "chance": 0.3 },
-        { "type": "bleeding", "chance": 0.4, "duration": 3 }
+        { "type": "stun", "chance": 0.25 },
+        { "type": "crushing_blow", "armorDamage": 10 }
+      ]
+    },
+    "crossbow_repeater": {
+      "id": "crossbow_repeater",
+      "name": "Balestra a Ripetizione",
+      "nameShort": "Balestra Rip.",
+      "description": "Una balestra modificata con un caricatore a più dardi. Silenziosa e letale, permette di sparare più colpi in rapida successione.",
+      "type": "weapon",
+      "rarity": "UNCOMMON",
+      "slot": "main_hand",
+      "weight": 2.8,
+      "value": 350,
+      "stackable": false,
+      "durability": 60,
+      "maxDurability": 60,
+      "damage": { "min": 8, "max": 15, "bonus": 2 },
+      "effects": [
+        { "type": "silent_killer", "stealthBonus": 20 },
+        { "type": "rapid_fire", "shots": 3 }
       ]
     }
   }
-} 
+}

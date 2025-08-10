@@ -664,6 +664,30 @@ func update_commands_panel():
 
 # ═══ UTILITY INVENTARIO ═══
 
+## Colori per categoria oggetti
+const CATEGORY_COLORS = {
+	"weapon": "#ff6b6b",        # Rosso per armi
+	"armor": "#4ecdc4",         # Ciano per armature
+	"consumable": "#45b7d1",   # Blu per consumabili
+	"unique": "#f39c12",       # Arancione per oggetti unici
+	"crafting_material": "#95a5a6", # Grigio per materiali
+	"quest": "#9b59b6",        # Viola per oggetti missione
+	"ammo": "#e67e22",         # Arancione scuro per munizioni
+	"tool": "#2ecc71"          # Verde per strumenti
+}
+
+func get_category_color(item_id: String) -> String:
+	"""Restituisce il colore per la categoria dell'oggetto"""
+	if not DataManager:
+		return "#00FF40"  # Verde di default
+	
+	var item_data = DataManager.get_item_data(item_id)
+	if not item_data:
+		return "#00FF40"  # Verde di default
+	
+	var category = item_data.get("category", "unknown")
+	return CATEGORY_COLORS.get(category, "#00FF40")  # Verde di default se categoria sconosciuta
+
 func clear_inventory_display():
 	"""Pulisce la lista inventario per aggiornamento"""
 	for child in inventory_list.get_children():
@@ -716,13 +740,16 @@ func add_inventory_item_to_display_with_selection(item: Dictionary, is_selected:
 		else:
 			base_text = "%s %s" % [number_marker, item_name]
 	
-	# Applica indicatore selezione con evidenziazione forte
+	# Ottieni colore per categoria
+	var category_color = get_category_color(item.id)
+	
+	# Applica indicatore selezione con evidenziazione forte e colore categoria
 	if is_selected:
-		# Oggetto selezionato: sfondo verde, testo nero, bordato
-		item_label.text = "[bgcolor=#00FF40][color=#000000]> %s[/color][/bgcolor]" % base_text
+		# Oggetto selezionato: sfondo del colore categoria, testo nero, bordato
+		item_label.text = "[bgcolor=%s][color=#000000]> %s[/color][/bgcolor]" % [category_color, base_text]
 	else:
-		# Oggetto non selezionato: testo normale verde
-		item_label.text = "[color=#00FF40]  %s[/color]" % base_text
+		# Oggetto non selezionato: testo del colore categoria
+		item_label.text = "[color=%s]  %s[/color]" % [category_color, base_text]
 	
 	inventory_list.add_child(item_label)
 

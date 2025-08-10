@@ -88,6 +88,9 @@ var active_statuses: Array[Status] = []
 # INVENTARIO E EQUIPAGGIAMENTO
 # ========================================
 
+## Limite massimo di oggetti trasportabili
+const MAX_INVENTORY_SLOTS: int = 10
+
 ## Inventario del giocatore
 ## Struttura: Array di Dictionary { "id": String, "quantity": int, "instance_data": Dictionary }
 var inventory: Array[Dictionary] = []
@@ -142,24 +145,38 @@ func _initialize_new_character() -> void:
 	print("   ✅ Inventario inizializzato con %d slot occupati" % inventory.size())
 
 ## Aggiunge oggetti di partenza per il nuovo sistema di gioco
+## Set fisso: 2 bevande, 2 cibi, 2 cure, 1 arma base, 1 armatura base
 func _add_starting_items() -> void:
 	# Solo se DataManager è disponibile, aggiungi alcuni oggetti base
 	if not DataManager:
 		print("   ⚠️ DataManager non disponibile - inventario vuoto")
 		return
 	
-	# Oggetti base per iniziare il gameplay (set fisso per The Survivor's Pack)
+	# Set fisso di oggetti iniziali (8 oggetti totali, 2 slot liberi)
 	var starting_items = [
+		# 2 oggetti da bere
+		{"item_id": "water_purified", "quantity": 1},
+		{"item_id": "water_purified", "quantity": 1},
+		# 2 oggetti da mangiare
+		{"item_id": "ration_pack", "quantity": 1},
+		{"item_id": "ration_pack", "quantity": 1},
+		# 2 oggetti di cura
+		{"item_id": "bandages_clean", "quantity": 1},
+		{"item_id": "bandages_clean", "quantity": 1},
+		# 1 arma base
 		{"item_id": "weapon_knife_rusty", "quantity": 1},
-		{"item_id": "ration_pack", "quantity": 3},
-		{"item_id": "water_purified", "quantity": 2}
+		# 1 armatura base
+		{"item_id": "armor_rags", "quantity": 1}
 	]
 	
+	print("   📦 Aggiunta set iniziale di oggetti...")
 	for starting_item in starting_items:
 		if DataManager.has_item(starting_item.item_id):
 			add_item(starting_item.item_id, starting_item.quantity)
 		else:
 			print("   ⚠️ Oggetto di partenza non trovato: %s" % starting_item.item_id)
+	
+	print("   ✅ Set iniziale completato: %d/%d slot occupati" % [inventory.size(), MAX_INVENTORY_SLOTS])
 
 # ========================================
 # GENERAZIONE CASUALE PERSONAGGIO (M3.T3.5)
@@ -268,7 +285,12 @@ func add_item(item_id: String, quantity: int) -> bool:
 		inventory[existing_slot].quantity += quantity
 		print("📦 Aggiunto %dx %s (stack esistente, totale: %d)" % [quantity, item_id, inventory[existing_slot].quantity])
 	else:
-		# NUOVO OGGETTO O NON STACKABLE: crea nuovo slot
+		# NUOVO OGGETTO O NON STACKABLE: verifica limite inventario
+		if inventory.size() >= MAX_INVENTORY_SLOTS:
+			print("❌ PlayerManager: Inventario pieno! Limite massimo: %d oggetti" % MAX_INVENTORY_SLOTS)
+			return false
+		
+		# Crea nuovo slot
 		var instance_data = {}
 		
 		# Se l'oggetto ha max_portions, inizializza le porzioni
@@ -282,7 +304,7 @@ func add_item(item_id: String, quantity: int) -> bool:
 			"instance_data": instance_data
 		}
 		inventory.append(new_slot)
-		print("📦 Aggiunto %dx %s (nuovo slot)" % [quantity, item_id])
+		print("📦 Aggiunto %dx %s (nuovo slot, %d/%d slot occupati)" % [quantity, item_id, inventory.size(), MAX_INVENTORY_SLOTS])
 	
 	# Emetti segnale di cambiamento
 	inventory_changed.emit()

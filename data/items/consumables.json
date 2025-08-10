@@ -117,21 +117,7 @@
         { "type": "poison_chance", "chance": 0.15 }
       ]
     },
-    "energy_drink_nuclear": {
-      "id": "energy_drink_nuclear",
-      "name": "Energy Drink \"Nuclear\"",
-      "nameShort": "Nuclear Drink",
-      "description": "Una lattina dai colori vivaci e un logo radioattivo. Promette un'esplosione di energia. Ha un sapore chimico e fa brillare leggermente le urine.",
-      "type": "consumable",
-      "rarity": "COMMON",
-      "weight": 0.4,
-      "value": 30,
-      "stackable": true,
-      "effects": [
-        { "type": "restore_stamina", "amount": 50 },
-        { "type": "add_radiation", "amount": 5 }
-      ]
-    },
+
     "bandages_dirty": {
       "id": "bandages_dirty",
       "name": "Bende Sporche",
@@ -206,20 +192,7 @@
         { "type": "cure", "status": "poison" }
       ]
     },
-    "herbal_antidote_strong": {
-      "id": "herbal_antidote_strong",
-      "name": "Antidoto Erbale Forte",
-      "nameShort": "Antidoto Forte",
-      "description": "Un potente antidoto creato con erbe rare e reagenti chimici. Efficace contro i veleni più letali delle terre desolate.",
-      "type": "consumable",
-      "rarity": "UNCOMMON",
-      "weight": 0.1,
-      "value": 80,
-      "stackable": true,
-      "effects": [
-        { "type": "cure", "status": "strong_poison" }
-      ]
-    },
+
     "rad_away_crude": {
       "id": "rad_away_crude",
       "name": "Rad-Away Rudimentale",
@@ -235,36 +208,120 @@
         { "type": "debuff", "stat": "strength", "amount": -1, "duration": 60 }
       ]
     },
-    "radaway_advanced": {
-      "id": "radaway_advanced",
-      "name": "RadAway Avanzato",
-      "nameShort": "RadAway Avanzato",
-      "description": "Una versione potenziata del RadAway, in grado di eliminare anche i livelli di radiazione più pericolosi e di offrire una resistenza temporanea.",
+
+
+    "military_stimpak": {
+      "id": "military_stimpak",
+      "name": "Stimpak Militare",
+      "nameShort": "Stimpak Mil.",
+      "description": "Una versione militare dello Stimpak standard. Guarisce più velocemente e fornisce resistenza temporanea al dolore.",
       "type": "consumable",
       "rarity": "RARE",
       "weight": 0.3,
       "value": 200,
       "stackable": true,
       "effects": [
-        { "type": "remove_radiation", "amount": 500 },
-        { "type": "radiation_resistance", "amount": 0.5, "duration": 300 }
+        { "type": "heal", "amount": 60 },
+        { "type": "pain_resistance", "amount": 0.3, "duration": 300 },
+        { "type": "bleeding_stop", "chance": 1.0 }
+      ]
+    },
+    "radaway_advanced": {
+      "id": "radaway_advanced",
+      "name": "RadAway Avanzato",
+      "nameShort": "RadAway Adv.",
+      "description": "Una versione potenziata del RadAway che rimuove le radiazioni più efficacemente e fornisce resistenza temporanea.",
+      "type": "consumable",
+      "rarity": "RARE",
+      "weight": 0.2,
+      "value": 180,
+      "stackable": true,
+      "effects": [
+        { "type": "radiation_heal", "amount": 80 },
+        { "type": "radiation_resistance", "amount": 0.5, "duration": 600 }
       ]
     },
     "combat_enhancer_v2": {
       "id": "combat_enhancer_v2",
       "name": "Potenziatore da Combattimento V2",
-      "nameShort": "Potenziatore V2",
-      "description": "Un cocktail chimico pre-guerra che affina i riflessi, aumenta la forza e la resistenza al dolore per un breve periodo. Crea dipendenza.",
+      "nameShort": "Enhancer V2",
+      "description": "Un cocktail chimico avanzato che migliora drasticamente le capacità di combattimento. Effetti collaterali garantiti.",
       "type": "consumable",
       "rarity": "EPIC",
       "weight": 0.1,
-      "value": 350,
+      "value": 400,
       "stackable": true,
       "effects": [
-        { "type": "stat_boost", "stats": ["strength", "agility"], "amount": 3, "duration": 60 },
-        { "type": "pain_resistance", "amount": 0.5, "duration": 60 },
-        { "type": "addiction_risk", "chance": 0.15 }
+        { "type": "stat_boost", "stats": ["strength", "agility", "perception"], "amount": 5, "duration": 180 },
+        { "type": "damage_boost", "amount": 0.3, "duration": 180 },
+        { "type": "addiction_risk", "chance": 0.25 },
+        { "type": "crash_effect", "delay": 180, "duration": 60 }
+      ]
+    },
+    "purified_water_large": {
+      "id": "purified_water_large",
+      "name": "Bottiglia d'Acqua Purificata Grande",
+      "nameShort": "Acqua Pura L",
+      "description": "Una grande bottiglia di acqua completamente purificata. Disseta completamente e fornisce un leggero bonus alla salute.",
+      "type": "consumable",
+      "rarity": "UNCOMMON",
+      "weight": 1.0,
+      "value": 80,
+      "stackable": true,
+      "effects": [
+        { "type": "thirst_heal", "amount": 100 },
+        { "type": "health_regen", "amount": 2, "duration": 300 },
+        { "type": "radiation_heal", "amount": 5 }
+      ]
+    },
+    "mre_military_pack": {
+      "id": "mre_military_pack",
+      "name": "Pacco Razione MRE Militare",
+      "nameShort": "MRE Pack",
+      "description": "Un pacco razione militare completo. Nutriente e sostanzioso, fornisce energia a lungo termine.",
+      "type": "consumable",
+      "rarity": "UNCOMMON",
+      "weight": 0.8,
+      "value": 120,
+      "stackable": true,
+      "effects": [
+        { "type": "hunger_heal", "amount": 90 },
+        { "type": "stamina_boost", "amount": 20, "duration": 600 },
+        { "type": "morale_boost", "amount": 10, "duration": 300 }
+      ]
+    },
+    "herbal_antidote_strong": {
+      "id": "herbal_antidote_strong",
+      "name": "Antidoto Erbale Forte",
+      "nameShort": "Antidoto Forte",
+      "description": "Un antidoto preparato con erbe rare della Wasteland. Cura avvelenamenti gravi e fornisce immunità temporanea.",
+      "type": "consumable",
+      "rarity": "RARE",
+      "weight": 0.2,
+      "value": 250,
+      "stackable": true,
+      "effects": [
+        { "type": "poison_cure", "amount": 100 },
+        { "type": "poison_immunity", "duration": 900 },
+        { "type": "health_regen", "amount": 1, "duration": 600 }
+      ]
+    },
+    "energy_drink_nuclear": {
+      "id": "energy_drink_nuclear",
+      "name": "Energy Drink 'Nuclear'",
+      "nameShort": "Nuclear Drink",
+      "description": "Una bevanda energetica pre-guerra con un gusto esplosivo. Fornisce energia istantanea ma con un prezzo radioattivo.",
+      "type": "consumable",
+      "rarity": "UNCOMMON",
+      "weight": 0.3,
+      "value": 90,
+      "stackable": true,
+      "effects": [
+        { "type": "stamina_restore", "amount": 100 },
+        { "type": "speed_boost", "amount": 0.2, "duration": 300 },
+        { "type": "radiation_exposure", "amount": 10 },
+        { "type": "jittery_effect", "duration": 180 }
       ]
     }
   }
-} 
+}

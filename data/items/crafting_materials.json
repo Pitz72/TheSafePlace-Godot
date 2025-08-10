@@ -44,17 +44,7 @@
       "value": 3,
       "stackable": true
     },
-    "military_grade_electronics": {
-      "id": "military_grade_electronics",
-      "name": "Elettronica di Grado Militare",
-      "nameShort": "Elettronica Mil.",
-      "description": "Componenti elettronici schermati e robusti, recuperati da equipaggiamento militare. Essenziali per il crafting di alto livello.",
-      "type": "crafting_material",
-      "rarity": "RARE",
-      "weight": 0.5,
-      "value": 120,
-      "stackable": true
-    },
+
     "fusion_core_depleted": {
       "id": "fusion_core_depleted",
       "name": "Nucleo a Fusione Esaurito",
@@ -88,17 +78,7 @@
       "value": 1000,
       "stackable": true
     },
-    "prewar_medical_kit": {
-      "id": "prewar_medical_kit",
-      "name": "Kit Medico Pre-Guerra",
-      "nameShort": "Kit Medico Pre-Guerra",
-      "description": "Una borsa medica completa di strumenti chirurgici, farmaci sigillati e manuali. Una fonte inestimabile per creare cure avanzate.",
-      "type": "crafting_material",
-      "rarity": "UNCOMMON",
-      "weight": 1.5,
-      "value": 220,
-      "stackable": false
-    },
+
     "perfectly_preserved_plant": {
       "id": "perfectly_preserved_plant",
       "name": "Pianta Perfettamente Conservata",
@@ -109,6 +89,61 @@
       "weight": 0.2,
       "value": 450,
       "stackable": true
+    },
+    "military_grade_electronics": {
+      "id": "military_grade_electronics",
+      "name": "Elettronica di Grado Militare",
+      "nameShort": "Elettronica Mil.",
+      "description": "Componenti elettronici militari di alta qualità. Resistenti alle radiazioni e perfetti per costruire dispositivi avanzati.",
+      "type": "crafting_material",
+      "rarity": "RARE",
+      "weight": 0.5,
+      "value": 300,
+      "stackable": true
+    },
+    "depleted_fusion_core": {
+      "id": "depleted_fusion_core",
+      "name": "Nucleo a Fusione Esaurito",
+      "nameShort": "Nucleo Fusione",
+      "description": "Un nucleo a fusione esaurito ma ancora utilizzabile. Contiene tracce di energia e materiali rari per il crafting avanzato.",
+      "type": "crafting_material",
+      "rarity": "EPIC",
+      "weight": 2.0,
+      "value": 800,
+      "stackable": true
+    },
+    "hyperactive_mutant_gland": {
+      "id": "hyperactive_mutant_gland",
+      "name": "Ghiandola Mutante Iperattiva",
+      "nameShort": "Ghiandola Mut.",
+      "description": "Una ghiandola estratta da un mutante particolarmente aggressivo. Secerne sostanze chimiche uniche per potenziamenti estremi.",
+      "type": "crafting_material",
+      "rarity": "RARE",
+      "weight": 0.3,
+      "value": 400,
+      "stackable": true
+    },
+    "alien_alloy_unknown": {
+      "id": "alien_alloy_unknown",
+      "name": "Lega Sconosciuta",
+      "nameShort": "Lega Aliena",
+      "description": "Un metallo di origine sconosciuta con proprietà fisiche impossibili. Leggero come l'alluminio ma resistente come l'acciaio.",
+      "type": "crafting_material",
+      "rarity": "LEGENDARY",
+      "weight": 0.8,
+      "value": 1200,
+      "stackable": true
+    },
+    "prewar_medical_kit": {
+      "id": "prewar_medical_kit",
+      "name": "Kit Medico Pre-Guerra",
+      "nameShort": "Kit Medico PG",
+      "description": "Un kit medico militare sigillato dell'era pre-guerra. Contiene strumenti chirurgici e farmaci di qualità superiore.",
+      "type": "crafting_material",
+      "rarity": "RARE",
+      "weight": 1.5,
+      "value": 500,
+      "stackable": false
     }
   }
-} 
+}
