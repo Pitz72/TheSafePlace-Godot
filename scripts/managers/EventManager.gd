@@ -21,14 +21,14 @@ var biome_event_pools: Dictionary = {}
 var current_event: Dictionary = {}
 var current_event_id: String = ""
 
-# Configurazione probabilità eventi per bioma
+# Configurazione probabilità eventi per bioma (v0.3.5 - Aumentate per migliore gameplay)
 var biome_event_chances: Dictionary = {
-	"pianure": 0.15,
-	"foreste": 0.20,
-	"villaggi": 0.25,
-	"citta": 0.30,
-	"fiumi": 0.18,
-	"montagne": 0.12
+	"pianure": 0.35,     # Era 0.15 - Aumentato per più eventi
+	"foreste": 0.45,     # Era 0.20 - Foreste più pericolose
+	"villaggi": 0.55,    # Era 0.25 - Villaggi più interessanti
+	"citta": 0.65,       # Era 0.30 - Città più dinamiche
+	"fiumi": 0.40,       # Era 0.18 - Attraversamenti più avventurosi
+	"montagne": 0.30     # Era 0.12 - Montagne più sfidanti
 }
 
 func _ready():
@@ -157,7 +157,7 @@ func _normalize_choice_schema(choice: Dictionary):
 func _convert_legacy_consequence(legacy_consequence: Dictionary) -> Dictionary:
 	var modern_consequence = {}
 	
-	match legacy_consequence.get("type", ""):
+	match legacy_consequence.get("consequence_type", ""):
 		"damage":
 			modern_consequence["hp_change"] = -legacy_consequence.get("amount", 0)
 		"heal":

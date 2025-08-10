@@ -137,7 +137,7 @@ var target_camera_position: Vector2 = Vector2.ZERO
 # ============================================================================
 
 func _ready():
-	print("🌍 Inizializzazione World v2.1 - Sistema Avanzato + Camera Fix")
+	# Debug rimosso per ridurre log
 	
 	# 1. Configura TileMap
 	_setup_tilemap()
@@ -160,27 +160,30 @@ func _ready():
 	# 7. CONNETTI SEGNALE A GAMEUI PER AGGIORNAMENTI INFO
 	_connect_to_gameui()
 	
-	print("✅ World v2.1 pronto - Sistema completo con camera fix e log movimento!")
+	# Debug rimosso per ridurre log
 
 func _setup_tilemap():
 	"""Configura il TileMap con il TileSet aggiornato"""
 	if ascii_tilemap == null:
-		print("❌ ERRORE: Nodo AsciiTileMap non trovato!")
+		# Debug rimosso per ridurre log
+		pass
 		return
 	
 	# Carica TileSet con nuova palette
 	var tileset = load(TILESET_PATH)
 	if tileset == null:
-		print("❌ ERRORE: TileSet non trovato in " + TILESET_PATH)
+		# Debug rimosso per ridurre log
+		pass
 		return
 	
 	ascii_tilemap.tile_set = tileset
-	print("✅ TileSet con nuova palette caricato")
+	# Debug rimosso per ridurre log
 
 func _setup_camera():
 	"""Configura camera con zoom ottimizzato e limiti automatici"""
 	if camera == null:
-		print("❌ ERRORE: Nodo Camera2D non trovato!")
+		# Debug rimosso per ridurre log
+		pass
 		return
 	
 	# APPROCCIO 1: Zoom ottimizzato per player più visibile
@@ -203,7 +206,7 @@ func _setup_camera():
 	camera.position = world_pos
 	camera.force_update_scroll()
 	
-	print("✅ Camera configurata - Zoom 1.065x (Single Source of Truth), Limiti: %dx%d pixel" % [map_width_pixels, map_height_pixels])
+	# Debug rimosso per ridurre log
 
 # ============================================================================
 # PHYSICS PROCESS - CAMERA SMOOTH UPDATE (FIX SALTELLO)
@@ -227,12 +230,13 @@ func _physics_process(delta):
 
 func _load_map():
 	"""Carica mappa ASCII e converte in TileMap + nodi speciali"""
-	print("📁 Caricamento mappa avanzato da: " + MAP_FILE_PATH)
+	# Debug rimosso per ridurre log
 	
 	# Carica dati raw
 	var file = FileAccess.open(MAP_FILE_PATH, FileAccess.READ)
 	if file == null:
-		print("❌ ERRORE: Impossibile aprire file mappa!")
+		# Debug rimosso per ridurre log
+		pass
 		return
 	
 	map_data.clear()
@@ -245,16 +249,19 @@ func _load_map():
 	if map_data.size() > 0:
 		map_height = map_data.size()
 		map_width = map_data[0].length()
-		print("✅ Mappa caricata: %dx%d" % [map_width, map_height])
+		# Debug rimosso per ridurre log
 		
 		# Converti mappa in tiles e nodi speciali
 		_convert_map_to_world()
 	else:
-		print("❌ ERRORE: File mappa vuoto!")
+		# Debug rimosso per ridurre log
+		pass
+		pass
+		pass
 
 func _convert_map_to_world():
 	"""Converte mappa ASCII in TileMap con tiles per S/E"""
-	print("🔄 Conversione avanzata mappa → World...")
+	# Debug rimosso per ridurre log
 	
 	var tiles_placed = 0
 	var start_found = false
@@ -269,18 +276,19 @@ func _convert_map_to_world():
 				if not start_found:
 					player_pos = Vector2i(x, y)
 					start_found = true
-					print("🎯 Start trovato: %s" % str(player_pos))
+					# Debug rimosso per ridurre log
 			
 			# TUTTI I CARATTERI (inclusi S/E) DIVENTANO TILES
 			var source_id = char_to_tile_id.get(char, 0)  # Default: pianura
 			ascii_tilemap.set_cell(0, Vector2i(x, y), source_id, Vector2i(0, 0))
 			tiles_placed += 1
 	
-	print("✅ Conversione completata:")
-	print("   • Tiles totali: %d (inclusi S/E)" % tiles_placed)
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
 	
 	if not start_found:
-		print("⚠️  Start 'S' non trovato, usando (0,0)")
+		# Debug rimosso per ridurre log
+		pass
 		player_pos = Vector2i(0, 0)
 
 # ============================================================================
@@ -290,7 +298,8 @@ func _convert_map_to_world():
 func _update_player_position():
 	"""Aggiorna posizione player sprite"""
 	if player_character == null:
-		print("❌ ERRORE: PlayerCharacter non trovato!")
+		# Debug rimosso per ridurre log
+		pass
 		return
 	
 	# Posiziona player in coordinate mondo (centrato nella tile)
@@ -302,9 +311,9 @@ func _update_player_position():
 		var texture_size = player_character.texture.get_size()
 		var scale_factor = Vector2(TILE_SIZE / texture_size.x, TILE_SIZE / texture_size.y)
 		player_character.scale = scale_factor
-		print("🔧 Sprite ridimensionato: %s → scale %s" % [str(texture_size), str(scale_factor)])
+		# Debug rimosso per ridurre log
 	
-	print("🎯 Player posizionato: %s" % str(world_pos))
+	# Debug rimosso per ridurre log
 	
 	# Aggiorna target camera (non più chiamata diretta)
 	_update_camera_target()
@@ -323,15 +332,16 @@ func _update_camera_target():
 func _connect_input_manager():
 	"""Configura connessioni ai segnali InputManager per movimento player"""
 	if not InputManager:
-		print("❌ ERRORE: InputManager non disponibile!")
+		# Debug rimosso per ridurre log
+		pass
 		return
 	
 	# Connetti segnale movimento mappa
 	if not InputManager.map_move.is_connected(_on_map_move):
 		InputManager.map_move.connect(_on_map_move)
-		print("✅ World: Connesso a InputManager.map_move")
+		# Debug rimosso per ridurre log
 	
-	print("🎮 World: Gestione input delegata a InputManager")
+	# Debug rimosso per ridurre log
 
 ## Connette il segnale player_moved al GameUI per aggiornamenti info real-time
 func _connect_to_gameui():
@@ -345,9 +355,10 @@ func _connect_to_gameui():
 	if gameui and gameui.has_method("_on_player_moved"):
 		if not player_moved.is_connected(gameui._on_player_moved):
 			player_moved.connect(gameui._on_player_moved)
-			print("✅ World: Connesso segnale player_moved a GameUI")
+			# Debug rimosso per ridurre log
 	else:
-		print("⚠️ World: GameUI non trovato per connessione segnale")
+		# Debug rimosso per ridurre log
+		pass
 
 ## Callback per movimento player tramite InputManager
 ## @param direction: Vector2i direzione movimento (-1,0,1 per x/y)
@@ -357,7 +368,7 @@ func _on_map_move(direction: Vector2i):
 	# SISTEMA PENALITÀ MOVIMENTO
 	if movement_penalty > 0:
 		movement_penalty -= 1
-		print("⏳ Penalità movimento: resta %d turni" % movement_penalty)
+		# Debug rimosso per ridurre log
 		if PlayerManager:
 			PlayerManager.narrative_log_generated.emit("Penalità movimento: resta %d turni" % movement_penalty)
 			narrative_message_sent.emit()
@@ -374,7 +385,7 @@ func _on_map_move(direction: Vector2i):
 			movement_penalty = 1  # Prossimo turno sarà saltato
 			_handle_river_crossing()
 			narrative_message_sent.emit()
-			print("🌊 Attraversamento fiume - penalità 1 turno applicata")
+			# Debug rimosso per ridurre log
 		
 		# Applica movimento
 		player_pos = new_position
@@ -396,7 +407,8 @@ func _on_map_move(direction: Vector2i):
 
 		# Log movimento (solo per posizioni significative)
 		if new_position.x % 5 == 0 or new_position.y % 5 == 0:
-			print("🚶 Player: %s (%s)" % [str(new_position), destination_char])
+			# Debug rimosso per ridurre log
+			pass
 	else:
 		# Logica per movimento bloccato
 		var destination_char = _get_char_at_position(new_position)
@@ -412,7 +424,7 @@ func _on_map_move(direction: Vector2i):
 			if PlayerManager:
 				PlayerManager.narrative_log_generated.emit("Movimento bloccato verso %s: ostacolo invalicabile" % direction_name)
 
-		print("🚫 Movimento bloccato verso: %s" % str(new_position))
+		# Debug rimosso per ridurre log
 
 ## Aggiunge log di movimento al GameUI
 func _add_movement_log(message: String):
@@ -426,7 +438,8 @@ func _add_movement_log(message: String):
 	if gameui and gameui.has_method("add_world_log"):
 		gameui.add_world_log(message)
 	else:
-		print("⚠️ GameUI non trovato per log movimento: %s" % message)
+		# Debug rimosso per ridurre log
+		pass
 
 func _is_valid_move(pos: Vector2i) -> bool:
 	"""Valida movimento con controlli confini e collisioni"""
@@ -485,14 +498,7 @@ func get_current_terrain_name() -> String:
 # DEBUG E INFORMAZIONI
 # ============================================================================
 
-func _on_debug_requested():
-	"""Stampa informazioni debug complete"""
-	print("=== WORLD v2.1 DEBUG ===")
-	print("Mappa: %dx%d" % [map_width, map_height])
-	print("Player: %s" % str(player_pos))
-	print("Char sotto player: %s" % _get_char_at_position(player_pos))
-	print("Terreno corrente: %s" % get_current_terrain_name())
-	print("Penalità movimento: %d" % movement_penalty)
-	print("Camera: %s (zoom: %s)" % [str(camera.position), str(camera.zoom)])
-	print("Target Camera: %s" % str(target_camera_position))
-	print("========================")
+func debug_world_state():
+	"""Debug completo stato World v2.1 - Debug rimosso per ridurre log"""
+	# Debug rimosso per ridurre log
+	pass

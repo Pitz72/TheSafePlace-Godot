@@ -12,17 +12,17 @@ extends CanvasLayer
 # COSTANTI
 # ========================================
 
-# Dizionario per localizzazione tipi di oggetto
-const ITEM_TYPE_LOC = {
-	"weapon": "Arma",
-	"armor": "Armatura", 
-	"consumable": "Consumabile",
-	"tool": "Strumento",
-	"accessory": "Accessorio",
-	"quest": "Oggetto Missione",
-	"crafting_material": "Materiale",
-	"ammo": "Munizioni",
-	"unique": "Unico"
+# Dizionario per localizzazione categorie oggetto (LINGUAGGIO COMUNE)
+const CATEGORY_LOC = {
+	"WEAPON": "Arma",
+	"ARMOR": "Armatura", 
+	"CONSUMABLE": "Consumabile",
+	"TOOL": "Strumento",
+	"ACCESSORY": "Accessorio",
+	"QUEST": "Oggetto Missione",
+	"CRAFTING_MATERIAL": "Materiale",
+	"AMMO": "Munizioni",
+	"UNIQUE": "Unico"
 }
 
 # ========================================
@@ -70,19 +70,19 @@ var _available_actions: Array[String] = []
 ## Mostra i dettagli di un oggetto nell'inventario e attiva il popup
 ## @param item: Dictionary completo dall'inventario PlayerManager (id, quantity, instance_data)
 func show_item_details(item: Dictionary) -> void:
-	print("🪟 ItemInteractionPopup: Mostrando dettagli per oggetto %s" % item.get("id", "sconosciuto"))
+	# Debug rimosso per ridurre log
 	
 	# Salva riferimento oggetto corrente
 	_current_item = item
 	
 	# Ottieni dati statici dall'oggetto
 	if not DataManager:
-		print("❌ ItemInteractionPopup: DataManager non disponibile")
+		# Debug rimosso per ridurre log
 		return
 	
 	_current_item_data = DataManager.get_item_data(item.id)
 	if _current_item_data.is_empty():
-		print("❌ ItemInteractionPopup: Dati oggetto non trovati per ID: %s" % item.id)
+		# Debug rimosso per ridurre log
 		return
 	
 	# Popola le informazioni nell'interfaccia
@@ -93,7 +93,7 @@ func show_item_details(item: Dictionary) -> void:
 	
 	# Mostra il popup
 	self.show()
-	print("✅ ItemInteractionPopup: Popup attivato per %s" % _current_item_data.get("name", "oggetto"))
+	# Debug rimosso per ridurre log
 
 # ========================================
 # FUNZIONI HELPER PRIVATE
@@ -112,26 +112,26 @@ func _populate_item_info() -> void:
 	# Popola griglia statistiche (implementazione temporanea - sarà rifattorizzata nel prossimo task)
 	_populate_stats_grid()
 	
-	print("📝 ItemInteractionPopup: Informazioni popolate per %s" % item_name)
+	# Debug rimosso per ridurre log
 
 ## Costruisce il testo delle statistiche basato sul tipo di oggetto
 func _build_stats_text() -> String:
 	var stats_parts: Array[String] = []
 	
 	# Informazioni base
-	var item_type = _current_item_data.get("type", "unknown")
+	var category = _current_item_data.get("category", "UNKNOWN")
 	var rarity = _current_item_data.get("rarity", "COMMON")
 	var weight = _current_item_data.get("weight", 0.0)
 	var value = _current_item_data.get("value", 0)
 	
-	# Localizzazione tipo oggetto  
-	var localized_type = ITEM_TYPE_LOC.get(item_type, item_type.capitalize())
+	# Localizzazione categoria oggetto  
+	var localized_category = CATEGORY_LOC.get(category, category.capitalize())
 	
 	# Localizzazione rarità tramite DataManager
 	var rarity_data = DataManager.get_rarity_data(rarity)
 	var localized_rarity = rarity_data.get("name", rarity.capitalize()) if rarity_data else rarity.capitalize()
 	
-	stats_parts.append("Tipo: %s" % localized_type)
+	stats_parts.append("Categoria: %s" % localized_category)
 	stats_parts.append("Rarità: %s" % localized_rarity)
 	stats_parts.append("Peso: %.1f kg" % weight)
 	stats_parts.append("Valore: %d caps" % value)
@@ -146,32 +146,36 @@ func _build_stats_text() -> String:
 		var max_portions = _current_item_data.get("max_portions", current_portions)
 		stats_parts.append("Porzioni: %d/%d" % [current_portions, max_portions])
 	
-	# Statistiche specifiche per tipo
-	match item_type:
-		"weapon":
-			var damage_min = _current_item_data.get("damage_min", 0)
-			var damage_max = _current_item_data.get("damage_max", 0)
+	# Statistiche specifiche per categoria
+	match category:
+		"WEAPON":
+			var properties = _current_item_data.get("properties", {})
+			var damage_data = properties.get("damage", {})
+			var damage_min = damage_data.get("min", 0)
+			var damage_max = damage_data.get("max", 0)
 			if damage_min > 0 or damage_max > 0:
 				stats_parts.append("Danno: %d-%d" % [damage_min, damage_max])
 			
-			var durability = _current_item_data.get("durability", 0)
-			var max_durability = _current_item_data.get("max_durability", 0)
+			var durability = properties.get("durability", 0)
+			var max_durability = properties.get("maxDurability", 0)
 			if max_durability > 0:
 				stats_parts.append("Durabilità: %d/%d" % [durability, max_durability])
 		
-		"armor":
-			var armor_value = _current_item_data.get("armor", 0)
+		"ARMOR":
+			var properties = _current_item_data.get("properties", {})
+			var armor_value = properties.get("armor", 0)
 			if armor_value > 0:
 				stats_parts.append("Protezione: %d" % armor_value)
 			
-			var durability = _current_item_data.get("durability", 0)
-			var max_durability = _current_item_data.get("max_durability", 0)
+			var durability = properties.get("durability", 0)
+			var max_durability = properties.get("max_durability", 0)
 			if max_durability > 0:
 				stats_parts.append("Durabilità: %d/%d" % [durability, max_durability])
 		
-		"consumable":
+		"CONSUMABLE":
 			# Effetti
-			var effects = _current_item_data.get("effects", [])
+			var properties = _current_item_data.get("properties", {})
+			var effects = properties.get("effects", [])
 			if effects.size() > 0:
 				var effects_text: Array[String] = []
 				for effect in effects:
@@ -196,7 +200,7 @@ func _build_stats_text() -> String:
 
 ## Popola la griglia delle statistiche utilizzando il GridContainer (2 colonne)
 func _populate_stats_grid() -> void:
-	print("📊 ItemInteractionPopup: Popolamento GridContainer con statistiche...")
+	# Debug rimosso per ridurre log
 	
 	# Pulisci griglia esistente
 	for child in stats_grid.get_children():
@@ -221,26 +225,26 @@ func _populate_stats_grid() -> void:
 		value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		stats_grid.add_child(value_label)
 	
-	print("📊 Griglia popolata con %d coppie di statistiche" % stats_pairs.size())
+	# Debug rimosso per ridurre log
 
 ## Costruisce array di coppie chiave-valore per le statistiche
 func _build_stats_pairs() -> Array[Dictionary]:
 	var pairs: Array[Dictionary] = []
 	
 	# Informazioni base
-	var item_type = _current_item_data.get("type", "unknown")
+	var category = _current_item_data.get("category", "UNKNOWN")
 	var rarity = _current_item_data.get("rarity", "COMMON")
 	var weight = _current_item_data.get("weight", 0.0)
 	var value = _current_item_data.get("value", 0)
 	
-	# Localizzazione tipo oggetto
-	var localized_type = ITEM_TYPE_LOC.get(item_type, item_type.capitalize())
+	# Localizzazione categoria oggetto
+	var localized_category = CATEGORY_LOC.get(category, category.capitalize())
 	
 	# Localizzazione rarità tramite DataManager
 	var rarity_data = DataManager.get_rarity_data(rarity)
 	var localized_rarity = rarity_data.get("name", rarity.capitalize()) if rarity_data else rarity.capitalize()
 	
-	pairs.append({"key": "Tipo:", "value": localized_type})
+	pairs.append({"key": "Categoria:", "value": localized_category})
 	pairs.append({"key": "Rarità:", "value": localized_rarity})
 	pairs.append({"key": "Peso:", "value": "%.1f kg" % weight})
 	pairs.append({"key": "Valore:", "value": "%d caps" % value})
@@ -252,36 +256,41 @@ func _build_stats_pairs() -> Array[Dictionary]:
 	# Porzioni se presenti
 	if _current_item.instance_data.has("portions"):
 		var current_portions = _current_item.instance_data.portions
-		var max_portions = _current_item_data.get("max_portions", current_portions)
+		var properties = _current_item_data.get("properties", {})
+		var max_portions = properties.get("max_portions", current_portions)
 		pairs.append({"key": "Porzioni:", "value": "%d/%d" % [current_portions, max_portions]})
 	
-	# Statistiche specifiche per tipo
-	match item_type:
-		"weapon":
-			var damage_min = _current_item_data.get("damage_min", 0)
-			var damage_max = _current_item_data.get("damage_max", 0)
+	# Statistiche specifiche per categoria
+	match category:
+		"WEAPON":
+			var properties = _current_item_data.get("properties", {})
+			var damage_data = properties.get("damage", {})
+			var damage_min = damage_data.get("min", 0)
+			var damage_max = damage_data.get("max", 0)
 			if damage_min > 0 or damage_max > 0:
 				pairs.append({"key": "Danno:", "value": "%d-%d" % [damage_min, damage_max]})
 			
-			var durability = _current_item_data.get("durability", 0)
-			var max_durability = _current_item_data.get("max_durability", 0)
+			var durability = properties.get("durability", 0)
+			var max_durability = properties.get("maxDurability", 0)
 			if max_durability > 0:
 				pairs.append({"key": "Durabilità:", "value": "%d/%d" % [durability, max_durability]})
 		
-		"armor":
-			var armor_value = _current_item_data.get("armor", 0)
+		"ARMOR":
+			var properties = _current_item_data.get("properties", {})
+			var armor_value = properties.get("armor", 0)
 			if armor_value > 0:
 				pairs.append({"key": "Protezione:", "value": "%d" % armor_value})
 			
-			var durability = _current_item_data.get("durability", 0)
-			var max_durability = _current_item_data.get("max_durability", 0)
+			var durability = properties.get("durability", 0)
+			var max_durability = properties.get("maxDurability", 0)
 			if max_durability > 0:
 				pairs.append({"key": "Durabilità:", "value": "%d/%d" % [durability, max_durability]})
 		
-		"consumable":
-			var effects = _current_item_data.get("effects", [])
+		"CONSUMABLE":
+			var properties = _current_item_data.get("properties", {})
+			var effects = properties.get("effects", [])
 			for effect in effects:
-				var effect_type = effect.get("type", "")
+				var effect_type = effect.get("effect_type", "")
 				var amount = effect.get("amount", 0)
 				match effect_type:
 					"heal":
@@ -297,31 +306,31 @@ func _build_stats_pairs() -> Array[Dictionary]:
 
 ## Genera le azioni disponibili dinamicamente in base al tipo di oggetto (sistema Label-based)
 func _generate_action_buttons(item: Dictionary) -> void:
-	print("🔘 ItemInteractionPopup: Generazione azioni Label-based per tipo %s" % _current_item_data.get("type", "unknown"))
+	# Debug rimosso per ridurre log
 	
 	# Reset array azioni disponibili
 	_available_actions.clear()
 	selected_action_index = 0
 	
-	var item_type = _current_item_data.get("type", "unknown")
+	var category = _current_item_data.get("category", "UNKNOWN")
 	
-	# Aggiungi azioni basate sul tipo oggetto
-	match item_type:
-		"consumable":
+	# Aggiungi azioni basate sulla categoria oggetto
+	match category:
+		"CONSUMABLE":
 			_available_actions.append("Usa")
 		
-		"weapon":
+		"WEAPON":
 			_available_actions.append("Equipaggia")
 			_available_actions.append("Ripara")
 		
-		"armor":
+		"ARMOR":
 			_available_actions.append("Equipaggia")
 			_available_actions.append("Ripara")
 		
-		"tool", "accessory":
+		"TOOL", "ACCESSORY":
 			_available_actions.append("Equipaggia")
 		
-		"unique":
+		"UNIQUE":
 			var is_usable = _current_item_data.get("usable", false)
 			if is_usable:
 				_available_actions.append("Usa")
@@ -333,7 +342,7 @@ func _generate_action_buttons(item: Dictionary) -> void:
 	# Aggiorna la visualizzazione delle azioni
 	_update_action_selection()
 	
-	print("🎯 ItemInteractionPopup: %d azioni generate: %s" % [_available_actions.size(), _available_actions])
+	# Debug rimosso per ridurre log
 
 ## Aggiorna la visualizzazione delle azioni con indicatore selezione (effetto negativo come inventario)
 func _update_action_selection() -> void:
@@ -357,7 +366,7 @@ func _update_action_selection() -> void:
 			# Nascondi label non utilizzati
 			action_labels[i].visible = false
 	
-	print("🎯 Selezione aggiornata: [%d] %s" % [selected_action_index, _available_actions[selected_action_index] if selected_action_index < _available_actions.size() else "N/A"])
+	# Debug rimosso per ridurre log
 
 # ========================================
 # CALLBACK AZIONI BOTTONI
@@ -365,70 +374,79 @@ func _update_action_selection() -> void:
 
 ## Callback: Usa oggetto
 func _on_use_pressed() -> void:
-	print("🎯 ItemInteractionPopup: Azione USE per %s" % _current_item.id)
+	# Debug rimosso per ridurre log
 	
 	if PlayerManager:
 		var success = PlayerManager.use_item(_current_item.id, 1)
 		if success:
-			print("✅ Oggetto usato con successo")
+			# Debug rimosso per ridurre log
+			pass
 		else:
-			print("❌ Errore nell'uso dell'oggetto")
+			# Debug rimosso per ridurre log
+			pass
 	else:
-		print("❌ PlayerManager non disponibile")
+		# Debug rimosso per ridurre log
+		pass
 	
 	# Chiudi popup
 	_close_popup()
 
 ## Callback: Equipaggia oggetto
 func _on_equip_pressed() -> void:
-	print("🎯 ItemInteractionPopup: Azione EQUIP per %s" % _current_item.id)
+	# Debug rimosso per ridurre log
 	
 	if PlayerManager:
 		var success = PlayerManager.equip_item(_current_item.id)
 		if success:
-			print("✅ Oggetto equipaggiato con successo")
+			# Debug rimosso per ridurre log
+			pass
 		else:
-			print("❌ Errore nell'equipaggiamento dell'oggetto")
+			# Debug rimosso per ridurre log
+			pass
 	else:
-		print("❌ PlayerManager non disponibile")
+		# Debug rimosso per ridurre log
+		pass
 	
 	# Chiudi popup
 	_close_popup()
 
 ## Callback: Ripara oggetto
 func _on_repair_pressed() -> void:
-	print("🎯 ItemInteractionPopup: Azione REPAIR per %s" % _current_item.id)
+	# Debug rimosso per ridurre log
 	
 	# TODO: Implementare sistema riparazione quando disponibile
-	print("⚠️ Funzionalità riparazione non ancora implementata")
+	# Debug rimosso per ridurre log
 	
 	# Chiudi popup
 	_close_popup()
 
 ## Callback: Scarta oggetto
 func _on_discard_pressed() -> void:
-	print("🎯 ItemInteractionPopup: Azione DISCARD per %s" % _current_item.id)
+	# Debug rimosso per ridurre log
 	
 	if PlayerManager:
 		var success = PlayerManager.remove_item(_current_item.id, 1)
 		if success:
-			print("✅ Oggetto scartato con successo")
+			# Debug rimosso per ridurre log
+			pass
 		else:
-			print("❌ Errore nello scarto dell'oggetto")
+			# Debug rimosso per ridurre log
+			pass
 	else:
-		print("❌ PlayerManager non disponibile")
+		# Debug rimosso per ridurre log
+		pass
 	
 	# Chiudi popup
 	_close_popup()
 
 ## Callback: Chiudi popup
 func _on_close_pressed() -> void:
-	print("🎯 ItemInteractionPopup: Azione CLOSE")
+	# Debug rimosso per ridurre log
 	_close_popup()
 
 ## Helper per chiusura e distruzione popup
 func _close_popup() -> void:
-	print("🪟 ItemInteractionPopup: Chiusura e distruzione popup")
+	# Debug rimosso per ridurre log
 	# Emetti segnale per ripristino stato input
 	popup_closed.emit()
 	self.queue_free()
@@ -470,11 +488,12 @@ func _input(event: InputEvent) -> void:
 ## Esegue l'azione attualmente selezionata
 func _execute_selected_action() -> void:
 	if selected_action_index < 0 or selected_action_index >= _available_actions.size():
-		print("❌ ItemInteractionPopup: Indice azione non valido: %d" % selected_action_index)
+		# Debug rimosso per ridurre log
+		pass
 		return
 	
 	var action_name = _available_actions[selected_action_index]
-	print("🎯 ItemInteractionPopup: Eseguendo azione: %s" % action_name)
+	# Debug rimosso per ridurre log
 	
 	# Mappa azioni a callback
 	match action_name:
@@ -489,4 +508,5 @@ func _execute_selected_action() -> void:
 		"Chiudi":
 			_on_close_pressed()
 		_:
-			print("❌ Azione non riconosciuta: %s" % action_name) 
+			# Debug rimosso per ridurre log
+			pass

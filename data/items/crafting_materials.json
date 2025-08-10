@@ -5,44 +5,56 @@
       "name": "Rottami Metallici",
       "nameShort": "Rottami",
       "description": "Pezzi di metallo assortiti. Utili per riparazioni e per rinforzare equipaggiamento.",
-      "type": "crafting_material",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "metal",
       "rarity": "COMMON",
       "weight": 0.8,
       "value": 5,
-      "stackable": true
+      "stackable": true,
+      "max_stack": 50,
+      "properties": {}
     },
     "electronic_parts": {
       "id": "electronic_parts",
       "name": "Parti Elettroniche",
       "nameShort": "Elettronica",
       "description": "Componenti elettronici recuperati da vecchi dispositivi. Necessari per riparare oggetti tecnologici.",
-      "type": "crafting_material",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "electronic",
       "rarity": "UNCOMMON",
       "weight": 0.2,
       "value": 15,
-      "stackable": true
+      "stackable": true,
+      "max_stack": 30,
+      "properties": {}
     },
     "animal_hide": {
       "id": "animal_hide",
       "name": "Pelle di Animale",
       "nameShort": "Pelle Animale",
       "description": "La pelle scuoiata da un animale. Può essere conciata per creare o riparare armature leggere.",
-      "type": "crafting_material",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "organic",
       "rarity": "COMMON",
       "weight": 1.5,
       "value": 8,
-      "stackable": true
+      "stackable": true,
+      "max_stack": 20,
+      "properties": {}
     },
     "wood_plank": {
       "id": "wood_plank",
       "name": "Asse di Legno",
       "nameShort": "Asse Legno",
       "description": "Un'asse di legno robusta. Utile per costruire rifugi o come arma improvvisata.",
-      "type": "crafting_material",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "organic",
       "rarity": "COMMON",
       "weight": 2.0,
       "value": 3,
-      "stackable": true
+      "stackable": true,
+      "max_stack": 25,
+      "properties": {}
     },
 
     "fusion_core_depleted": {
@@ -50,33 +62,42 @@
       "name": "Nucleo a Fusione Esaurito",
       "nameShort": "Nucleo Fusione",
       "description": "Il nucleo di alimentazione di una vecchia armatura potenziata o di un robot. È esaurito, ma può essere ricaricato o smontato per ottenere componenti rari.",
-      "type": "crafting_material",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "energy",
       "rarity": "EPIC",
       "weight": 2.0,
       "value": 300,
-      "stackable": true
+      "stackable": true,
+      "max_stack": 5,
+      "properties": {}
     },
     "mutant_gland_hyper": {
       "id": "mutant_gland_hyper",
       "name": "Ghiandola Mutante Iperattiva",
       "nameShort": "Ghiandola Mutante",
       "description": "Una ghiandola pulsante recuperata da un mutante particolarmente potente. Contiene un cocktail di sostanze chimiche instabili, utili in alchimia avanzata.",
-      "type": "crafting_material",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "biological",
       "rarity": "RARE",
       "weight": 0.3,
       "value": 180,
-      "stackable": true
+      "stackable": true,
+      "max_stack": 10,
+      "properties": {}
     },
     "unidentified_alien_alloy": {
       "id": "unidentified_alien_alloy",
       "name": "Lega Sconosciuta",
       "nameShort": "Lega Sconosciuta",
       "description": "Un frammento di metallo leggero ma incredibilmente resistente. Non assomiglia a nessun materiale terrestre. Forse parte di un satellite... o qualcos'altro.",
-      "type": "crafting_material",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "exotic",
       "rarity": "LEGENDARY",
       "weight": 1.0,
       "value": 1000,
-      "stackable": true
+      "stackable": true,
+      "max_stack": 3,
+      "properties": {}
     },
 
     "perfectly_preserved_plant": {
@@ -84,66 +105,84 @@
       "name": "Pianta Perfettamente Conservata",
       "nameShort": "Pianta Rara",
       "description": "Un esemplare di una pianta estinta, conservata in un gel speciale. Le sue proprietà biologiche sono uniche e potenti.",
-      "type": "crafting_material",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "biological",
       "rarity": "EPIC",
       "weight": 0.2,
       "value": 450,
-      "stackable": true
+      "stackable": true,
+      "max_stack": 5,
+      "properties": {}
     },
     "military_grade_electronics": {
       "id": "military_grade_electronics",
       "name": "Elettronica di Grado Militare",
       "nameShort": "Elettronica Mil.",
       "description": "Componenti elettronici militari di alta qualità. Resistenti alle radiazioni e perfetti per costruire dispositivi avanzati.",
-      "type": "crafting_material",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "electronic",
       "rarity": "RARE",
       "weight": 0.5,
       "value": 300,
-      "stackable": true
+      "stackable": true,
+      "max_stack": 15,
+      "properties": {}
     },
     "depleted_fusion_core": {
       "id": "depleted_fusion_core",
       "name": "Nucleo a Fusione Esaurito",
       "nameShort": "Nucleo Fusione",
       "description": "Un nucleo a fusione esaurito ma ancora utilizzabile. Contiene tracce di energia e materiali rari per il crafting avanzato.",
-      "type": "crafting_material",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "energy",
       "rarity": "EPIC",
       "weight": 2.0,
       "value": 800,
-      "stackable": true
+      "stackable": true,
+      "max_stack": 3,
+      "properties": {}
     },
     "hyperactive_mutant_gland": {
       "id": "hyperactive_mutant_gland",
       "name": "Ghiandola Mutante Iperattiva",
       "nameShort": "Ghiandola Mut.",
       "description": "Una ghiandola estratta da un mutante particolarmente aggressivo. Secerne sostanze chimiche uniche per potenziamenti estremi.",
-      "type": "crafting_material",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "biological",
       "rarity": "RARE",
       "weight": 0.3,
       "value": 400,
-      "stackable": true
+      "stackable": true,
+      "max_stack": 8,
+      "properties": {}
     },
     "alien_alloy_unknown": {
       "id": "alien_alloy_unknown",
       "name": "Lega Sconosciuta",
       "nameShort": "Lega Aliena",
       "description": "Un metallo di origine sconosciuta con proprietà fisiche impossibili. Leggero come l'alluminio ma resistente come l'acciaio.",
-      "type": "crafting_material",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "exotic",
       "rarity": "LEGENDARY",
       "weight": 0.8,
       "value": 1200,
-      "stackable": true
+      "stackable": true,
+      "max_stack": 2,
+      "properties": {}
     },
     "prewar_medical_kit": {
       "id": "prewar_medical_kit",
       "name": "Kit Medico Pre-Guerra",
       "nameShort": "Kit Medico PG",
       "description": "Un kit medico militare sigillato dell'era pre-guerra. Contiene strumenti chirurgici e farmaci di qualità superiore.",
-      "type": "crafting_material",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "medical",
       "rarity": "RARE",
       "weight": 1.5,
       "value": 500,
-      "stackable": false
+      "stackable": false,
+      "max_stack": 1,
+      "properties": {}
     }
   }
 }

@@ -24,7 +24,8 @@ var choice_buttons: Array[Button] = []
 var selected_choice_index: int = 0
 
 func _ready():
-	print("[EventPopup] Inizializzazione EventPopup...")
+	# Debug rimosso per ridurre log
+	pass
 	
 	# Nascondi popup all'avvio
 	visible = false
@@ -34,11 +35,13 @@ func _ready():
 	if close_button:
 		close_button.pressed.connect(_on_close_button_pressed)
 	
-	print("[EventPopup] EventPopup inizializzato con successo")
+	# Debug rimosso per ridurre log
+	pass
 
 # Mostra popup con dati evento
 func show_event(event_data: Dictionary):
-	print("[EventPopup] Mostrando evento: ", event_data.get("id", "unknown"))
+	# Debug rimosso per ridurre log
+	pass
 	
 	current_event_data = event_data
 	is_popup_active = true
@@ -137,7 +140,8 @@ func _update_skill_check_info():
 
 # Gestisce selezione scelta
 func _on_choice_selected(choice_index: int):
-	print("[EventPopup] Scelta selezionata: ", choice_index)
+	# Debug rimosso per ridurre log
+	pass
 	
 	# Emetti segnale
 	choice_selected.emit(choice_index)
@@ -147,7 +151,8 @@ func _on_choice_selected(choice_index: int):
 
 # Gestisce pressione bottone chiusura
 func _on_close_button_pressed():
-	print("[EventPopup] Popup chiuso dall'utente")
+	# Debug rimosso per ridurre log
+	pass
 	_close_popup()
 
 # Chiude il popup con animazione

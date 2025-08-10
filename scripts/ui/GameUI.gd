@@ -88,7 +88,7 @@ var is_character_creation_popup_active: bool = false
 # ═══ INIZIALIZZAZIONE PRINCIPALE ═══
 
 func _ready():
-	print("GameUI: ═══ INIZIALIZZAZIONE UI PRINCIPALE (MAINGAME ARCHITECTURE) ═══")
+	# Debug rimosso per ridurre log
 	
 	# Step 0: Aggiungi al gruppo per connessione automatica World
 	add_to_group("gameui")
@@ -120,7 +120,7 @@ func _ready():
 	# Step 8: INIZIALIZZA SISTEMA EVENTI UI (FASE 4)
 	_initialize_event_system()
 	
-	print("GameUI: ✅ Inizializzazione completata con successo (MainGame.tscn architecture + InputManager + TimeManager + EventSystem)")
+	# Debug rimosso per ridurre log
 	
 	# Force aggiornamento status dopo inizializzazione completa
 	call_deferred("_force_status_update")
@@ -132,46 +132,43 @@ func _ready():
 
 func debug_node_references():
 	"""Debug: verifica quali nodi @onready sono null"""
-	print("GameUI: 🔍 DEBUG - Verifica referenze nodi:")
-	print("  hp_label: %s" % ("✅ OK" if hp_label else "❌ NULL"))
-	print("  food_label: %s" % ("✅ OK" if food_label else "❌ NULL"))
-	print("  water_label: %s" % ("✅ OK" if water_label else "❌ NULL"))
-	print("  status_label: %s" % ("✅ OK" if status_label else "❌ NULL"))
-	print("  inventory_list: %s" % ("✅ OK" if inventory_list else "❌ NULL"))
-	print("  map_display: %s" % ("✅ OK" if map_display else "❌ NULL"))
-	print("  world_viewport: %s" % ("✅ OK" if world_viewport else "❌ NULL"))
-	print("  log_display: %s" % ("✅ OK" if log_display else "❌ NULL"))
-	print("  posizione_label: %s" % ("✅ OK" if posizione_label else "❌ NULL"))
-	print("  luogo_label: %s" % ("✅ OK" if luogo_label else "❌ NULL"))
-	print("  ora_label: %s" % ("✅ OK" if ora_label else "❌ NULL"))
-	print("  strength_label: %s" % ("✅ OK" if strength_label else "❌ NULL"))
-	print("  agility_label: %s" % ("✅ OK" if agility_label else "❌ NULL"))
-	print("  intelligence_label: %s" % ("✅ OK" if intelligence_label else "❌ NULL"))
-	print("  charisma_label: %s" % ("✅ OK" if charisma_label else "❌ NULL"))
-	print("  luck_label: %s" % ("✅ OK" if luck_label else "❌ NULL"))
-	print("  weapon_label: %s" % ("✅ OK" if weapon_label else "❌ NULL"))
-	print("  armor_label: %s" % ("✅ OK" if armor_label else "❌ NULL"))
-	print("  command1_label: %s" % ("✅ OK" if command1_label else "❌ NULL"))
-	print("  command2_label: %s" % ("✅ OK" if command2_label else "❌ NULL"))
-	print("  command3_label: %s" % ("✅ OK" if command3_label else "❌ NULL"))
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
 
 func verify_player_manager():
 	"""Verifica che PlayerManager sia disponibile"""
 	if PlayerManager:
-		print("GameUI: ✅ PlayerManager trovato e disponibile")
-		print("GameUI: HP: %d/%d | Food: %d/%d | Water: %d/%d" % [
-			PlayerManager.hp, PlayerManager.max_hp,
-			PlayerManager.food, PlayerManager.max_food, 
-			PlayerManager.water, PlayerManager.max_water
-		])
+		# Debug rimosso per ridurre log
+		pass
 	else:
-		print("GameUI: ❌ ERRORE CRITICO - PlayerManager non disponibile!")
+		# Debug rimosso per ridurre log
 		push_error("GameUI: PlayerManager Singleton non configurato correttamente")
 
 func instantiate_world_scene():
 	"""Instanzia la scena World.tscn nel WorldViewport del pannello mappa"""
 	if not world_viewport:
-		print("GameUI: ❌ world_viewport è null - impossibile istanziare World")
+		# Debug rimosso per ridurre log
+		pass
 		return
 		
 	var world_scene = preload("res://scenes/World.tscn")
@@ -192,7 +189,7 @@ func instantiate_world_scene():
 		world_viewport.gui_disable_input = false  # Abilita ricezione input
 		world_viewport.handle_input_locally = true  # SubViewport gestisce input internamente
 		world_viewport.physics_object_picking = true  # Abilita interazioni fisiche
-		print("GameUI: 🎮 SubViewport configurato per gestire input internamente")
+		# Debug rimosso per ridurre log
 		
 		# Configura la camera del World per il SubViewport
 		var camera = world_scene_instance.get_node("Camera2D")
@@ -200,18 +197,19 @@ func instantiate_world_scene():
 			camera.enabled = true
 			camera.make_current()
 			# APPROCCIO 1: Rimuovo sovrascrittura zoom - World.gd gestisce il suo zoom
-			print("GameUI: 📷 Camera2D configurata per SubViewport - zoom gestito da World.gd")
+			# Debug rimosso per ridurre log
 		
 		# Forza il World a inizializzarsi
 		if world_scene_instance.has_method("_ready"):
-			print("GameUI: 🔄 Forzando inizializzazione World...")
+			# Debug rimosso per ridurre log
+			pass
 		
 		# Forza rendering immediato
 		world_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 		
-		print("GameUI: ✅ Scena World.tscn istanziata nel viewport mappa")
-		print("GameUI: 🖥️ SubViewport configurato come 'monitor' 400x300")
-		print("GameUI: 📊 World children: %d" % world_scene_instance.get_child_count())
+		# Debug rimosso per ridurre log
+		# Debug rimosso per ridurre log
+		# Debug rimosso per ridurre log
 		
 		# Collega la texture del SubViewport al TextureRect per visualizzazione
 		call_deferred("connect_viewport_to_display")
@@ -222,7 +220,7 @@ func instantiate_world_scene():
 		# Debug immediato per test
 		call_deferred("test_viewport_content")
 	else:
-		print("GameUI: ❌ ERRORE nel caricamento scena World.tscn")
+		# Debug rimosso per ridurre log
 		push_error("GameUI: Impossibile caricare res://scenes/World.tscn")
 
 # ═══ CONNESSIONI SEGNALI PLAYERMANAGER ═══
@@ -664,31 +662,30 @@ func update_commands_panel():
 
 # ═══ UTILITY INVENTARIO ═══
 
-## Colori per categoria oggetti
+## Colori per categorie oggetti (M2.T2.5) - Versione migliorata v0.3.5
+# Colori più distintivi e contrastanti per migliore leggibilità
 const CATEGORY_COLORS = {
-	"weapon": "#ff6b6b",        # Rosso per armi
-	"armor": "#4ecdc4",         # Ciano per armature
-	"consumable": "#45b7d1",   # Blu per consumabili
-	"unique": "#f39c12",       # Arancione per oggetti unici
-	"crafting_material": "#95a5a6", # Grigio per materiali
-	"quest": "#9b59b6",        # Viola per oggetti missione
-	"ammo": "#e67e22",         # Arancione scuro per munizioni
-	"tool": "#2ecc71",         # Verde per strumenti
-	"accessory": "#e74c3c"     # Rosso scuro per accessori
+	"weapon": "#FF4444",       # Rosso brillante per armi
+	"armor": "#44AAFF",        # Blu brillante per armature
+	"consumable": "#44FF44",   # Verde brillante per consumabili
+	"unique": "#FFAA00",       # Arancione dorato per oggetti unici
+	"crafting_material": "#AAAAAA", # Grigio chiaro per materiali
+	"quest": "#AA44FF",        # Viola brillante per oggetti missione
+	"ammo": "#FF8800",         # Arancione per munizioni
+	"tool": "#00FFAA",         # Ciano per strumenti
+	"accessory": "#FF44AA"     # Rosa per accessori
 }
 
 func get_category_color(item_id: String) -> String:
-	"""Restituisce il colore per la categoria dell'oggetto"""
+	"""Restituisce il colore per la categoria dell'oggetto usando il sistema DataManager"""
 	if not DataManager:
 		return "#00FF40"  # Verde di default
 	
-	var item_data = DataManager.get_item_data(item_id)
-	if not item_data:
-		return "#00FF40"  # Verde di default
+	# Usa il nuovo sistema di colori del DataManager
+	var color = DataManager.get_item_color(item_id)
 	
-	# Usa "category" se presente, altrimenti ricade su "type" (coerente con i JSON dati)
-	var category = item_data.get("category", item_data.get("type", "unknown"))
-	return CATEGORY_COLORS.get(category, "#00FF40")  # Verde di default se categoria sconosciuta
+	# Converte Color in stringa esadecimale
+	return "#%02X%02X%02X" % [int(color.r * 255), int(color.g * 255), int(color.b * 255)]
 
 func clear_inventory_display():
 	"""Pulisce la lista inventario per aggiornamento"""

@@ -65,7 +65,7 @@ var _is_active: bool = false
 # ========================================
 
 func _ready() -> void:
-	print("🏆 LevelUpPopup: Inizializzazione popup livellamento")
+	# Debug rimosso per ridurre log
 	
 	# Nascondi popup all'inizio
 	self.hide()
@@ -73,7 +73,7 @@ func _ready() -> void:
 	# Configura array bottoni per navigazione
 	_stat_buttons = [forza_button, agilita_button, intelligenza_button, carisma_button, fortuna_button, close_button]
 	
-	print("✅ LevelUpPopup: Pronto (%d bottoni configurati)" % _stat_buttons.size())
+	# Debug rimosso per ridurre log
 
 # ========================================
 # FUNZIONE PUBBLICA PRINCIPALE
@@ -82,10 +82,12 @@ func _ready() -> void:
 ## Mostra il popup di livellamento (sempre, anche senza punti disponibili)
 func show_level_up_popup() -> void:
 	if not PlayerManager:
-		print("❌ LevelUpPopup: PlayerManager non disponibile")
+		# Debug rimosso per ridurre log
+		pass
 		return
 	
-	print("🏆 LevelUpPopup: Apertura popup livellamento")
+	# Debug rimosso per ridurre log
+	pass
 	
 	# Aggiorna dati popup
 	_update_popup_data()
@@ -99,11 +101,11 @@ func show_level_up_popup() -> void:
 	_is_active = true
 	self.show()
 	
-	print("✅ LevelUpPopup: Popup attivo - Punti disponibili: %d" % PlayerManager.available_stat_points)
+	# Debug rimosso per ridurre log
 
 ## Chiude il popup e ripristina stato input
 func close_popup() -> void:
-	print("🏆 LevelUpPopup: Chiusura popup")
+	# Debug rimosso per ridurre log
 	
 	_is_active = false
 	self.hide()
@@ -114,7 +116,7 @@ func close_popup() -> void:
 	# Emetti segnale di chiusura
 	popup_closed.emit()
 	
-	print("✅ LevelUpPopup: Popup chiuso, input ripristinato")
+	# Debug rimosso per ridurre log
 
 # ========================================
 # GESTIONE INPUT KEYBOARD-ONLY
@@ -153,7 +155,7 @@ func _navigate_selection(direction: int) -> void:
 	elif selected_stat_index >= _stat_buttons.size():
 		selected_stat_index = 0
 	
-	print("🎯 LevelUpPopup: Navigazione → index %d" % selected_stat_index)
+	# Debug rimosso per ridurre log
 	_update_visual_selection()
 
 ## Attiva l'azione attualmente selezionata
@@ -161,7 +163,7 @@ func _activate_selected_action() -> void:
 	if not PlayerManager:
 		return
 	
-	print("🎯 LevelUpPopup: Attivazione azione index %d" % selected_stat_index)
+	# Debug rimosso per ridurre log
 	
 	# Se è selezionato "Chiudi" (ultimo bottone)
 	if selected_stat_index >= _stat_names.size():
@@ -173,12 +175,14 @@ func _activate_selected_action() -> void:
 	
 	# Verifica se ci sono ancora punti disponibili
 	if not PlayerManager.has_available_stat_points():
-		print("⚠️ LevelUpPopup: Nessun punto disponibile per migliorare %s" % stat_name)
+		# Debug rimosso per ridurre log
+		pass
 		return
 	
 	# Migliora statistica tramite PlayerManager
 	if PlayerManager.improve_stat(stat_name):
-		print("✅ LevelUpPopup: %s migliorata con successo" % stat_name.capitalize())
+		# Debug rimosso per ridurre log
+		pass
 		
 		# Aggiorna visualizzazione
 		_update_popup_data()
@@ -186,10 +190,12 @@ func _activate_selected_action() -> void:
 		
 		# Se non ci sono più punti, chiudi automaticamente
 		if not PlayerManager.has_available_stat_points():
-			print("🏆 LevelUpPopup: Tutti i punti spesi - Chiusura automatica")
+			# Debug rimosso per ridurre log
+			pass
 			call_deferred("close_popup")  # Chiusura differita per evitare problemi input
 	else:
-		print("❌ LevelUpPopup: Errore nel miglioramento di %s" % stat_name)
+		# Debug rimosso per ridurre log
+		pass
 
 # ========================================
 # FUNZIONI HELPER PRIVATE
@@ -215,18 +221,19 @@ func _update_popup_data() -> void:
 	# Aggiorna informazioni progressione (M3.T1 Enhancement)
 	_update_progression_info()
 	
-	print("📊 LevelUpPopup: Dati aggiornati - Punti: %d" % available_points)
+	# Debug rimosso per ridurre log
 
 ## Aggiorna le informazioni di progressione (livello, EXP, ecc.)
 func _update_progression_info() -> void:
 	if not PlayerManager:
 		return
 	
-	# Calcola livello attuale basato sull'esperienza
-	var current_level = _calculate_current_level(PlayerManager.experience)
-	var current_exp = PlayerManager.experience
-	var exp_for_next = PlayerManager.experience_for_next_point
-	var exp_remaining = max(0, exp_for_next - current_exp)
+	# Ottieni dati di progressione dal PlayerManager
+	var progression_data = PlayerManager.get_progression_data()
+	var current_level = progression_data.current_level
+	var current_exp = progression_data.experience
+	var exp_for_next = progression_data.experience_for_next_point
+	var exp_remaining = progression_data.experience_to_next_level
 	
 	# Aggiorna label informazioni progressione
 	level_info_label.text = "Livello Attuale: %d" % current_level
@@ -234,25 +241,9 @@ func _update_progression_info() -> void:
 	exp_remaining_label.text = "EXP Mancante: %d" % exp_remaining
 	total_exp_label.text = "EXP Totale: %d" % current_exp
 	
-	print("📈 LevelUpPopup: Progressione - Livello: %d | EXP: %d/%d" % [current_level, current_exp, exp_for_next])
+	# Debug rimosso per ridurre log
 
-## Calcola il livello attuale basato sull'esperienza totale
-func _calculate_current_level(total_experience: int) -> int:
-	# Sistema AD&D: inizia da livello 1, ogni 100/150/225... EXP sale di livello
-	# Per semplicità, calcoliamo livello approssimativo
-	if total_experience < 100:
-		return 1
-	elif total_experience < 250:  # 100 + 150
-		return 2
-	elif total_experience < 475:  # 100 + 150 + 225
-		return 3
-	elif total_experience < 812:  # ... + 337
-		return 4
-	elif total_experience < 1318:  # ... + 506
-		return 5
-	else:
-		# Per livelli alti, approssimazione
-		return 5 + int((total_experience - 1318) / 600)  # Incremento di ~600 EXP per livello
+# Funzione _calculate_current_level rimossa - ora usa PlayerManager.get_progression_data()
 
 ## Aggiorna l'evidenziazione visuale della selezione corrente
 func _update_visual_selection() -> void:
@@ -283,4 +274,4 @@ func _update_visual_selection() -> void:
 			# Bottone chiudi selezionato
 			selected_button.text = "[bgcolor=#00FF40][color=#000000]Chiudi[/color][/bgcolor]"
 	
-	print("🎨 LevelUpPopup: Selezione aggiornata - Index: %d" % selected_stat_index)
+	# Debug rimosso per ridurre log

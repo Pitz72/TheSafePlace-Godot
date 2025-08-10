@@ -1,4 +1,4 @@
-# 🏠 The Safe Place v0.3.5 "Colors and Separation"
+# 🏠 The Safe Place v0.4.0 "A unifying language for all things"
 
 *Un GDR testuale in stile retro computer sviluppato in Godot*
 
@@ -16,7 +16,7 @@
 
 ## 🚀 Stato del Progetto
 
-**Versione Attuale**: v0.3.5 "Colors and Separation"
+**Versione Attuale**: v0.4.0 "A unifying language for all things"
 
 ### ✅ Sistemi Implementati
 - ✅ Core Engine e World Manager
@@ -26,6 +26,10 @@
 - ✅ Time Manager e Sistema Temporale
 - ✅ Sistema di Skill Check
 - ✅ Generazione Mappa ASCII
+- ✅ **NUOVO**: Linguaggio Comune Unificato per Oggetti
+- ✅ **NUOVO**: Sistema di Colori Dinamico per Categorie
+- ✅ **NUOVO**: Sistema di Transazioni Oggetti
+- ✅ **NUOVO**: Architettura Dati Standardizzata con Properties
 
 ### 🔄 In Sviluppo
 - 🔄 Sistema di Combattimento Avanzato

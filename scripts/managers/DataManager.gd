@@ -10,6 +10,32 @@ extends Node
 ## Progettato come Singleton (Autoload) per accesso globale ai dati.
 
 # ========================================
+# COSTANTI - SISTEMA COLORI OGGETTI
+# ========================================
+
+## Colori base per categoria oggetti (LINGUAGGIO COMUNE)
+const CATEGORY_COLORS: Dictionary = {
+	"WEAPON": Color(0.8, 0.2, 0.2),      # Rosso
+	"ARMOR": Color(0.2, 0.6, 0.8),       # Blu
+	"CONSUMABLE": Color(0.2, 0.8, 0.2),  # Verde
+	"TOOL": Color(0.8, 0.6, 0.2),        # Arancione
+	"AMMO": Color(0.6, 0.4, 0.2),        # Marrone
+	"CRAFTING_MATERIAL": Color(0.6, 0.2, 0.8), # Viola
+	"QUEST": Color(0.8, 0.8, 0.2),       # Giallo
+	"UNIQUE": Color(0.8, 0.4, 0.6),      # Rosa
+	"ACCESSORY": Color(0.4, 0.8, 0.8)    # Ciano
+}
+
+## Moltiplicatori intensità per rarità oggetti
+const RARITY_MULTIPLIERS: Dictionary = {
+	"COMMON": 0.6,
+	"UNCOMMON": 0.8,
+	"RARE": 1.0,
+	"EPIC": 1.3,
+	"LEGENDARY": 1.6
+}
+
+# ========================================
 # VARIABILI PUBBLICHE - DATABASE CARICATI
 # ========================================
 
@@ -230,7 +256,7 @@ func _validate_data_integrity() -> void:
 
 ## Verifica che un oggetto abbia tutte le proprietà essenziali
 func _validate_item_properties(item_data: Dictionary) -> bool:
-	var required_properties = ["id", "name", "description", "type", "rarity", "weight", "value"]
+	var required_properties = ["id", "name", "description", "category", "rarity", "weight", "value"]
 	for prop in required_properties:
 		if not item_data.has(prop):
 			return false
@@ -261,14 +287,27 @@ func get_rarity_data(rarity_name: String) -> Dictionary:
 	return {}
 
 ## Restituisce tutti gli oggetti di una categoria specifica
-## @param category: Categoria oggetti ("weapon", "armor", "consumable", etc.)
+## @param category: Categoria oggetti ("WEAPON", "ARMOR", "CONSUMABLE", etc.)
 ## @return: Dictionary con oggetti della categoria
 func get_items_by_category(category: String) -> Dictionary:
 	var filtered_items: Dictionary = {}
 	
 	for item_id in items:
 		var item_data = items[item_id]
-		if item_data.has("type") and item_data.type == category:
+		if item_data.has("category") and item_data.category == category:
+			filtered_items[item_id] = item_data
+	
+	return filtered_items
+
+## Restituisce tutti gli oggetti di una sottocategoria specifica
+## @param subcategory: Sottocategoria oggetti ("melee", "ranged", "food", etc.)
+## @return: Dictionary con oggetti della sottocategoria
+func get_items_by_subcategory(subcategory: String) -> Dictionary:
+	var filtered_items: Dictionary = {}
+	
+	for item_id in items:
+		var item_data = items[item_id]
+		if item_data.has("subcategory") and item_data.subcategory == subcategory:
 			filtered_items[item_id] = item_data
 	
 	return filtered_items
@@ -308,6 +347,27 @@ func search_items_by_name(search_term: String) -> Array[String]:
 func has_item(item_id: String) -> bool:
 	return items.has(item_id)
 
+## Calcola il colore di un oggetto basato su categoria e rarità
+## @param item_id: ID dell'oggetto
+## @return: Color calcolato, o Color.WHITE se oggetto non trovato
+func get_item_color(item_id: String) -> Color:
+	var item_data = get_item_data(item_id)
+	if item_data.is_empty():
+		return Color.WHITE
+	
+	# Ottieni colore base dalla categoria
+	var base_color = Color.WHITE
+	if item_data.has("category") and CATEGORY_COLORS.has(item_data.category):
+		base_color = CATEGORY_COLORS[item_data.category]
+	
+	# Ottieni moltiplicatore dalla rarità
+	var multiplier = 1.0
+	if item_data.has("rarity") and RARITY_MULTIPLIERS.has(item_data.rarity):
+		multiplier = RARITY_MULTIPLIERS[item_data.rarity]
+	
+	# Calcola colore finale
+	return Color(base_color.r * multiplier, base_color.g * multiplier, base_color.b * multiplier, base_color.a)
+
 ## Restituisce statistiche generali sui dati caricati
 ## @return: Dictionary con statistiche
 func get_loading_stats() -> Dictionary:
@@ -341,8 +401,8 @@ func get_weapons_by_damage() -> Array[Dictionary]:
 	
 	for item_id in items:
 		var item_data = items[item_id]
-		if item_data.has("type") and item_data.type == "weapon":
-			weapon_list.append(item_data)
+		if item_data.has("category") and item_data.category == "WEAPON":
+			weapons[item_id] = item_data
 	
 	# Ordinamento per danno medio
 	weapon_list.sort_custom(func(a, b): 
@@ -354,12 +414,31 @@ func get_weapons_by_damage() -> Array[Dictionary]:
 	return weapon_list
 
 ## Calcola il danno medio di un'arma
+## @param weapon_data: Dati dell'arma
+## @return: Valore numerico del danno medio
 func _get_average_damage(weapon_data: Dictionary) -> float:
-	if weapon_data.has("damage") and weapon_data.damage is Dictionary:
-		var damage = weapon_data.damage
-		if damage.has("min") and damage.has("max"):
-			return (damage.min + damage.max) / 2.0
-	return 0.0
+	# Cerca il danno sia nel campo diretto che nelle properties
+	var damage = null
+	if weapon_data.has("damage"):
+		damage = weapon_data.damage
+	elif weapon_data.has("properties") and weapon_data.properties.has("damage"):
+		damage = weapon_data.properties.damage
+	else:
+		return 0.0
+	
+	if damage is String:
+		# Formato "min-max" (es. "10-15")
+		var parts = damage.split("-")
+		if parts.size() == 2:
+			var min_dmg = parts[0].to_float()
+			var max_dmg = parts[1].to_float()
+			return (min_dmg + max_dmg) / 2.0
+		else:
+			return damage.to_float()
+	elif damage is int or damage is float:
+		return float(damage)
+	else:
+		return 0.0
 
 ## Restituisce tutti gli oggetti equipaggiabili per uno slot specifico
 ## @param slot: Slot equipaggiamento ("main_hand", "body", "feet", etc.)
@@ -369,7 +448,14 @@ func get_items_by_slot(slot: String) -> Dictionary:
 	
 	for item_id in items:
 		var item_data = items[item_id]
-		if item_data.has("slot") and item_data.slot == slot:
+		# Controlla sia il campo diretto che nelle properties
+		var item_slot = null
+		if item_data.has("slot"):
+			item_slot = item_data.slot
+		elif item_data.has("properties") and item_data.properties.has("slot"):
+			item_slot = item_data.properties.slot
+		
+		if item_slot == slot:
 			slot_items[item_id] = item_data
 	
 	return slot_items

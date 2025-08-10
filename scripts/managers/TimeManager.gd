@@ -54,16 +54,16 @@ var is_night_time: bool = false
 # ========================================
 
 func _ready() -> void:
-	print("⏰ TimeManager inizializzazione...")
-	print("   ✅ Tempo iniziale: Giorno %d, %02d:%02d" % [current_day, current_hour, current_minute])
-	print("   ✅ Sistema temporale: 30 minuti per movimento")
-	print("   ✅ Ciclo giorno/notte: 06:00-18:59 (giorno), 19:00-05:59 (notte)")
-	print("   ✅ Penalità sopravvivenza: ogni sera alle 19:00")
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
 	
 	# Controlla se il tempo iniziale è notte
 	_check_day_night_cycle(current_hour, current_hour)
 	
-	print("✅ TimeManager pronto - Sistema temporale attivo")
+	# Debug rimosso per ridurre log
 
 # ========================================
 # API PUBBLICA - AVANZAMENTO TEMPO
@@ -74,7 +74,8 @@ func _ready() -> void:
 ## @param moves: int numero di movimenti (default: 1)
 func advance_time_by_moves(moves: int = 1) -> void:
 	if moves <= 0:
-		print("⚠️ TimeManager: Tentativo di avanzare tempo con moves <= 0")
+		# Debug rimosso per ridurre log
+		pass
 		return
 	
 	var previous_hour = current_hour
@@ -95,14 +96,14 @@ func advance_time_by_moves(moves: int = 1) -> void:
 	var days_passed = int(total_minutes / (24 * 60))
 	if days_passed > 0:
 		current_day += days_passed
-		print("🌅 TimeManager: Nuovo giorno! Giorno %d iniziato" % current_day)
+		# Debug rimosso per ridurre log
 		day_changed.emit(current_day)
 	
 	# Aggiorna tempo corrente
 	current_hour = new_hour
 	current_minute = new_minute
 	
-	print("⏰ TimeManager: Tempo avanzato - %02d:%02d (Giorno %d) [+%d movimenti]" % [current_hour, current_minute, current_day, moves])
+	# Debug rimosso per ridurre log
 	
 	# Emetti segnale avanzamento tempo
 	time_advanced.emit(current_hour, current_minute)
@@ -158,7 +159,7 @@ func load_time_data(data: Dictionary) -> void:
 	# Aggiorna stato notte
 	is_night_time = is_night()
 	
-	print("⏰ TimeManager: Dati tempo caricati - %s, %s" % [get_formatted_time(), get_formatted_day()])
+	# Debug rimosso per ridurre log
 
 # ========================================
 # FUNZIONI HELPER PRIVATE
@@ -174,13 +175,13 @@ func _check_day_night_cycle(prev_hour: int, new_hour: int) -> void:
 	# Transizione da giorno a notte (18:xx → 19:xx)
 	if not was_night and is_now_night and new_hour == 19:
 		is_night_time = true
-		print("🌙 TimeManager: Inizia la notte (19:00)")
+		# Debug rimosso per ridurre log
 		night_started.emit()
 	
 	# Transizione da notte a giorno (05:xx → 06:xx)
 	elif was_night and not is_now_night and new_hour == 6:
 		is_night_time = false
-		print("🌅 TimeManager: Inizia il giorno (06:00)")
+		# Debug rimosso per ridurre log
 		day_started.emit()
 	
 	# Aggiorna stato attuale
@@ -192,7 +193,8 @@ func _check_day_night_cycle(prev_hour: int, new_hour: int) -> void:
 func _check_survival_penalty(prev_hour: int, new_hour: int) -> void:
 	# Penalità sopravvivenza alle 19:00 (inizio notte)
 	if prev_hour != 19 and new_hour == 19:
-		print("💀 TimeManager: Penalità sopravvivenza - Cala la notte")
+		# Debug rimosso per ridurre log
+		pass
 		survival_penalty_tick.emit()
 
 # ========================================
@@ -201,8 +203,9 @@ func _check_survival_penalty(prev_hour: int, new_hour: int) -> void:
 
 ## Stampa lo stato attuale del tempo (per debug)
 func debug_print_time_status() -> void:
-	print("⏰ TimeManager DEBUG:")
-	print("  Tempo: %s" % get_formatted_time())
-	print("  Giorno: %s" % get_formatted_day())
-	print("  Movimenti totali: %d" % total_moves)
-	print("  È notte: %s" % ("Sì" if is_night() else "No")) 
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	pass
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log

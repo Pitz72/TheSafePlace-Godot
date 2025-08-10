@@ -69,7 +69,8 @@ signal crt_shader_toggled(enabled: bool)
 
 # 🚀 INIZIALIZZAZIONE
 func _ready():
-	print("🎨 ThemeManager inizializzato - Tema: DEFAULT")
+	# Debug rimosso per ridurre log
+	pass
 	set_theme(ThemeType.DEFAULT)
 	# Configura sistema CRT dopo un frame per assicurarsi che la scena sia pronta
 	call_deferred("setup_crt_control")
@@ -77,7 +78,8 @@ func _ready():
 # 🎯 API PRINCIPALE TEMI
 func set_theme(theme_type: ThemeType) -> void:
 	"""Imposta il tema specificato"""
-	print("🎨 Cambio tema richiesto: %s" % ThemeType.keys()[theme_type])
+	# Debug rimosso per ridurre log
+	pass
 	
 	current_theme_type = theme_type
 	
@@ -96,7 +98,8 @@ func set_theme(theme_type: ThemeType) -> void:
 	theme_changed.emit(theme_type)
 	colors_updated.emit(current_colors)
 	
-	print("✅ Tema applicato: %s" % ThemeType.keys()[theme_type])
+	# Debug rimosso per ridurre log
+	pass
 
 func get_current_theme_type() -> ThemeType:
 	"""Ritorna il tipo di tema corrente"""
@@ -115,7 +118,8 @@ func apply_theme(theme_name: String) -> bool:
 			set_theme(ThemeType.HIGH_CONTRAST)
 			return true
 		_:
-			print("⚠️ Tema non riconosciuto: %s" % theme_name)
+			# Debug rimosso per ridurre log
+			pass
 			return false
 
 # 🎨 API ACCESSO COLORI
@@ -124,7 +128,8 @@ func get_color(color_name: String) -> Color:
 	if color_name in current_colors:
 		return current_colors[color_name]
 	else:
-		print("⚠️ Colore non trovato: %s" % color_name)
+		# Debug rimosso per ridurre log
+		pass
 		return current_colors["primary"]  # Fallback
 
 # Funzioni di accesso diretto per i colori più comuni
@@ -190,17 +195,20 @@ func setup_crt_control():
 	if main_scene:
 		crt_display = main_scene.get_node_or_null("CRTDisplay")
 		if crt_display:
-			print("✅ CRTDisplay trovato")
+			# Debug rimosso per ridurre log
+			pass
 			# Il material verrà caricato manualmente in Godot
 		else:
-			print("⚠️ CRTDisplay non trovato nella scena")
+			# Debug rimosso per ridurre log
+			pass
 
 func toggle_crt_shader() -> void:
 	"""Attiva/disattiva effetto CRT"""
 	if crt_display:
 		is_crt_active = !is_crt_active
 		crt_display.visible = is_crt_active
-		print("🎥 CRT: %s" % ("ATTIVO" if is_crt_active else "DISATTIVO"))
+		# Debug rimosso per ridurre log
+		pass
 		crt_shader_toggled.emit(is_crt_active)
 
 func is_crt_shader_active() -> bool:

@@ -108,14 +108,14 @@ var equipped_armor: Dictionary = {}
 # ========================================
 
 func _ready() -> void:
-	print("🎮 PlayerManager inizializzazione...")
+	# Debug rimosso per ridurre log
 	_initialize_new_character()
 	_connect_time_manager_signals()
-	print("✅ PlayerManager pronto - Personaggio inizializzato")
+	# Debug rimosso per ridurre log
 
 ## Inizializza un nuovo personaggio con valori di default
 func _initialize_new_character() -> void:
-	print("👤 Inizializzazione nuovo personaggio...")
+	# Debug rimosso per ridurre log
 	
 	# GENERAZIONE CASUALE STATISTICHE (M3.T3.5)
 	stats = _generate_initial_stats()
@@ -140,9 +140,9 @@ func _initialize_new_character() -> void:
 	# OGGETTI DI PARTENZA (opzionale - solo per testing)
 	_add_starting_items()
 	
-	print("   ✅ Risorse: HP=%d/%d (basato su Vigore), Food=%d/%d, Water=%d/%d" % [hp, max_hp, food, max_food, water, max_water])
-	print("   ✅ Statistiche generate casualmente: %s" % str(stats))
-	print("   ✅ Inventario inizializzato con %d slot occupati" % inventory.size())
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
+	# Debug rimosso per ridurre log
 
 ## Aggiunge oggetti di partenza per il nuovo sistema di gioco
 ## Set fisso: 2 bevande, 2 cibi, 2 cure, 1 arma base, 1 armatura base
@@ -383,21 +383,21 @@ func use_item(item_id: String, quantity: int = 1) -> bool:
 	var item_slot = inventory[slot_index]
 	var has_portions = item_slot.instance_data.has("portions")
 	
-	# Applica effetti basati sul tipo oggetto
-	var item_type = item_data.get("type", "unknown")
+	# Applica effetti basati sulla categoria oggetto
+	var category = item_data.get("category", "UNKNOWN")
 	var item_name = item_data.get("name", item_id)
 	
-	match item_type:
-		"consumable":
+	match category:
+		"CONSUMABLE":
 			_apply_consumable_effects(item_data, quantity)
-		"weapon":
+		"WEAPON":
 			print("⚠️ Armi non possono essere 'usate' direttamente. Usa equip_weapon()")
 			return false
-		"armor":
+		"ARMOR":
 			print("⚠️ Armature non possono essere 'usate' direttamente. Usa equip_armor()")
 			return false
 		_:
-			print("⚠️ Tipo oggetto non gestito per uso: %s" % item_type)
+			print("⚠️ Categoria oggetto non gestita per uso: %s" % category)
 			# Per oggetti senza effetti, li gestiamo comunque
 	
 	# GESTIONE PORZIONI: Se l'oggetto ha porzioni, decrementa invece di rimuovere
@@ -432,12 +432,18 @@ func use_item(item_id: String, quantity: int = 1) -> bool:
 ## @param item_data: Dati completi dell'oggetto
 ## @param quantity: Quantità usata (per moltiplicare effetti)
 func _apply_consumable_effects(item_data: Dictionary, quantity: int) -> void:
-	var effects = item_data.get("effects", [])
+	# Cerca gli effetti sia nel campo diretto che nelle properties
+	var effects = []
+	if item_data.has("effects"):
+		effects = item_data.effects
+	elif item_data.has("properties") and item_data.properties.has("effects"):
+		effects = item_data.properties.effects
+	
 	var effects_applied = []
 	
 	# Itera through array of effects
 	for effect in effects:
-		var effect_type = effect.get("type", "")
+		var effect_type = effect.get("effect_type", "")
 		var amount = effect.get("amount", 0)
 		
 		match effect_type:
@@ -492,12 +498,12 @@ func equip_item(item_id: String) -> bool:
 		print("❌ PlayerManager: Dati oggetto non trovati: %s" % item_id)
 		return false
 	
-	var item_type = item_data.get("type", "unknown")
+	var category = item_data.get("category", "UNKNOWN")
 	var item_name = item_data.get("name", item_id)
 	
-	# Equipaggia basandoti sul tipo
-	match item_type:
-		"weapon":
+	# Equipaggia basandoti sulla categoria
+	match category:
+		"WEAPON":
 			# Rimuovi arma equipaggiata precedente (se presente)
 			if not equipped_weapon.is_empty():
 				var old_weapon_name = equipped_weapon.get("name", "Arma precedente")
@@ -508,7 +514,7 @@ func equip_item(item_id: String) -> bool:
 			equipped_weapon = item_data.duplicate()
 			print("⚔️ Arma equipaggiata: %s" % item_name)
 			
-		"armor":
+		"ARMOR":
 			# Rimuovi armatura equipaggiata precedente (se presente)
 			if not equipped_armor.is_empty():
 				var old_armor_name = equipped_armor.get("name", "Armatura precedente")
@@ -520,7 +526,7 @@ func equip_item(item_id: String) -> bool:
 			print("🛡️ Armatura equipaggiata: %s" % item_name)
 			
 		_:
-			print("⚠️ PlayerManager: Tipo oggetto non equipaggiabile: %s (%s)" % [item_name, item_type])
+			print("⚠️ PlayerManager: Categoria oggetto non equipaggiabile: %s (%s)" % [item_name, category])
 			return false
 	
 	# Rimuovi oggetto dall'inventario (è ora equipaggiato)
@@ -541,12 +547,12 @@ func equip_item(item_id: String) -> bool:
 ## Genera messaggio narrativo per equipaggiamento
 func _get_narrative_message_for_equip(item_data: Dictionary) -> String:
 	var item_name = item_data.get("name", "oggetto")
-	var item_type = item_data.get("type", "")
+	var category = item_data.get("category", "")
 	
-	match item_type:
-		"weapon":
+	match category:
+		"WEAPON":
 			return "Afferri saldamente %s. Ti senti più sicuro con un'arma in mano." % item_name
-		"armor":
+		"ARMOR":
 			return "Indossi %s. La protezione aggiuntiva ti fa sentire più preparato." % item_name
 		_:
 			return "Hai equipaggiato: %s" % item_name
@@ -554,20 +560,26 @@ func _get_narrative_message_for_equip(item_data: Dictionary) -> String:
 ## Emette messaggio narrativo per l'uso di oggetti
 func _emit_narrative_message_for_use(item_data: Dictionary, _quantity: int) -> void:
 	var item_name = item_data.get("name", "oggetto")
-	var item_type = item_data.get("type", "")
-	var effects = item_data.get("effects", [])
+	var category = item_data.get("category", "")
+	
+	# Cerca gli effetti sia nel campo diretto che nelle properties
+	var effects = []
+	if item_data.has("effects"):
+		effects = item_data.effects
+	elif item_data.has("properties") and item_data.properties.has("effects"):
+		effects = item_data.properties.effects
 	
 	var narrative_message = ""
 	
-	match item_type:
-		"consumable":
+	match category:
+		"CONSUMABLE":
 			# Messaggio specifico basato sugli effetti
 			var has_hydrate = false
 			var has_heal = false
 			var has_nourish = false
 			
 			for effect in effects:
-				match effect.get("type", ""):
+				match effect.get("effect_type", ""):
 					"hydrate":
 						has_hydrate = true
 					"heal":
@@ -755,17 +767,23 @@ func _level_up() -> void:
 	# Sottrai esperienza usata per livellamento
 	experience -= experience_for_next_point
 	
-	# Incrementa punti disponibili
-	available_stat_points += 1
+	# Calcola livello attuale dopo il livellamento
+	var current_level = _calculate_current_level()
+	
+	# Incrementa punti disponibili SOLO dal livello 2 in poi
+	if current_level >= 2:
+		available_stat_points += 1
+		var level_msg = "[color=yellow]Sei diventato più esperto! Hai un nuovo punto statistica da spendere.[/color]"
+		narrative_log_generated.emit(level_msg)
+		print("🎉 LIVELLAMENTO! Livello: %d, Punti disponibili: %d" % [current_level, available_stat_points])
+	else:
+		# Livello 1 -> 2: solo messaggio di livellamento senza punti
+		var level_msg = "[color=cyan]Hai raggiunto il livello 2! Dal prossimo livellamento riceverai punti statistica.[/color]"
+		narrative_log_generated.emit(level_msg)
+		print("🎉 LIVELLAMENTO! Livello: %d (nessun punto assegnato)" % current_level)
 	
 	# Aumenta soglia per prossimo livellamento (progressione crescente)
 	experience_for_next_point = int(experience_for_next_point * 1.5)
-	
-	# Messaggio narrativo speciale per livellamento
-	var level_msg = "[color=yellow]Sei diventato più esperto! Hai un nuovo punto statistica da spendere.[/color]"
-	narrative_log_generated.emit(level_msg)
-	
-	print("🎉 LIVELLAMENTO! Punti disponibili: %d, prossima soglia: %d" % [available_stat_points, experience_for_next_point])
 	
 	# Emetti segnale per aggiornare UI statistiche
 	stats_changed.emit()
@@ -822,14 +840,58 @@ func improve_stat(stat_name: String) -> bool:
 func has_available_stat_points() -> bool:
 	return available_stat_points > 0
 
+## Calcola il livello attuale basato sull'esperienza totale
+## @return: Livello attuale del personaggio (inizia da 1)
+func _calculate_current_level() -> int:
+	# Sistema AD&D: inizia da livello 1, ogni 100/150/225... EXP sale di livello
+	if experience < 100:
+		return 1
+	elif experience < 250:  # 100 + 150
+		return 2
+	elif experience < 475:  # 100 + 150 + 225
+		return 3
+	elif experience < 812:  # ... + 337
+		return 4
+	elif experience < 1318:  # ... + 506
+		return 5
+	else:
+		# Per livelli alti, approssimazione
+		return 5 + int((experience - 1318) / 600)  # Incremento di ~600 EXP per livello
+
+## Calcola la soglia di esperienza richiesta per raggiungere un livello specifico
+## @param target_level: Livello target per cui calcolare la soglia
+## @return: Esperienza totale richiesta per raggiungere quel livello
+func _get_experience_threshold_for_level(target_level: int) -> int:
+	match target_level:
+		1:
+			return 0
+		2:
+			return 100
+		3:
+			return 250  # 100 + 150
+		4:
+			return 475  # 100 + 150 + 225
+		5:
+			return 812  # ... + 337
+		6:
+			return 1318  # ... + 506
+		_:
+			# Per livelli alti, approssimazione
+			return 1318 + ((target_level - 6) * 600)
+
 ## Ottiene informazioni complete sul sistema di progressione
 ## @return: Dictionary con tutti i dati di progressione
 func get_progression_data() -> Dictionary:
+	var current_level = _calculate_current_level()
+	var next_level_threshold = _get_experience_threshold_for_level(current_level + 1)
+	
 	return {
 		"experience": experience,
 		"experience_for_next_point": experience_for_next_point,
 		"available_stat_points": available_stat_points,
-		"experience_to_next_level": experience_for_next_point - experience
+		"experience_to_next_level": next_level_threshold - experience,
+		"current_level": current_level,
+		"next_level_threshold": next_level_threshold
 	}
 
 # ========================================
@@ -1095,3 +1157,36 @@ func apply_skill_check_result(check_result: Dictionary, consequences: Dictionary
 		narrative_log_generated.emit(outcome.narrative_text)
 	
 	print("✅ PlayerManager: Conseguenze skill check applicate")
+
+## Applica una transazione di oggetti (aggiunta/rimozione multipla)
+## @param transaction: Dictionary con formato {"add": [{"id": String, "quantity": int}], "remove": [{"id": String, "quantity": int}]}
+## @return: bool - true se tutte le operazioni sono riuscite
+func apply_item_transaction(transaction: Dictionary) -> bool:
+	var success = true
+	
+	# Prima rimuovi gli oggetti (per verificare disponibilità)
+	if transaction.has("remove"):
+		for item_entry in transaction.remove:
+			var item_id = item_entry.get("id", "")
+			var quantity = item_entry.get("quantity", 1)
+			if not remove_item(item_id, quantity):
+				print("❌ PlayerManager: Transazione fallita - impossibile rimuovere %s (x%d)" % [item_id, quantity])
+				success = false
+				break
+	
+	# Poi aggiungi gli oggetti
+	if success and transaction.has("add"):
+		for item_entry in transaction.add:
+			var item_id = item_entry.get("id", "")
+			var quantity = item_entry.get("quantity", 1)
+			if not add_item(item_id, quantity):
+				print("❌ PlayerManager: Transazione fallita - impossibile aggiungere %s (x%d)" % [item_id, quantity])
+				success = false
+				break
+	
+	if success:
+		print("✅ PlayerManager: Transazione oggetti completata con successo")
+	else:
+		print("❌ PlayerManager: Transazione oggetti fallita")
+	
+	return success

@@ -12,14 +12,14 @@ var time_since_last_event: float = 0.0
 var steps_since_last_event: int = 0
 var steps_threshold: int = 10  # Minimo 10 passi prima di nuovo evento
 
-# Probabilità eventi per bioma
+# Probabilità eventi per bioma (allineate con EventManager)
 var biome_probabilities = {
-	"pianure": 0.15,
-	"foreste": 0.25,
-	"villaggi": 0.20,
-	"città": 0.30,
-	"fiumi": 0.18,
-	"montagne": 0.12,
+	"pianure": 0.35,
+	"foreste": 0.45,
+	"villaggi": 0.55,
+	"città": 0.65,
+	"fiumi": 0.40,
+	"montagne": 0.30,
 	"ristoro": 0.25
 }
 
@@ -153,14 +153,15 @@ func _attempt_event_trigger(biome: String):
 	if biome == "ristoro":
 		print("⛔ Evento disattivato per bioma: ristoro")
 		return
-	var trigger_chance = biome_probabilities.get(biome, 0.1)
 	
-	if randf() <= trigger_chance:
-		print("🎲 Evento triggerato per bioma: %s (probabilità: %.1f%%)" % [biome, trigger_chance * 100])
-		event_manager.trigger_random_event(biome)
+	# CORREZIONE: Rimuovo doppia probabilità - delego tutto a EventManager
+	print("🎲 Tentativo evento per bioma: %s" % biome)
+	var result = event_manager.trigger_random_event(biome)
+	if result.get("triggered", false):
 		_reset_cooldowns()
+		print("✅ Evento triggerato con successo")
 	else:
-		print("🎲 Evento non triggerato per %s (probabilità: %.1f%%)" % [biome, trigger_chance * 100])
+		print("❌ Evento non triggerato: %s" % result.get("reason", "unknown"))
 
 # Reset dei cooldown dopo un evento
 func _reset_cooldowns():
