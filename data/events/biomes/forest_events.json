@@ -10,7 +10,7 @@
           "skillCheck": { "stat": "agilita", "difficulty": 12 },
           "successText": "Con movimenti precisi, riesci a disattivare il meccanismo. Ora puoi prenderla per usarla come trappola.",
           "failureText": "Il meccanismo scatta e ti afferra la caviglia. Il dolore è lancinante.",
-          "reward": { "type": "item", "item": { "id": "bear_trap", "quantity": 1 } },
+          "items_gained": [{ "id": "bear_trap", "quantity": 1 }],
           "penalty": { "type": "damage", "amount": 20 }
         },
         {
@@ -30,7 +30,7 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 10 },
           "successText": "All'interno trovi un piccolo magazzino di sopravvivenza: cibo in scatola, acqua pulita e medicine scadute ma ancora utilizzabili.",
           "failureText": "La capanna è stata già saccheggiata tempo fa. Non c'è rimasto nulla di utile, solo polvere e ragnatele.",
-          "reward": { "type": "items", "items": [{ "id": "canned_food", "quantity": 2 }, { "id": "water_purified", "quantity": 2 }, { "id": "expired_medicine", "quantity": 1 }] }
+          "items_gained": [{ "id": "canned_food", "quantity": 2 }, { "id": "water_purified", "quantity": 2 }, { "id": "expired_medicine", "quantity": 1 }]
         },
         {
           "text": "Riposati qui per un po'",
@@ -49,13 +49,13 @@
           "skillCheck": { "stat": "agilita", "difficulty": 11 },
           "successText": "Riesci a infilarti nel tronco e scopri una piccola cavità con dentro un vecchio zaino da sopravvivenza.",
           "failureText": "Ti incastri nel tronco e fai fatica a uscire. Nel processo ti graffi e perdi del tempo prezioso.",
-          "reward": { "type": "item", "item": { "id": "survival_backpack", "quantity": 1 } },
+          "items_gained": [{ "id": "survival_backpack", "quantity": 1 }],
           "penalty": { "type": "damage", "amount": 5 }
         },
         {
           "text": "Raccogli legna secca alla base",
           "resultText": "Raccogli una buona quantità di legna secca e ben stagionata. Perfetta per fare fuoco.",
-          "reward": { "type": "item", "item": { "id": "dry_wood", "quantity": 4 } }
+          "items_gained": [{ "id": "dry_wood", "quantity": 4 }]
         }
       ]
     },
@@ -67,14 +67,14 @@
         {
           "text": "Riempi le tue borracce",
           "resultText": "L'acqua è fresca e pulita. Riempi tutte le tue riserve idriche.",
-          "reward": { "type": "item", "item": { "id": "water_purified", "quantity": 4 } }
+          "items_gained": [{ "id": "water_purified", "quantity": 4 }]
         },
         {
           "text": "Cerca pesci con le mani",
           "skillCheck": { "stat": "agilita", "difficulty": 13 },
           "successText": "Con pazienza e riflessi pronti, riesci a catturare alcuni piccoli pesci d'acqua dolce.",
           "failureText": "I pesci sono troppo veloci per te. Scappano tutti e rimani con le mani vuote e bagnate.",
-          "reward": { "type": "item", "item": { "id": "fresh_fish", "quantity": 2 } }
+          "items_gained": [{ "id": "fresh_fish", "quantity": 2 }]
         }
       ]
     },
@@ -88,7 +88,7 @@
           "skillCheck": { "stat": "forza", "difficulty": 10 },
           "successText": "Riesci a tagliare le ragnatele senza problemi. Raccogli anche un po' di filo di ragno, potrebbe essere utile.",
           "failureText": "Il coltello si impiglia nelle ragnatele appiccicose. Mentre lotti per liberarlo, qualcosa di grosso si muove nell'ombra...",
-          "reward": { "type": "item", "item": { "id": "spider_silk", "quantity": 3 } },
+          "items_gained": [{ "id": "spider_silk", "quantity": 3 }],
           "penalty": { "type": "damage", "amount": 8 }
         },
         {
@@ -109,7 +109,7 @@
           "skillCheck": { "stat": "agilita", "difficulty": 12 },
           "successText": "Dalla piattaforma hai una vista eccellente della zona circostante. Noti anche un binocolo dimenticato e delle munizioni.",
           "failureText": "Un ramo cede sotto il tuo peso e cadi a terra pesantemente. Ti fai male alla schiena.",
-          "reward": { "type": "items", "items": [{ "id": "binoculars", "quantity": 1 }, { "id": "rifle_ammo", "quantity": 6 }] },
+          "items_gained": [{ "id": "binoculars", "quantity": 1 }, { "id": "rifle_ammo", "quantity": 6 }],
           "penalty": { "type": "damage", "amount": 12 }
         },
         {
@@ -117,7 +117,7 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 9 },
           "successText": "Frugando tra le foglie alla base dell'albero, trovi una piccola scatola sepoltra con munizioni e un coltello da caccia.",
           "failureText": "Non trovi nulla di interessante. Il terreno è stato già setacciato da qualcun altro.",
-          "reward": { "type": "items", "items": [{ "id": "hunting_knife", "quantity": 1 }, { "id": "shotgun_shells", "quantity": 4 }] }
+          "items_gained": [{ "id": "hunting_knife", "quantity": 1 }, { "id": "shotgun_shells", "quantity": 4 }]
         }
       ]
     },
@@ -131,7 +131,7 @@
           "skillCheck": { "stat": "carisma", "difficulty": 11 },
           "successText": "Gli uccelli ti accettano come presenza non minacciosa. Ti guidano verso un piccolo stagno naturale con acqua pulita e bacche commestibili.",
           "failureText": "Il tuo movimento brusco spaventa gli uccelli, che volano via cinguettando di allarme. Altri predatori potrebbero aver sentito.",
-          "reward": { "type": "items", "items": [{ "id": "water_purified", "quantity": 2 }, { "id": "wild_berries", "quantity": 3 }] },
+          "items_gained": [{ "id": "water_purified", "quantity": 2 }, { "id": "wild_berries", "quantity": 3 }],
           "penalty": { "type": "special", "effect": "attract_predators" }
         },
         {
@@ -151,7 +151,7 @@
           "skillCheck": { "stat": "forza", "difficulty": 11 },
           "successText": "Dopo aver lottato con rovi e rami, riesci ad aprire un passaggio e scopri i resti di un vecchio ponte di legno con una cassetta degli attrezzi ancora sigillata.",
           "failureText": "Le spine dei rovi ti graffiano e i rami ti colpiscono. Apri un passaggio, ma a caro prezzo.",
-          "reward": { "type": "item", "item": { "id": "tool_box", "quantity": 1 } },
+          "items_gained": [{ "id": "tool_box", "quantity": 1 }],
           "penalty": { "type": "damage", "amount": 10 }
         },
         {
@@ -173,7 +173,7 @@
           "skillCheck": { "stat": "agilita", "difficulty": 12 },
           "successText": "Con passi misurati e un perfetto equilibrio, attraversi il tronco senza problemi. Dall'altra parte trovi una vecchia borsa da escursionista.",
           "failureText": "Scivoli sul muschio umido e cadi nel burrone. Per fortuna non è molto profondo, ma ti fai male e ti bagni.",
-          "reward": { "type": "item", "item": { "id": "hiking_backpack", "quantity": 1 } },
+          "items_gained": [{ "id": "hiking_backpack", "quantity": 1 }],
           "penalty": { "type": "damage", "amount": 15 }
         },
         {
@@ -181,7 +181,7 @@
           "skillCheck": { "stat": "forza", "difficulty": 13 },
           "successText": "Scendi e risali usando radici e sporgenze rocciose. È faticoso ma sicuro. Trovi anche qualche fungo commestibile sul fondo.",
           "failureText": "La risalita è più difficile del previsto. Rimani bloccato a metà e devi lottare per uscire, esaurendoti.",
-          "reward": { "type": "item", "item": { "id": "edible_mushrooms", "quantity": 2 } },
+          "items_gained": [{ "id": "edible_mushrooms", "quantity": 2 }],
           "penalty": { "type": "stat_reduction", "stat": "stamina", "amount": 25 }
         }
       ]
@@ -196,7 +196,7 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 12 },
           "successText": "Scavando con cautela, trovi una vecchia moneta d'oro e una piccola pietra preziosa. Sembrano molto antiche.",
           "failureText": "Scavi freneticamente ma non trovi nulla di valore. Solo terra e radici. Hai sprecato tempo ed energie.",
-          "reward": { "type": "items", "items": [{ "id": "gold_coin", "quantity": 1 }, { "id": "precious_stone", "quantity": 1 }] },
+          "items_gained": [{ "id": "gold_coin", "quantity": 1 }, { "id": "precious_stone", "quantity": 1 }],
           "penalty": { "type": "time", "minutes": 45 }
         },
         {
@@ -216,14 +216,14 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 10 },
           "successText": "Tra gli oggetti sparsi trovi una borraccia ancora piena, un accendino funzionante e una mappa della zona.",
           "failureText": "Gli oggetti sono troppo danneggiati dalle intemperie per essere utili. Hai perso solo tempo.",
-          "reward": { "type": "items", "items": [{ "id": "water_bottle", "quantity": 1 }, { "id": "lighter", "quantity": 1 }, { "id": "local_map", "quantity": 1 }] }
+          "items_gained": [{ "id": "water_bottle", "quantity": 1 }, { "id": "lighter", "quantity": 1 }, { "id": "local_map", "quantity": 1 }]
         },
         {
           "text": "Cerca di riparare la tenda",
           "skillCheck": { "stat": "intelligenza", "difficulty": 13 },
           "successText": "Con qualche aggiustamento riesci a rendere la tenda di nuovo utilizzabile. Ora hai un riparo portatile.",
           "failureText": "La tenda è troppo danneggiata. Nel tentativo di ripararla la rovini completamente.",
-          "reward": { "type": "item", "item": { "id": "portable_tent", "quantity": 1 } }
+          "items_gained": [{ "id": "portable_tent", "quantity": 1 }]
         }
       ]
     }

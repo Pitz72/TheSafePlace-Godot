@@ -1,6 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://bkhciyfpfpjvu"]
+[gd_scene load_steps=9 format=3 uid="uid://bkhciyfpfpjvu"]
 
-[ext_resource type="Script" path="res://scripts/ui/GameUI.gd" id="1_m9k5p"]
+[ext_resource type="Script" uid="uid://dt7otbhan4qdk" path="res://scripts/ui/GameUI.gd" id="1_m9k5p"]
+[ext_resource type="Script" uid="uid://dskyssyo3xbyp" path="res://scripts/ui/panels/SurvivalPanel.gd" id="2_survival"]
+[ext_resource type="Script" uid="uid://xvhdwrffhywh" path="res://scripts/ui/panels/InventoryPanel.gd" id="3_inventory"]
+[ext_resource type="Script" uid="uid://b24cc0fqb0wmy" path="res://scripts/ui/panels/InfoPanel.gd" id="4_info"]
+[ext_resource type="Script" uid="uid://bst6i33a7k0d4" path="res://scripts/ui/panels/StatsPanel.gd" id="5_stats"]
+[ext_resource type="Script" uid="uid://c4y7vyer5qcn2" path="res://scripts/ui/panels/EquipmentPanel.gd" id="6_equipment"]
+[ext_resource type="Script" uid="uid://dj4kg12076t" path="res://scripts/ui/panels/CommandsPanel.gd" id="7_commands"]
+[ext_resource type="Script" uid="uid://lb1uhcxttcja" path="res://scripts/ui/panels/LogPanel.gd" id="8_log"]
 
 [node name="GameUI_Layer" type="CanvasLayer"]
 
@@ -45,6 +52,7 @@ theme_override_constants/separation = 10
 
 [node name="SurvivalPanel" type="PanelContainer" parent="GameUI/MainLayout/ThreeColumnLayout/LeftPanel"]
 layout_mode = 2
+script = ExtResource("2_survival")
 
 [node name="SurvivalVBox" type="VBoxContainer" parent="GameUI/MainLayout/ThreeColumnLayout/LeftPanel/SurvivalPanel"]
 layout_mode = 2
@@ -68,15 +76,16 @@ layout_mode = 2
 text = "Idratazione: 100/100"
 
 [node name="StatusLabel" type="RichTextLabel" parent="GameUI/MainLayout/ThreeColumnLayout/LeftPanel/SurvivalPanel/SurvivalVBox"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
 bbcode_enabled = true
-fit_content = true
 text = "Status: Normale"
+fit_content = true
 
 [node name="InventoryPanel" type="PanelContainer" parent="GameUI/MainLayout/ThreeColumnLayout/LeftPanel"]
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("3_inventory")
 
 [node name="InventoryVBox" type="VBoxContainer" parent="GameUI/MainLayout/ThreeColumnLayout/LeftPanel/InventoryPanel"]
 layout_mode = 2
@@ -120,7 +129,6 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="WorldViewport" type="SubViewport" parent="GameUI/MainLayout/ThreeColumnLayout/CenterPanel/MapPanel/MapVBox"]
-layout_mode = 2
 size = Vector2i(400, 300)
 render_target_update_mode = 4
 
@@ -128,6 +136,7 @@ render_target_update_mode = 4
 custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 size_flags_vertical = 0
+script = ExtResource("8_log")
 
 [node name="LogVBox" type="VBoxContainer" parent="GameUI/MainLayout/ThreeColumnLayout/CenterPanel/LogPanel"]
 layout_mode = 2
@@ -151,6 +160,7 @@ theme_override_constants/separation = 10
 
 [node name="InfoPanel" type="PanelContainer" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel"]
 layout_mode = 2
+script = ExtResource("4_info")
 
 [node name="InfoVBox" type="VBoxContainer" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel/InfoPanel"]
 layout_mode = 2
@@ -170,14 +180,15 @@ layout_mode = 2
 text = "Luogo: Pianura"
 
 [node name="OraLabel" type="RichTextLabel" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel/InfoPanel/InfoVBox"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
 bbcode_enabled = true
-fit_content = true
 text = "Ora: 08:00"
+fit_content = true
 
 [node name="StatsPanel" type="PanelContainer" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel"]
 layout_mode = 2
+script = ExtResource("5_stats")
 
 [node name="StatsVBox" type="VBoxContainer" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel/StatsPanel"]
 layout_mode = 2
@@ -214,6 +225,7 @@ text = "Vigore: 10"
 
 [node name="EquipmentPanel" type="PanelContainer" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel"]
 layout_mode = 2
+script = ExtResource("6_equipment")
 
 [node name="EquipmentVBox" type="VBoxContainer" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel/EquipmentPanel"]
 layout_mode = 2
@@ -235,6 +247,7 @@ text = "Armatura: Nessuna"
 [node name="CommandsPanel" type="PanelContainer" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel"]
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("7_commands")
 
 [node name="CommandsVBox" type="VBoxContainer" parent="GameUI/MainLayout/ThreeColumnLayout/RightPanel/CommandsPanel"]
 layout_mode = 2

@@ -656,4 +656,38 @@ Questo file mantiene tutti i test manuali per prevenire regressioni durante lo s
 
 **Note:** Test superato - polish finale completato - v0.2.1
 
+---
+
+## Milestone 3 Task 4.2: Implementazione SkillCheckManager
+
+### Test M3.T4.2: Verifica SkillCheckManager e Debug Key F9
+
+**Obiettivo:** Verificare che il Singleton `SkillCheckManager` esegua correttamente un test di abilità e che il tasto di debug `F9` attivi il test e ne stampi il risultato in console.
+
+**Passi:**
+1. Avviare la scena `MainGame.tscn`.
+2. Una volta in gioco, premere il tasto `F9`.
+3. Controllare l'output nella console di debug di Godot.
+
+**Risultato Atteso:**
+- ✅ Alla pressione di `F9`, non devono verificarsi errori.
+- ✅ La console di Godot deve stampare un blocco di testo formattato, contenente le seguenti chiavi: `stat_used`, `stat_value`, `modifier`, `roll`, `total`, `difficulty`, `success`.
+- ✅ Esempio di output atteso (i valori numerici possono variare):
+  ```
+  --- SKILL CHECK TEST (Forza vs 12) ---
+  stat_used: forza
+  stat_value: 5
+  modifier: -3
+  roll: 15
+  total: 12
+  difficulty: 12
+  success: True
+  ------------------------------------
+  ```
+- ✅ Il valore di `stat_used` deve essere "forza" e `difficulty` deve essere 12, come specificato nel codice di debug.
+
+**Risultato Test:** [ ] PASS / [ ] FAIL
+
+**Note:** Test per la nuova funzionalità di skill check.
+
 ═══════════════════════════════════════════════════════════════════════════════

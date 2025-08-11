@@ -46,41 +46,63 @@ var atmosphere_messages = [
 
 
 func _ready():
-	print("🎮 MainGame inizializzato")
+	print("🎮 MainGame: Inizio sequenza di avvio UNIFICATA.")
 	
-	# Ottieni riferimenti ai manager
-	event_manager = EventManager
-	player_manager = PlayerManager
-	# Recupera GameUI e l'istanza di World creata al suo interno (SubViewport)
-	game_ui = get_node("GameUI/GameUI") if has_node("GameUI/GameUI") else null
-	world = null
+	# 1. Inizializza i manager che contengono dati
+	EventManager.initialize_events()
 	
-	# Connetti ai segnali del World instanziato da GameUI (se/quando disponibile)
+	# 2. Prepara dati personaggio (senza applicarli)
+	var char_data = PlayerManager.prepare_new_character_data()
+	
+	# 2.5. Ordina alla GameUI di mostrare il popup di creazione personaggio
+	game_ui = get_node("/root/MainGame/GameUI/GameUI")
+	if game_ui and game_ui.has_method("show_character_creation_popup"):
+		game_ui.show_character_creation_popup(char_data)
+	else:
+		print("⚠️ MainGame: GameUI o show_character_creation_popup() non trovata!")
+	
+	# 3. Connetti i segnali globali (se necessario)
+	_connect_signals() # Assicurati che questa funzione esista e sia corretta
+	
+	print("✅ MainGame: Flusso di avvio completato.")
+
+func _connect_signals() -> void:
+	print("🔌 MainGame: Connessione segnali...")
+
+	# Connetti a EventManager
+	if EventManager:
+		if not EventManager.event_triggered.is_connected(_on_event_triggered):
+			EventManager.event_triggered.connect(_on_event_triggered)
+			print("✅ Connesso a EventManager.event_triggered")
+
+	# Connetti a World (tramite GameUI)
 	if game_ui and game_ui.has_method("get_world_scene"):
 		world = game_ui.get_world_scene()
 		if world and world.has_signal("player_moved"):
+			# Connetti InputManager.map_move a World._on_map_move (CATENA MOVIMENTO)
+			if InputManager and not InputManager.map_move.is_connected(world._on_map_move):
+				InputManager.map_move.connect(world._on_map_move)
+				print("✅ Connesso InputManager.map_move a World._on_map_move")
+			
+			# Connetti World.player_moved a MainGame._on_player_moved
 			if not world.player_moved.is_connected(_on_player_moved):
 				world.player_moved.connect(_on_player_moved)
+				print("✅ Connesso a World.player_moved")
+				
 			if not world.narrative_message_sent.is_connected(_on_world_narrative_message):
 				world.narrative_message_sent.connect(_on_world_narrative_message)
-			print("✅ Connesso a World.player_moved e World.narrative_message_sent (via GameUI)")
+				print("✅ Connesso a World.narrative_message_sent")
 		else:
-			print("⏳ World non ancora disponibile dal GameUI, riprovo a connettere...")
+			print("⏳ World non ancora disponibile dal GameUI, tento connessione differita...")
 			call_deferred("_try_connect_world_signals")
 	else:
-		print("⚠️ GameUI o metodo get_world_scene non disponibile")
-	
-	if event_manager:
-		event_manager.event_triggered.connect(_on_event_triggered)
-		print("✅ Connesso a EventManager.event_triggered")
-	
+		print("⚠️ GameUI o metodo get_world_scene non disponibile per la connessione dei segnali.")
+
 	# Emetti messaggi di benvenuto iniziali
-	player_manager.narrative_log_generated.emit("[color=yellow]La sopravvivenza dipende dalle tue scelte.[/color]")
-	player_manager.narrative_log_generated.emit("[color=yellow]Ogni passo è una decisione. Muoviti con [WASD] o le frecce.[/color]")
-	player_manager.narrative_log_generated.emit("[color=yellow]Ogni passo sarà un'esperienza che ti renderà più forte.[/color]")
-	player_manager.narrative_log_generated.emit("[color=yellow]Il viaggio inizia ora. Che la fortuna ti accompagni.[/color]")
-	
-	print("🎯 MainGame pronto per gestire eventi durante il gameplay")
+	PlayerManager.narrative_log_generated.emit("[color=yellow]La sopravvivenza dipende dalle tue scelte.[/color]")
+	PlayerManager.narrative_log_generated.emit("[color=yellow]Ogni passo è una decisione. Muoviti con [WASD] o le frecce.[/color]")
+	PlayerManager.narrative_log_generated.emit("[color=yellow]Ogni passo sarà un'esperienza che ti renderà più forte.[/color]")
+	PlayerManager.narrative_log_generated.emit("[color=yellow]Il viaggio inizia ora. Che la fortuna ti accompagni.[/color]")
 
 # Tenta di connettere i segnali del World istanziato da GameUI in modo differito
 func _try_connect_world_signals():
@@ -89,11 +111,17 @@ func _try_connect_world_signals():
 	var w = game_ui.get_world_scene()
 	if w and w.has_signal("player_moved"):
 		world = w
+		# Connetti InputManager.map_move a World._on_map_move (CATENA MOVIMENTO)
+		if InputManager and not InputManager.map_move.is_connected(world._on_map_move):
+			InputManager.map_move.connect(world._on_map_move)
+			print("✅ Connesso InputManager.map_move a World._on_map_move (deferred)")
+		
 		if not world.player_moved.is_connected(_on_player_moved):
 			world.player_moved.connect(_on_player_moved)
+			print("✅ Connesso a World.player_moved (deferred)")
 		if not world.narrative_message_sent.is_connected(_on_world_narrative_message):
 			world.narrative_message_sent.connect(_on_world_narrative_message)
-		print("✅ Connesso a World.player_moved e World.narrative_message_sent (via GameUI, deferred)")
+			print("✅ Connesso a World.narrative_message_sent (deferred)")
 	else:
 		call_deferred("_try_connect_world_signals")
 
@@ -105,7 +133,7 @@ func _process(delta):
 	# Controlla se è il momento di un messaggio di atmosfera
 	if time_since_last_message >= atmosphere_message_cooldown:
 		var random_message = atmosphere_messages[randi() % atmosphere_messages.size()]
-		player_manager.narrative_log_generated.emit(random_message)
+		PlayerManager.narrative_log_generated.emit(random_message)
 		time_since_last_message = 0.0 # Resetta il timer
 
 # Gestisce il movimento del giocatore e triggera eventi
@@ -123,7 +151,7 @@ func _on_player_moved(position: Vector2i, terrain_type: String):
 		exp_gained = randi_range(5, 10)  # Esperienza normale di giorno
 	
 	# Aggiungi esperienza (i messaggi sono gestiti internamente da PlayerManager)
-	player_manager.add_experience(exp_gained, "esplorazione")
+	PlayerManager.add_experience(exp_gained, "esplorazione")
 	
 	# Mappa terreno a bioma per EventManager
 	var new_biome = _map_terrain_to_biome(terrain_type)
@@ -132,7 +160,7 @@ func _on_player_moved(position: Vector2i, terrain_type: String):
 	if new_biome != current_biome:
 		if biome_entry_messages.has(new_biome):
 			var msg_data = biome_entry_messages[new_biome]
-			player_manager.narrative_log_generated.emit("[color=%s]%s[/color]" % [msg_data.color, msg_data.text])
+			PlayerManager.narrative_log_generated.emit("[color=%s]%s[/color]" % [msg_data.color, msg_data.text])
 			time_since_last_message = 0.0 # Resetta il timer atmosfera
 		current_biome = new_biome
 	
@@ -156,7 +184,7 @@ func _attempt_event_trigger(biome: String):
 	
 	# CORREZIONE: Rimuovo doppia probabilità - delego tutto a EventManager
 	print("🎲 Tentativo evento per bioma: %s" % biome)
-	var result = event_manager.trigger_random_event(biome)
+	var result = EventManager.trigger_random_event(biome)
 	if result.get("triggered", false):
 		_reset_cooldowns()
 		print("✅ Evento triggerato con successo")
@@ -187,7 +215,7 @@ func force_trigger_event(target_biome: String = ""):
 		biome = ["forest", "plains", "mountains", "urban"][randi() % 4]
 	
 	print("🔧 DEBUG: Forzando evento per bioma: %s" % biome)
-	event_manager.trigger_random_event(biome)
+	EventManager.trigger_random_event(biome)
 	_reset_cooldowns()
 
 # Mappa il tipo di terreno di World ai biomi di EventManager

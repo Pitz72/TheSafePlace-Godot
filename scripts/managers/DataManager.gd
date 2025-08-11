@@ -402,7 +402,7 @@ func get_weapons_by_damage() -> Array[Dictionary]:
 	for item_id in items:
 		var item_data = items[item_id]
 		if item_data.has("category") and item_data.category == "WEAPON":
-			weapons[item_id] = item_data
+			weapon_list.append(item_data)
 	
 	# Ordinamento per danno medio
 	weapon_list.sort_custom(func(a, b): 

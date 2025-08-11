@@ -37,11 +37,11 @@ func _ready() -> void:
     hide()
     _connect_button_inputs()
 
-func show_character_creation() -> void:
+func show_character_creation(char_data: Dictionary) -> void:
     InputManager.set_state(InputManager.InputState.POPUP)
     _is_active = true
     self.show()
-    _start_generation_sequence()
+    _start_generation_sequence(char_data)
 
 func close_popup() -> void:
     _is_active = false
@@ -70,22 +70,18 @@ func _input(event: InputEvent) -> void:
 func _on_accept_pressed() -> void:
     if _rolled_stats.is_empty():
         return
-    # Applica stats generate al PlayerManager e termina
-    if PlayerManager:
-        PlayerManager.stats = _rolled_stats.duplicate()
-        PlayerManager.max_hp = PlayerManager._calculate_max_hp(PlayerManager.stats.get("vigore", 10))
-        PlayerManager.hp = PlayerManager.max_hp
-        PlayerManager.food = 100
-        PlayerManager.water = 100
-        PlayerManager.inventory.clear()
+    # Il segnale character_accepted non passa parametri
+    # La finalizzazione sarà gestita da GameUI
     character_accepted.emit()
     close_popup()
 
 func _on_reroll_pressed() -> void:
     if _is_active:
-        _start_generation_sequence()
+        # Rigenera i dati tramite PlayerManager
+        var new_char_data = PlayerManager.prepare_new_character_data()
+        _start_generation_sequence(new_char_data)
 
-func _start_generation_sequence() -> void:
+func _start_generation_sequence(char_data: Dictionary) -> void:
     subtitle_label.text = "Generazione casuale in corso..."
     # Reset UI
     for node in [stat_forza, stat_agilita, stat_intelligenza, stat_carisma, stat_fortuna, stat_vigore, hp_container, button_container]:
@@ -94,20 +90,20 @@ func _start_generation_sequence() -> void:
         label.text = "???"
     accept_button.text = "[center][color=#888888]Accetta Personaggio[/color][/center]"
 
-    # Genera stats usando le funzioni esistenti in PlayerManager
-    if PlayerManager:
-        _rolled_stats = PlayerManager._generate_initial_stats()
-        var calc_hp = PlayerManager._calculate_max_hp(_rolled_stats.get("vigore", 10))
-        # Sequenza rivelazione
-        await _reveal_stat(stat_forza, forza_value, _rolled_stats.get("forza", 10), 0.0)
-        await _reveal_stat(stat_agilita, agilita_value, _rolled_stats.get("agilita", 10), 0.2)
-        await _reveal_stat(stat_intelligenza, intelligenza_value, _rolled_stats.get("intelligenza", 10), 0.2)
-        await _reveal_stat(stat_carisma, carisma_value, _rolled_stats.get("carisma", 10), 0.2)
-        await _reveal_stat(stat_fortuna, fortuna_value, _rolled_stats.get("fortuna", 10), 0.2)
-        await _reveal_stat(stat_vigore, vigore_value, _rolled_stats.get("vigore", 10), 0.2)
-        await _reveal_hp(calc_hp, 0.2)
-        await _reveal_buttons(0.2)
-        subtitle_label.text = "Premi INVIO per iniziare o R rigenera"
+    # Usa i dati forniti dal PlayerManager
+    _rolled_stats = char_data.get("stats", {})
+    var calc_hp = char_data.get("max_hp", 100)
+    
+    # Sequenza rivelazione
+    await _reveal_stat(stat_forza, forza_value, _rolled_stats.get("forza", 10), 0.0)
+    await _reveal_stat(stat_agilita, agilita_value, _rolled_stats.get("agilita", 10), 0.2)
+    await _reveal_stat(stat_intelligenza, intelligenza_value, _rolled_stats.get("intelligenza", 10), 0.2)
+    await _reveal_stat(stat_carisma, carisma_value, _rolled_stats.get("carisma", 10), 0.2)
+    await _reveal_stat(stat_fortuna, fortuna_value, _rolled_stats.get("fortuna", 10), 0.2)
+    await _reveal_stat(stat_vigore, vigore_value, _rolled_stats.get("vigore", 10), 0.2)
+    await _reveal_hp(calc_hp, 0.2)
+    await _reveal_buttons(0.2)
+    subtitle_label.text = "Premi INVIO per iniziare o R rigenera"
 
 func _reveal_stat(container: Control, value_label: Label, value: int, delay: float) -> void:
     await get_tree().create_timer(1.0).timeout

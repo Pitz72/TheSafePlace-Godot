@@ -10,14 +10,14 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 12 },
           "successText": "Trovi un kit di primo soccorso e un paio di granate fumogene.",
           "failureText": "I luoghi saccheggiati a fondo rivelano solo detriti.",
-          "reward": { "type": "items", "items": [{ "id": "first_aid_kit", "quantity": 1 }, { "id": "smoke_grenade", "quantity": 2 }] }
+          "items_gained": [{ "id": "first_aid_kit", "quantity": 1 }, { "id": "smoke_grenade", "quantity": 2 }]
         },
         {
           "text": "Forza un container chiuso",
           "skillCheck": { "stat": "forza", "difficulty": 14 },
           "successText": "Riesci ad aprire un container con munizioni e rifornimenti.",
           "failureText": "Le serrature sono troppo resistenti.",
-          "reward": { "type": "items", "items": [{ "id": "rifle_ammo", "quantity": 10 }, { "id": "ration_pack", "quantity": 2 }] }
+          "items_gained": [{ "id": "rifle_ammo", "quantity": 10 }, { "id": "ration_pack", "quantity": 2 }]
         }
       ]
     },
@@ -31,14 +31,14 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 11 },
           "successText": "Recuperi antibiotici scaduti e alcune bende sterili.",
           "failureText": "Niente di utile rimasto.",
-          "reward": { "type": "items", "items": [{ "id": "antibiotics_expired", "quantity": 1 }, { "id": "bandages_clean", "quantity": 2 }] }
+          "items_gained": [{ "id": "antibiotics_expired", "quantity": 1 }, { "id": "bandages_clean", "quantity": 2 }]
         },
         {
           "text": "Controlla il retro",
           "skillCheck": { "stat": "agilita", "difficulty": 12 },
           "successText": "Sgattaioli nel retro e trovi uno scomparto segreto con farmaci migliori.",
           "failureText": "Fai rumore e devi battere in ritirata.",
-          "reward": { "type": "item", "item": { "id": "painkillers", "quantity": 2 } }
+          "items_gained": [{ "id": "painkillers", "quantity": 2 }]
         }
       ]
     },
@@ -52,7 +52,7 @@
           "skillCheck": { "stat": "agilita", "difficulty": 13 },
           "successText": "Trovi rifugi improvvisati, batterie e un vecchio radio portatile.",
           "failureText": "Ti perdi nei corridoi e devi risalire in fretta.",
-          "reward": { "type": "items", "items": [{ "id": "batteries_pack", "quantity": 1 }, { "id": "portable_radio", "quantity": 1 }] }
+          "items_gained": [{ "id": "batteries_pack", "quantity": 1 }, { "id": "portable_radio", "quantity": 1 }]
         },
         {
           "text": "Evita i sotterranei",
@@ -79,7 +79,7 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 11 },
           "successText": "Trovi attrezzi, fusibili e una lampadina di ricambio.",
           "failureText": "È stato svuotato da tempo.",
-          "reward": { "type": "items", "items": [{ "id": "tool_screwdriver", "quantity": 1 }, { "id": "fuse", "quantity": 2 }, { "id": "light_bulb", "quantity": 1 }] }
+          "items_gained": [{ "id": "tool_screwdriver", "quantity": 1 }, { "id": "fuse", "quantity": 2 }, { "id": "light_bulb", "quantity": 1 }]
         }
       ]
     },
@@ -93,12 +93,12 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 11 },
           "successText": "Trovi manuali di meccanica e pronto soccorso.",
           "failureText": "La maggior parte dei libri è inutile per la sopravvivenza.",
-          "reward": { "type": "items", "items": [{ "id": "mechanic_manual", "quantity": 1 }, { "id": "first_aid_book", "quantity": 1 }] }
+          "items_gained": [{ "id": "mechanic_manual", "quantity": 1 }, { "id": "first_aid_book", "quantity": 1 }]
         },
         {
           "text": "Recupera carta per accendere fuochi",
           "resultText": "Raccogli carta asciutta e di facile combustione.",
-          "reward": { "type": "item", "item": { "id": "dry_paper", "quantity": 5 } }
+          "items_gained": [{ "id": "dry_paper", "quantity": 5 }]
         }
       ]
     },
@@ -112,14 +112,14 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 12 },
           "successText": "Trovi tende, corde e kit multiuso.",
           "failureText": "Gli scaffali sono vuoti o danneggiati.",
-          "reward": { "type": "items", "items": [{ "id": "tent_small", "quantity": 1 }, { "id": "rope_strong", "quantity": 1 }, { "id": "multitool", "quantity": 1 }] }
+          "items_gained": [{ "id": "tent_small", "quantity": 1 }, { "id": "rope_strong", "quantity": 1 }, { "id": "multitool", "quantity": 1 }]
         },
         {
           "text": "Controlla il magazzino",
           "skillCheck": { "stat": "forza", "difficulty": 13 },
           "successText": "Apri una porta bloccata e trovi scatoloni con conserve e acqua.",
           "failureText": "La porta non si apre.",
-          "reward": { "type": "items", "items": [{ "id": "canned_food", "quantity": 3 }, { "id": "water_purified", "quantity": 3 }] }
+          "items_gained": [{ "id": "canned_food", "quantity": 3 }, { "id": "water_purified", "quantity": 3 }]
         }
       ]
     },
@@ -133,14 +133,14 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 13 },
           "successText": "Trovi munizioni e un giubbotto protettivo.",
           "failureText": "L'armeria è stata svuotata.",
-          "reward": { "type": "items", "items": [{ "id": "pistol_ammo", "quantity": 10 }, { "id": "kevlar_vest", "quantity": 1 }] }
+          "items_gained": [{ "id": "pistol_ammo", "quantity": 10 }, { "id": "kevlar_vest", "quantity": 1 }]
         },
         {
           "text": "Controlla gli uffici",
           "skillCheck": { "stat": "intelligenza", "difficulty": 11 },
           "successText": "Recuperi walkie-talkie e documenti con codici utili.",
           "failureText": "Documenti bagnati e inutilizzabili.",
-          "reward": { "type": "items", "items": [{ "id": "walkie_talkie", "quantity": 1 }, { "id": "code_list", "quantity": 1 }] }
+          "items_gained": [{ "id": "walkie_talkie", "quantity": 1 }, { "id": "code_list", "quantity": 1 }]
         }
       ]
     },
@@ -154,14 +154,14 @@
           "skillCheck": { "stat": "forza", "difficulty": 12 },
           "successText": "Spingi via una scaffalatura e trovi scorte nascoste.",
           "failureText": "Nulla di interessante.",
-          "reward": { "type": "items", "items": [{ "id": "fuel_canister_small", "quantity": 1 }, { "id": "car_toolkit", "quantity": 1 }] }
+          "items_gained": [{ "id": "fuel_canister_small", "quantity": 1 }, { "id": "car_toolkit", "quantity": 1 }]
         },
         {
           "text": "Smonta le pompe",
           "skillCheck": { "stat": "intelligenza", "difficulty": 13 },
           "successText": "Recuperi componenti metallici e guarnizioni.",
           "failureText": "Tutto troppo usurato.",
-          "reward": { "type": "items", "items": [{ "id": "metal_scrap", "quantity": 4 }, { "id": "rubber_gasket", "quantity": 2 }] }
+          "items_gained": [{ "id": "metal_scrap", "quantity": 4 }, { "id": "rubber_gasket", "quantity": 2 }]
         }
       ]
     },
@@ -175,14 +175,14 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 12 },
           "successText": "Trovi farmaci generici e materiale sterile.",
           "failureText": "Armadi svuotati e locali danneggiati.",
-          "reward": { "type": "items", "items": [{ "id": "generic_meds", "quantity": 2 }, { "id": "sterile_gauze", "quantity": 3 }] }
+          "items_gained": [{ "id": "generic_meds", "quantity": 2 }, { "id": "sterile_gauze", "quantity": 3 }]
         },
         {
           "text": "Controlla l'officina tecnica",
           "skillCheck": { "stat": "intelligenza", "difficulty": 13 },
           "successText": "Recuperi strumenti di precisione e batterie speciali.",
           "failureText": "Molto è stato portato via.",
-          "reward": { "type": "items", "items": [{ "id": "precision_tools", "quantity": 1 }, { "id": "medical_battery", "quantity": 2 }] }
+          "items_gained": [{ "id": "precision_tools", "quantity": 1 }, { "id": "medical_battery", "quantity": 2 }]
         }
       ]
     },
@@ -196,14 +196,14 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 12 },
           "successText": "Trovi microchip, cavi e moduli funzionanti.",
           "failureText": "Tutto troppo danneggiato.",
-          "reward": { "type": "items", "items": [{ "id": "electronic_parts", "quantity": 5 }, { "id": "copper_wire", "quantity": 3 }] }
+          "items_gained": [{ "id": "electronic_parts", "quantity": 5 }, { "id": "copper_wire", "quantity": 3 }]
         },
         {
           "text": "Cerca un generatore portatile",
           "skillCheck": { "stat": "forza", "difficulty": 14 },
           "successText": "Sollevi una casseratura pesante e trovi un piccolo generatore.",
           "failureText": "Troppo pesante o rotto.",
-          "reward": { "type": "item", "item": { "id": "portable_generator", "quantity": 1 } }
+          "items_gained": [{ "id": "portable_generator", "quantity": 1 }]
         }
       ]
     },

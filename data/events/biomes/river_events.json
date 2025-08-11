@@ -10,12 +10,12 @@
           "skillCheck": { "stat": "agilita", "difficulty": 11 },
           "successText": "Riesci a prendere alcuni pesci.",
           "failureText": "I pesci non abboccano.",
-          "reward": { "type": "item", "item": { "id": "fresh_fish", "quantity": 2 } }
+          "items_gained": [{ "id": "fresh_fish", "quantity": 2 }]
         },
         {
           "text": "Recupera acqua",
           "resultText": "Riempi alcune borracce con acqua da filtrare.",
-          "reward": { "type": "item", "item": { "id": "river_water", "quantity": 3 } }
+          "items_gained": [{ "id": "river_water", "quantity": 3 }]
         }
       ]
     },
@@ -29,7 +29,7 @@
           "skillCheck": { "stat": "agilita", "difficulty": 12 },
           "successText": "Trovi una cassetta impermeabile con attrezzatura da pesca.",
           "failureText": "Scivoli e cadi in acqua.",
-          "reward": { "type": "items", "items": [{ "id": "fishing_kit", "quantity": 1 }, { "id": "hook_set", "quantity": 1 }] },
+          "items_gained": [{ "id": "fishing_kit", "quantity": 1 }, { "id": "hook_set", "quantity": 1 }],
           "penalty": { "type": "damage", "amount": 5 }
         },
         {
@@ -37,7 +37,7 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 10 },
           "successText": "Trovi chiodi e tavole riutilizzabili.",
           "failureText": "Il legno è troppo marcio.",
-          "reward": { "type": "items", "items": [{ "id": "wood_planks", "quantity": 3 }, { "id": "nails_box", "quantity": 1 }] }
+          "items_gained": [{ "id": "wood_planks", "quantity": 3 }, { "id": "nails_box", "quantity": 1 }]
         }
       ]
     },
@@ -56,7 +56,7 @@
         {
           "text": "Usa la bottiglia come contenitore",
           "resultText": "Pulita e asciugata, può tornare utile per trasportare liquidi.",
-          "reward": { "type": "item", "item": { "id": "glass_bottle", "quantity": 1 } }
+          "items_gained": [{ "id": "glass_bottle", "quantity": 1 }]
         }
       ]
     },
@@ -70,14 +70,14 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 10 },
           "successText": "Ottieni acqua parzialmente purificata.",
           "failureText": "Il filtro è rotto e inefficace.",
-          "reward": { "type": "item", "item": { "id": "water_filtered", "quantity": 2 } }
+          "items_gained": [{ "id": "water_filtered", "quantity": 2 }]
         },
         {
           "text": "Smontal o per materiali",
           "skillCheck": { "stat": "forza", "difficulty": 11 },
           "successText": "Recuperi tessuti e sabbia fine.",
           "failureText": "Si disfa senza recuperare nulla.",
-          "reward": { "type": "items", "items": [{ "id": "cloth_piece", "quantity": 2 }, { "id": "fine_sand", "quantity": 1 }] }
+          "items_gained": [{ "id": "cloth_piece", "quantity": 2 }, { "id": "fine_sand", "quantity": 1 }]
         }
       ]
     },
@@ -91,7 +91,7 @@
           "skillCheck": { "stat": "agilita", "difficulty": 12 },
           "successText": "Trovi una cassetta impermeabile con strumenti.",
           "failureText": "Tagli e contusioni mentre cerchi.",
-          "reward": { "type": "items", "items": [{ "id": "waterproof_case", "quantity": 1 }, { "id": "small_tools", "quantity": 1 }] },
+          "items_gained": [{ "id": "waterproof_case", "quantity": 1 }, { "id": "small_tools", "quantity": 1 }],
           "penalty": { "type": "damage", "amount": 7 }
         },
         {
@@ -99,7 +99,7 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 13 },
           "successText": "Riesci a sifonare un po' di carburante.",
           "failureText": "Serbatoio vuoto o acqua dentro.",
-          "reward": { "type": "item", "item": { "id": "fuel_canister_small", "quantity": 1 } }
+          "items_gained": [{ "id": "fuel_canister_small", "quantity": 1 }]
         }
       ]
     },
@@ -154,7 +154,7 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 11 },
           "successText": "Trovi una borraccia, corde e una foto ingiallita.",
           "failureText": "Lo zaino è strappato e quasi vuoto.",
-          "reward": { "type": "items", "items": [{ "id": "water_bottle", "quantity": 1 }, { "id": "rope_strong", "quantity": 1 }] }
+          "items_gained": [{ "id": "water_bottle", "quantity": 1 }, { "id": "rope_strong", "quantity": 1 }]
         },
         {
           "text": "Seppellisci i resti",
@@ -175,7 +175,7 @@
           "skillCheck": { "stat": "forza", "difficulty": 12 },
           "successText": "Recuperi legname e rami resistenti.",
           "failureText": "Fai crollare troppo e vieni bagnato.",
-          "reward": { "type": "items", "items": [{ "id": "sturdy_branches", "quantity": 3 }, { "id": "wood_planks", "quantity": 2 }] },
+          "items_gained": [{ "id": "sturdy_branches", "quantity": 3 }, { "id": "wood_planks", "quantity": 2 }],
           "penalty": { "type": "damage", "amount": 4 }
         },
         {
@@ -193,7 +193,7 @@
         {
           "text": "Raccogli argilla",
           "resultText": "Raccogli abbastanza argilla per piccoli lavori.",
-          "reward": { "type": "item", "item": { "id": "clay_chunk", "quantity": 3 } }
+          "items_gained": [{ "id": "clay_chunk", "quantity": 3 }]
         },
         {
           "text": "Cerca tracce di animali",

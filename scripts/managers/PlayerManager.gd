@@ -107,22 +107,43 @@ var equipped_armor: Dictionary = {}
 # INIZIALIZZAZIONE
 # ========================================
 
-func _ready() -> void:
-	# Debug rimosso per ridurre log
-	_initialize_new_character()
-	_connect_time_manager_signals()
-	# Debug rimosso per ridurre log
+## Dati temporanei del personaggio in fase di creazione
+var _pending_character_data: Dictionary = {}
 
-## Inizializza un nuovo personaggio con valori di default
-func _initialize_new_character() -> void:
-	# Debug rimosso per ridurre log
+func _ready() -> void:
+	# L'inizializzazione del personaggio è stata spostata in MainGame.gd
+	_connect_time_manager_signals()
+	print("PlayerManager pronto, in attesa di ordini.")
+
+## Prepara i dati di un nuovo personaggio senza applicarli allo stato attivo
+## @return: Dictionary con i dati generati (stats, max_hp, hp)
+func prepare_new_character_data() -> Dictionary:
+	print("▶️ PlayerManager: Preparazione dati nuovo personaggio")
 	
-	# GENERAZIONE CASUALE STATISTICHE (M3.T3.5)
-	stats = _generate_initial_stats()
+	# GENERAZIONE CASUALE STATISTICHE
+	var new_stats = _generate_initial_stats()
 	
 	# CALCOLO HP DINAMICO BASATO SU VIGORE
-	max_hp = _calculate_max_hp(stats.vigore)
-	hp = max_hp  # HP correnti = HP massimi all'inizio
+	var new_max_hp = _calculate_max_hp(new_stats.vigore)
+	
+	# Salva i dati in variabile temporanea
+	_pending_character_data = {
+		"stats": new_stats,
+		"max_hp": new_max_hp,
+		"hp": new_max_hp
+	}
+	
+	print("✅ PlayerManager: Dati personaggio preparati (non ancora applicati)")
+	return _pending_character_data
+
+## Applica i dati pendenti allo stato reale del giocatore
+func finalize_character_creation() -> void:
+	print("▶️ PlayerManager: Finalizzazione creazione personaggio")
+	
+	# Applica i dati pendenti allo stato reale del giocatore
+	self.stats = _pending_character_data.stats
+	self.max_hp = _pending_character_data.max_hp
+	self.hp = _pending_character_data.hp
 	
 	# RISORSE SOPRAVVIVENZA DI DEFAULT
 	food = 100
@@ -130,19 +151,19 @@ func _initialize_new_character() -> void:
 	water = 100
 	max_water = 100
 	
-	# INVENTARIO VUOTO
+	# INVENTARIO E EQUIPAGGIAMENTO VUOTI
 	inventory.clear()
-	
-	# EQUIPAGGIAMENTO VUOTO
 	equipped_weapon.clear()
 	equipped_armor.clear()
 	
-	# OGGETTI DI PARTENZA (opzionale - solo per testing)
-	_add_starting_items()
+	# Pulisci i dati temporanei
+	_pending_character_data.clear()
 	
-	# Debug rimosso per ridurre log
-	# Debug rimosso per ridurre log
-	# Debug rimosso per ridurre log
+	print("✅ PlayerManager: Creazione personaggio finalizzata")
+	
+	# Emetti i segnali per aggiornare la UI
+	stats_changed.emit()
+	resources_changed.emit()
 
 ## Aggiunge oggetti di partenza per il nuovo sistema di gioco
 ## Set fisso: 2 bevande, 2 cibi, 2 cure, 1 arma base, 1 armatura base
@@ -479,7 +500,8 @@ func _apply_consumable_effects(item_data: Dictionary, quantity: int) -> void:
 ## @return: Indice slot (0-based) o -1 se non trovato
 func _find_inventory_slot(item_id: String) -> int:
 	for i in range(inventory.size()):
-		if inventory[i].id == item_id:
+		# HOTFIX: Usa .get("id") per evitare crash se un oggetto non ha un ID.
+		if inventory[i].get("id") == item_id:
 			return i
 	return -1
 

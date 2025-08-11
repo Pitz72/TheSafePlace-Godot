@@ -154,11 +154,8 @@ func _ready():
 	# 5. Avvia animazione di lampeggio
 	player_character.get_node("AnimationPlayer").play("pulse")
 	
-	# 6. CONNETTI SEGNALI INPUTMANAGER
-	_connect_input_manager()
-	
-	# 7. CONNETTI SEGNALE A GAMEUI PER AGGIORNAMENTI INFO
-	_connect_to_gameui()
+	# La logica di connessione dei segnali è stata spostata in MainGame.gd
+	# per centralizzare il flusso di inizializzazione.
 	
 	# Debug rimosso per ridurre log
 

@@ -24,7 +24,7 @@
         {
           "text": "Fruga tra i resti",
           "resultText": "Tra le macerie e i ricordi di un mondo perduto, trovi alcuni oggetti utili che il povero Marco non avrà più bisogno di usare.",
-          "reward": { "type": "items", "items": [{ "id": "canned_food", "quantity": 1 }, { "id": "medical_supplies", "quantity": 1 }] }
+          "items_gained": [{ "id": "canned_food", "quantity": 1 }, { "id": "medical_supplies", "quantity": 1 }]
         }
       ]
     },
@@ -37,7 +37,7 @@
         {
           "text": "Apri la scatola",
           "resultText": "Con rispetto per il defunto, liberi delicatamente la scatola dalle sue mani. All'interno trovi provviste ben conservate, come se qualcuno avesse saputo che un giorno sarebbero servite a un altro sopravvissuto.",
-          "reward": { "type": "items", "items": [{ "id": "water_bottle", "quantity": 1 }, { "id": "pain_killers", "quantity": 1 }] }
+          "items_gained": [{ "id": "water_bottle", "quantity": 1 }, { "id": "pain_killers", "quantity": 1 }]
         }
       ]
     },
@@ -52,7 +52,7 @@
           "skillCheck": { "stat": "costituzione", "difficulty": 12 },
           "successText": "Riesci a forzare la porta e ad entrare. Il bunker contiene scorte militari ancora utilizzabili.",
           "failureText": "La porta è troppo pesante e arrugginita. I tuoi sforzi sono vani e ti ferisci nel tentativo.",
-          "reward": { "type": "items", "items": [{ "id": "military_rations", "quantity": 2 }, { "id": "first_aid_kit", "quantity": 1 }] },
+          "items_gained": [{ "id": "military_rations", "quantity": 2 }, { "id": "first_aid_kit", "quantity": 1 }],
           "penalty": { "type": "damage", "amount": 5 }
         }
       ]
@@ -81,7 +81,7 @@
         {
           "text": "Apri la capsula con rispetto",
           "resultText": "Tra i ricordi innocenti di un mondo perduto, trovi anche alcune provviste che i bambini avevano nascosto per 'il futuro'.",
-          "reward": { "type": "items", "items": [{ "id": "candy", "quantity": 3 }, { "id": "toy", "quantity": 1 }] }
+          "items_gained": [{ "id": "candy", "quantity": 3 }, { "id": "toy", "quantity": 1 }]
         }
       ]
     }

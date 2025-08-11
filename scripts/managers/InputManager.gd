@@ -189,6 +189,9 @@ func _handle_global_input(event: InputEvent) -> bool:
 	
 	# M3.T3: Debug system removed - production ready
 	
+	# M3.T4.2: Gestione input di debug (F9)
+	_handle_debug_input(event)
+
 	return false
 
 ## Gestisce input specifici per stato MAP
@@ -290,6 +293,21 @@ func _handle_combat_input(event: InputEvent) -> void:
 			# Debug rimosso per ridurre log
 			pass
 		action_confirm.emit()
+
+# ========================================
+# GESTIONE INPUT DEBUG (M3.T4.2)
+# ========================================
+
+## Gestisce input specifici per il debug, come i tasti funzione.
+## Viene chiamato da _handle_global_input per assicurare che sia sempre attivo.
+func _handle_debug_input(event: InputEvent) -> void:
+	if event.is_action_pressed("debug_f9"):
+		# Esegui un test di skill check e stampa il risultato in console
+		var result = SkillCheckManager.perform_check("forza", 12)
+		print("--- SKILL CHECK TEST (Forza vs 12) ---")
+		for key in result:
+			print(key, ": ", result[key])
+		print("------------------------------------")
 
 # ========================================
 # UTILITIES E DEBUG

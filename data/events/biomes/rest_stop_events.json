@@ -20,7 +20,7 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 12 },
           "successText": "Frugando tra i detriti, trovi alcuni oggetti ancora utilizzabili: una torcia e delle batterie.",
           "failureText": "Cerchi per un po' ma non trovi nulla di utile. Hai solo perso tempo prezioso.",
-          "reward": { "type": "items", "items": [{ "id": "flashlight", "quantity": 1 }, { "id": "battery", "quantity": 2 }] },
+          "items_gained": [{ "id": "flashlight", "quantity": 1 }, { "id": "battery", "quantity": 2 }],
           "penalty": { "type": "time", "minutes": 30 }
         },
         {

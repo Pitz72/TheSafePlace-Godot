@@ -6,8 +6,7 @@ extends Node
 
 # Segnali per comunicazione con altri sistemi
 signal event_triggered(event_data: Dictionary)
-signal event_completed(event_id: String, choice_index: int, result: Dictionary, skill_check_result)
-signal skill_check_performed(stat_name: String, result: Dictionary)
+signal event_choice_resolved(result_text: String, narrative_log: String, skill_check_details: Dictionary)
 
 # Riferimenti ai manager
 @onready var player_manager: PlayerManager
@@ -32,6 +31,10 @@ var biome_event_chances: Dictionary = {
 }
 
 func _ready():
+	print("EventManager pronto.")
+
+## Inizializza il sistema eventi. Chiamato esplicitamente da MainGame.
+func initialize_events():
 	print("[EventManager] Inizializzazione EventManager...")
 	
 	# Ottieni riferimenti ai manager
@@ -157,7 +160,7 @@ func _normalize_choice_schema(choice: Dictionary):
 func _convert_legacy_consequence(legacy_consequence: Dictionary) -> Dictionary:
 	var modern_consequence = {}
 	
-	match legacy_consequence.get("consequence_type", ""):
+	match legacy_consequence.get("type", ""):
 		"damage":
 			modern_consequence["hp_change"] = -legacy_consequence.get("amount", 0)
 		"heal":
@@ -180,22 +183,43 @@ func _convert_legacy_consequence(legacy_consequence: Dictionary) -> Dictionary:
 		"full_hydrate":
 			modern_consequence["water_change"] = 999  # Valore alto per idratazione completa
 		"remove_item":
-			# TODO: Implementare rimozione oggetti se necessario
-			pass
+			var item_id = legacy_consequence.get("id", "")
+			var quantity = legacy_consequence.get("quantity", 1)
+			modern_consequence["items_lost"] = [{"id": item_id, "quantity": quantity}]
 		_:
 			# Per tipi sconosciuti o complessi, mantieni la struttura originale
 			modern_consequence = legacy_consequence.duplicate(true)
 	
 	return modern_consequence
 
+# Seleziona un evento casuale per il bioma specificato (con controlli di sicurezza)
+func get_random_event(biome: String) -> Dictionary:
+	# 1. Controlla che il bioma esista nel database
+	if not biome_event_pools.has(biome):
+		print("[EventManager] Bioma non trovato: ", biome)
+		return {}
+	
+	# 2. Ottieni l'array di eventi per il bioma
+	var biome_events = biome_event_pools[biome]
+	
+	# 3. Controlla che l'array non sia vuoto
+	if biome_events.is_empty():
+		print("[EventManager] Nessun evento disponibile per bioma: ", biome)
+		return {}
+	
+	# 4. Seleziona un evento casuale dall'array
+	var selected_event = biome_events.pick_random()
+	
+	# 5. Controllo di sicurezza finale
+	if selected_event is Dictionary and selected_event.has("id"):
+		return selected_event
+	else:
+		print("[ERROR] EventManager: Evento selezionato per il bioma '", biome, "' è malformato o non valido.")
+		return {}  # Restituisce un dizionario vuoto per evitare crash
+
 # Funzione principale: triggera un evento casuale per il bioma specificato
 func trigger_random_event(biome: String) -> Dictionary:
 	print("[EventManager] Tentativo trigger evento per bioma: ", biome)
-	
-	# Verifica se ci sono eventi per questo bioma
-	if not biome_event_pools.has(biome) or biome_event_pools[biome].is_empty():
-		print("[EventManager] Nessun evento disponibile per bioma: ", biome)
-		return {"triggered": false, "reason": "no_events_for_biome"}
 	
 	# Controlla probabilità evento
 	var chance = biome_event_chances.get(biome, 0.15)
@@ -207,10 +231,15 @@ func trigger_random_event(biome: String) -> Dictionary:
 		print("[EventManager] Evento non triggerato (probabilità)")
 		return {"triggered": false, "reason": "probability_failed"}
 	
-	# Seleziona evento casuale dal pool
-	var available_events = biome_event_pools[biome]
-	var selected_event = available_events[randi() % available_events.size()]
+	# Usa la nuova funzione robusta per selezionare l'evento
+	var selected_event = get_random_event(biome)
 	
+	# Controllo di sicurezza: verifica che l'evento sia valido
+	if selected_event.is_empty():
+		print("[EventManager] Nessun evento valido trovato per il bioma '", biome, "'. Salto il turno dell'evento.")
+		return {"triggered": false, "reason": "no_valid_events"}
+	
+	# Solo ora possiamo accedere a selected_event["id"] in sicurezza
 	print("[EventManager] Evento triggerato: ", selected_event["id"])
 	
 	# Imposta evento corrente per UI
@@ -226,79 +255,53 @@ func trigger_random_event(biome: String) -> Dictionary:
 		"biome": biome
 	}
 
-# Processa la scelta del giocatore per un evento
-func process_event_choice(event_id: String, choice_index: String) -> Dictionary:
+# Sostituisci l'intera funzione 'process_event_choice' con questa: 
+func process_event_choice(event_id: String, choice_index: int) -> void:
 	print("[EventManager] Processing scelta evento: ", event_id, " - scelta index: ", choice_index)
-	
-	# Trova l'evento
+
+	# Controlli di sicurezza iniziali
 	if not cached_events.has(event_id):
-		print("[EventManager] ERRORE: Evento non trovato: ", event_id)
-		return {"success": false, "error": "event_not_found"}
-	
+		print("[EventManager] ERRORE: Evento non trovato in cache: ", event_id)
+		return
+
 	var event = cached_events[event_id]
 	var choices = event.get("choices", [])
-	
-	# Converti choice_index in intero
-	var choice_idx = choice_index.to_int()
-	
-	# Verifica che l'indice sia valido
-	if choice_idx < 0 or choice_idx >= choices.size():
-		print("[EventManager] ERRORE: Indice scelta non valido: ", choice_idx, " (max: ", choices.size() - 1, ")")
-		return {"success": false, "error": "choice_index_invalid"}
-	
-	# Ottieni la scelta selezionata
-	var selected_choice = choices[choice_idx]
-	
-	# Processa skill check se presente
-	var skill_check_result = null
-	if selected_choice.has("skill_check"):
-		skill_check_result = _process_skill_check(selected_choice["skill_check"])
-		print("[EventManager] Risultato skill check: ", skill_check_result)
-	
-	# Determina le conseguenze da applicare
-	var consequences_to_apply = {}
-	
-	if skill_check_result:
-		# Usa conseguenze basate su successo/fallimento skill check
-		if skill_check_result["success"]:
-			consequences_to_apply = selected_choice.get("consequences_success", {})
-		else:
-			consequences_to_apply = selected_choice.get("consequences_failure", {})
-	else:
-		# Usa conseguenze dirette
-		consequences_to_apply = selected_choice.get("consequences", {})
-	
-	# Applica le conseguenze
-	if not consequences_to_apply.is_empty():
-		_apply_event_consequences(consequences_to_apply)
-	
-	# Emetti segnale completamento
-	event_completed.emit(event_id, choice_idx, selected_choice, skill_check_result)
-	
-	return {
-		"success": true,
-		"event_id": event_id,
-		"choice_index": choice_idx,
-		"choice_data": selected_choice,
-		"skill_check_result": skill_check_result,
-		"consequences_applied": consequences_to_apply
-	}
 
-# Processa un skill check
-func _process_skill_check(skill_check_data: Dictionary) -> Dictionary:
-	var stat_name = skill_check_data.get("stat", "forza")
-	var difficulty = skill_check_data.get("difficulty", 15)
-	var modifier = skill_check_data.get("modifier", 0)
-	
-	print("[EventManager] Esecuzione skill check: ", stat_name, " vs DC ", difficulty, " (mod: ", modifier, ")")
-	
-	# Chiama il sistema skill check del PlayerManager
-	var result = player_manager.skill_check(stat_name, difficulty, modifier)
-	
-	# Emetti segnale
-	skill_check_performed.emit(stat_name, result)
-	
-	return result
+	if choice_index < 0 or choice_index >= choices.size():
+		print("[EventManager] ERRORE: Indice scelta non valido: ", choice_index)
+		return
+
+	var choice = choices[choice_index]
+	var result_text = ""
+	var narrative_log = ""
+	var skill_check_details = {}
+
+	# --- INIZIO LOGICA DI RISOLUZIONE ---
+	if choice.has("skillCheck"):
+		var check_data = choice.skillCheck
+		skill_check_details = SkillCheckManager.perform_check(check_data.stat, check_data.difficulty)
+
+		if skill_check_details.success:
+			result_text = choice.get("successText", "Successo!")
+			if choice.has("reward"):
+				PlayerManager.apply_item_transaction(choice.reward)
+		else:
+			result_text = choice.get("failureText", "Fallimento.")
+			if choice.has("penalty"):
+				_apply_penalty(choice.penalty)
+	else:
+		# Scelta senza skill check
+		result_text = choice.get("resultText", "Azione completata.")
+		if choice.has("reward"):
+			PlayerManager.apply_item_transaction(choice.reward)
+		if choice.has("penalty"):
+			_apply_penalty(choice.penalty)
+	# --- FINE LOGICA DI RISOLUZIONE ---
+
+	narrative_log = result_text
+	event_choice_resolved.emit(result_text, narrative_log, skill_check_details)
+
+
 
 # Applica le conseguenze di un evento
 func _apply_event_consequences(consequences: Dictionary):
@@ -306,6 +309,31 @@ func _apply_event_consequences(consequences: Dictionary):
 	
 	# Usa la funzione del PlayerManager per applicare le conseguenze
 	player_manager.apply_skill_check_result({}, consequences)
+
+## Gestisce l'applicazione di una penalità da un evento.
+## Creato per M3.T4.3 per centralizzare la logica delle penalità.
+func _apply_penalty(penalty_data: Dictionary):
+	if penalty_data.has("type"):
+		match penalty_data.type:
+			"damage":
+				if penalty_data.has("amount"):
+					PlayerManager.modify_hp(-penalty_data.amount)
+			"status":
+				if penalty_data.has("status"):
+					# Converti la stringa dello stato (es. "WOUNDED") nell'enum del PlayerManager
+					var status_enum = PlayerManager.Status.get(penalty_data.status.to_upper())
+					if status_enum != null:
+						PlayerManager.add_status(status_enum)
+			"time":
+				if penalty_data.has("minutes"):
+					var minutes_to_advance = penalty_data.get("minutes", 0)
+					if minutes_to_advance > 0:
+						# Ogni mossa equivale a 30 minuti. Calcoliamo il numero di mosse.
+						var moves = int(ceil(float(minutes_to_advance) / 30.0))
+						TimeManager.advance_time_by_moves(moves)
+			"remove_item":
+				if penalty_data.has("item_id") and penalty_data.has("quantity"):
+					PlayerManager.remove_item(penalty_data.item_id, penalty_data.quantity)
 
 # Ottieni eventi disponibili per un bioma
 func get_events_for_biome(biome: String) -> Array:
