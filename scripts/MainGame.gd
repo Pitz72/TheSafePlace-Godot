@@ -54,6 +54,10 @@ func _ready():
 	if EventManager and not EventManager.event_triggered.is_connected(_on_event_triggered):
 		EventManager.event_triggered.connect(_on_event_triggered)
 
+	# Ora che abbiamo connesso il nostro listener, diciamo alla UI di procedere
+	# con la creazione del mondo. Questo garantisce che non perderemo il segnale.
+	game_ui.initialize_world()
+
 
 # Callback eseguita SOLO quando GameUI ha finito di creare il mondo.
 func _on_world_ready(world_instance: Node):

@@ -44,7 +44,6 @@ func _ready():
 	add_to_group("gameui")
 	verify_player_manager()
 	connect_player_manager_signals()
-	instantiate_world_scene()
 	# update_all_ui() // Spostato o gestito da segnali
 	call_deferred("debug_world_viewport")
 	_connect_input_manager()
@@ -54,6 +53,11 @@ func _ready():
 	# La creazione del personaggio è ora gestita da MainGame.gd
 
 # ═══ VERIFICA E SETUP INIZIALE ═══
+
+# Funzione pubblica chiamata da MainGame per avviare l'istanziazione del mondo.
+# Questo assicura che MainGame sia già in ascolto del segnale world_ready.
+func initialize_world():
+	instantiate_world_scene()
 
 func verify_player_manager():
 	if not PlayerManager:
