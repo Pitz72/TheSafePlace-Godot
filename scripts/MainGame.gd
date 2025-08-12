@@ -1,7 +1,7 @@
 extends Node
 
 # Riferimenti ai manager e nodi
-@onready var game_ui = $GameUI
+@onready var game_ui = $GameUI/GameUI
 var world: Node # Riferimento al mondo, verrà impostato in _on_world_ready
 
 # Sistema cooldown eventi
