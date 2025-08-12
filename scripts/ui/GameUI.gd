@@ -3,6 +3,11 @@ extends Control
 class_name GameUI
 
 # ========================================
+# SEGNALI
+# ========================================
+signal world_ready(world_instance: Node)
+
+# ========================================
 # SCENE PRECARICATE
 # ========================================
 
@@ -62,6 +67,8 @@ func instantiate_world_scene():
 		world_scene_instance = world_scene.instantiate()
 		world_viewport.add_child(world_scene_instance)
 		world_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+		print("✅ GameUI: Mondo istanziato. Emissione segnale world_ready.")
+		world_ready.emit(world_scene_instance) # Notifica che il mondo è pronto
 		call_deferred("connect_viewport_to_display")
 	else:
 		push_error("GameUI: Impossibile caricare res://scenes/World.tscn")
