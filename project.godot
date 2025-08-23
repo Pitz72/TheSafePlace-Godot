@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="The Safe Place v0.4.0 - A unifying language for all things"
-config/description="Un GDR di sopravvivenza post-apocalittico ispirato ai terminali anni 80 - Linguaggio comune unificato per oggetti e sistema dati standardizzato"
+config/name="The Safe Place v0.4.1 - Write Only When You're Not Drunk"
+config/description="Un GDR di sopravvivenza post-apocalittico ispirato ai terminali anni 80 - Sistema di logging consolidato e architettura anti-conflitti"
 run/main_scene="res://scenes/MainGame.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
 

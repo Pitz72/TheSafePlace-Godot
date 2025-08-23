@@ -1,6 +1,7 @@
 extends Control
 
-class_name GameUI
+# TheSafePlaceGameUI - Non registrato come class_name per evitare conflitti globali
+# Accesso tramite gruppo "gameui" come da architettura del progetto
 
 # ========================================
 # SCENE PRECARICATE
@@ -73,7 +74,7 @@ func connect_player_manager_signals():
 		return
 	# I segnali specifici dei pannelli (resources, stats, inventory) sono gestiti dai pannelli stessi.
 	# GameUI gestisce solo segnali più ampi.
-	PlayerManager.narrative_log_generated.connect(_on_narrative_log_generated)
+	# Log narrativo gestito direttamente da LogPanel - rimossa connessione duplicata
 
 func _connect_input_manager():
 	if not InputManager:
@@ -94,11 +95,12 @@ func _connect_time_manager_signals():
 
 # ═══ CALLBACK SEGNALI ═══
 
-func _on_narrative_log_generated(message: String):
-	if log_panel and log_panel.has_method("add_log_message"):
-		log_panel.add_log_message(message)
+# Funzione rimossa - log narrativo gestito direttamente da LogPanel per evitare duplicati
+# func _on_narrative_log_generated(message: String):
+#	if log_panel and log_panel.has_method("add_log_message"):
+#		log_panel.add_log_message(message)
 
-func _on_day_changed(new_day: int):
+func _on_day_changed(_new_day: int):
 	if log_panel and log_panel.has_method("add_log_message"):
 		log_panel.add_log_message("[color=yellow]🌅 Inizia il %s[/color]" % TimeManager.get_formatted_day())
 
@@ -155,6 +157,11 @@ func add_log_message(message: String):
 func _on_player_moved(new_position: Vector2i, terrain_type: String):
 	if info_panel and info_panel.has_method("update_position"):
 		info_panel.update_position(new_position, terrain_type)
+
+## Restituisce l'istanza della scena World per la connessione dei segnali
+## Questo metodo è necessario per MainGame._connect_signals()
+func get_world_scene() -> Node:
+	return world_scene_instance
 
 # ═══ GESTIONE POPUP ═══
 

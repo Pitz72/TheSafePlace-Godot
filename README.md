@@ -1,4 +1,4 @@
-# 🏠 The Safe Place v0.4.0 "A unifying language for all things"
+# 🏠 The Safe Place v0.4.1 "Write Only When You're Not Drunk"
 
 *Un GDR testuale in stile retro computer sviluppato in Godot*
 
@@ -16,7 +16,7 @@
 
 ## 🚀 Stato del Progetto
 
-**Versione Attuale**: v0.4.0 "A unifying language for all things"
+**Versione Attuale**: v0.4.1 "Write Only When You're Not Drunk"
 
 ### ✅ Sistemi Implementati
 - ✅ Core Engine e World Manager
@@ -26,10 +26,9 @@
 - ✅ Time Manager e Sistema Temporale
 - ✅ Sistema di Skill Check
 - ✅ Generazione Mappa ASCII
-- ✅ **NUOVO**: Linguaggio Comune Unificato per Oggetti
-- ✅ **NUOVO**: Sistema di Colori Dinamico per Categorie
-- ✅ **NUOVO**: Sistema di Transazioni Oggetti
-- ✅ **NUOVO**: Architettura Dati Standardizzata con Properties
+- ✅ **NUOVO v0.4.1**: Sistema di Logging Unificato e Anti-Conflitti
+- ✅ **NUOVO v0.4.1**: Framework di Testing Unitario
+- ✅ **NUOVO v0.4.1**: Architettura Global Class Management
 
 ### 🔄 In Sviluppo
 - 🔄 Sistema di Combattimento Avanzato
@@ -99,7 +98,8 @@ Progetto in sviluppo - Licenza da definire
 
 ## 🏷️ Tag e Versioni
 
-- `v0.3.5` - Colors and Separation (Corrente)
+- `v0.4.1` - Write Only When You're Not Drunk (Corrente)
+- `v0.4.0` - A unifying language for all things
 - `v0.3.4` - To have a giant backpack
 - `v0.3.3` - Every step is an experience
 - `v0.3.2` - The Importance of Choices
@@ -115,7 +115,7 @@ Progetto in sviluppo - Licenza da definire
 *Sviluppato con ❤️ e l'assistenza di Claude AI*
 
 [![Godot Engine](https://img.shields.io/badge/Godot-4.4.1-blue.svg)](https://godotengine.org/)
-[![Version](https://img.shields.io/badge/Version-v0.3.5-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-v0.4.1-green.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Active%20Development-brightgreen.svg)](01%20ROADMAP.txt)
 
@@ -125,7 +125,12 @@ Progetto in sviluppo - Licenza da definire
 
 **The Safe Place** è un GDR testuale ambientato negli anni '80 che combina l'estetica retrò dei monitor CRT con meccaniche di gioco moderne. Il giocatore esplora un mondo post-apocalittico alla ricerca di un rifugio sicuro, affrontando eventi dinamici, gestendo risorse vitali e prendendo decisioni che influenzano la sopravvivenza.
 
-### **🎯 Caratteristiche Principali v0.3.5**
+### **🎯 Caratteristiche Principali v0.4.1**
+
+- **🔧 Sistema Logging Unificato:** TSPLogger con formattazione standardizzata e emoji
+- **🧪 Framework Testing:** TestFramework.gd per unit testing automatico
+- **⚡ Gestione Conflitti Globali:** Architettura anti-conflitti per class_name
+- **📊 Documentazione Sincronizzata:** Versioning consistente across progetto
 
 - **🖥️ Estetica CRT Autentica:** Shader personalizzati con scanlines, curvatura e effetti vintage
 - **🎮 Sistema Eventi Modulare:** Architettura separata per biomi con 59+ eventi organizzati per colori
@@ -243,7 +248,7 @@ MainGame.gd (Scene Root)
 ### **✅ Milestone 3: Living World & Events**
 - Character creation system
 - Time management con ciclo giorno/notte
-- **Event system completo con skill check** ⭐ v0.3.2
+- **Event system completo con skill check** ⭐ v0.4.0
 
 ### **🔄 Milestone 4: Combat System** (In Sviluppo)
 - Sistema combattimento turn-based
@@ -252,14 +257,14 @@ MainGame.gd (Scene Root)
 
 ---
 
-## 🆕 **NOVITÀ v0.3.2 "The Importance of Choices"**
+## 🆕 **NOVITÀ v0.4.0 "A unifying language for all things"**
 
-### **🎯 Funzionalità Principali**
-- **Sistema Skill Check Completo:** Test automatici con visualizzazione dettagliata
-- **Navigazione Keyboard Totale:** ↑/↓, W/S, 1-5, ENTER, ESC per tutti i popup
-- **EventPopup UI Ottimizzata:** Dimensioni adattive, text wrapping automatico
-- **Risultati Dettagliati:** "Test di [STAT]: [ROLL]+mod = [TOTAL] vs [DIFF] - [SUCCESS/FAILURE]"
-- **Colori Feedback:** Verde per successo, rosso per fallimento
+### **🎯 Funzionalità Principali v0.4.0**
+- **Sistema Linguaggio Unificato:** Architettura dati standardizzata per tutti gli oggetti
+- **Sistema Colori Dinamico:** Codifica colori automatica per categorie e rarità
+- **Sistema Transazioni Avanzato:** Gestione completa scambio oggetti con validazione
+- **Properties Standardizzate:** Schema unificato per armi, armature e consumabili
+- **Database Modulari:** Separazione completa per tipo di oggetto
 
 ### **🐛 Bug Fixes Critici**
 - **Risolto:** "Invalid access to property or key 'id'" negli eventi
@@ -390,7 +395,7 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file [`LICENSE`](LICENS
 
 ## 🎯 **ROADMAP FUTURO**
 
-### **v0.4.0 "Combat Ready"** (Q2 2025)
+### **v0.5.0 "Combat Ready"** (Q2 2025)
 - Sistema combattimento turn-based
 - Nemici e incontri casuali
 - Equipaggiamento e armi
@@ -410,10 +415,10 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file [`LICENSE`](LICENS
 
 ---
 
-**🏠 The Safe Place v0.3.2 "The Importance of Choices"**  
+**🏠 The Safe Place v0.4.0 "A unifying language for all things"**  
 *Dove ogni scelta conta nella sopravvivenza*
 
 ---
 
-*Ultimo aggiornamento: 28 Gennaio 2025*  
-*Versione README: v0.3.2*
+*Ultimo aggiornamento: 23 Agosto 2025*  
+*Versione README: v0.4.0*

@@ -12,6 +12,10 @@ var time_since_last_event: float = 0.0
 var steps_since_last_event: int = 0
 var steps_threshold: int = 10  # Minimo 10 passi prima di nuovo evento
 
+# Contatore per evitare loop infinito nella connessione segnali
+var connection_attempts: int = 0
+const MAX_CONNECTION_ATTEMPTS: int = 10
+
 # Probabilità eventi per bioma (allineate con EventManager)
 var biome_probabilities = {
 	"pianure": 0.35,
@@ -106,8 +110,20 @@ func _connect_signals() -> void:
 
 # Tenta di connettere i segnali del World istanziato da GameUI in modo differito
 func _try_connect_world_signals():
-	if not game_ui or not game_ui.has_method("get_world_scene"):
+	# Incrementa contatore per evitare loop infinito
+	connection_attempts += 1
+	
+	# Controlla se abbiamo superato il limite di tentativi
+	if connection_attempts > MAX_CONNECTION_ATTEMPTS:
+		push_error("MainGame: Impossibile connettere World signals dopo %d tentativi" % MAX_CONNECTION_ATTEMPTS)
+		print("❌ MainGame: Timeout connessione World signals")
 		return
+	
+	if not game_ui or not game_ui.has_method("get_world_scene"):
+		print("⏳ MainGame: GameUI non ancora pronto, tentativo %d/%d" % [connection_attempts, MAX_CONNECTION_ATTEMPTS])
+		call_deferred("_try_connect_world_signals")
+		return
+		
 	var w = game_ui.get_world_scene()
 	if w and w.has_signal("player_moved"):
 		world = w
@@ -122,7 +138,12 @@ func _try_connect_world_signals():
 		if not world.narrative_message_sent.is_connected(_on_world_narrative_message):
 			world.narrative_message_sent.connect(_on_world_narrative_message)
 			print("✅ Connesso a World.narrative_message_sent (deferred)")
+			
+		# Reset contatore su successo
+		connection_attempts = 0
+		print("✅ MainGame: Tutti i segnali World connessi con successo")
 	else:
+		print("⏳ MainGame: World non ancora disponibile, tentativo %d/%d" % [connection_attempts, MAX_CONNECTION_ATTEMPTS])
 		call_deferred("_try_connect_world_signals")
 
 # Aggiorna il timer del cooldown eventi

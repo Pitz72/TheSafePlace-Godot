@@ -62,17 +62,65 @@ func _load_and_cache_events():
 	cached_events.clear()
 	biome_event_pools.clear()
 	
-	# Tracciamento ID per evitare duplicati tra fonti diverse
-	var seen_ids: Dictionary = {}
+	# Lista dei file eventi da caricare
+	var event_files = [
+		"res://data/events/biomes/city_events.json",
+		"res://data/events/biomes/forest_events.json",
+		"res://data/events/biomes/plains_events.json",
+		"res://data/events/biomes/rest_stop_events.json",
+		"res://data/events/biomes/river_events.json",
+		"res://data/events/biomes/unique_events.json",
+		"res://data/events/biomes/village_events.json"
+	]
 	
-	# 1) Carica eventi modulari per bioma dalla cartella data/events/biomes
-	_load_events_from_biomes_dir(seen_ids)
-	
-	# 2) Gli eventi unici sono ora caricati tramite unique_events.json nella directory biomes
+	# Carica ogni file
+	for file_path in event_files:
+		_load_single_event_file(file_path)
 	
 	print("[EventManager] Caricati ", cached_events.size(), " eventi totali")
 	for biome in biome_event_pools.keys():
 		print("[EventManager] Bioma '", biome, "': ", biome_event_pools[biome].size(), " eventi")
+
+# Carica un singolo file di eventi
+func _load_single_event_file(file_path: String) -> void:
+	var file = FileAccess.open(file_path, FileAccess.READ)
+	if file == null:
+		print("[EventManager] ERRORE: File non trovato: ", file_path)
+		return
+	
+	var file_content = file.get_as_text()
+	file.close()
+	
+	var json = JSON.new()
+	var parse_result = json.parse(file_content)
+	
+	if parse_result != OK:
+		print("[EventManager] ERRORE: JSON non valido in ", file_path)
+		return
+	
+	var data = json.data
+	if not data is Dictionary:
+		print("[EventManager] ERRORE: Formato non valido in ", file_path)
+		return
+	
+	print("   ✅ Caricato: ", file_path.get_file())
+	
+	# Processa i dati del file
+	for biome_key in data.keys():
+		var biome_events = data[biome_key]
+		if biome_events is Array:
+			var normalized_biome = _normalize_biome_name(biome_key)
+			for event_data in biome_events:
+				if event_data is Dictionary and event_data.has("id"):
+					# Aggiungi bioma al dict evento se mancante
+					if not event_data.has("biome"):
+						event_data["biome"] = normalized_biome
+					
+					# Aggiorna cache eventi
+					cached_events[event_data.id] = event_data
+					
+					# Aggiungi al pool bioma
+					_add_event_to_biome_pool(event_data)
 
 # Normalizza i nomi dei biomi per la compatibilità
 func _normalize_biome_name(biome_key: String) -> String:
