@@ -296,7 +296,13 @@ func add_item(item_id: String, quantity: int) -> bool:
 	# Ottieni dati oggetto per verificare se è stackable e gestire porzioni
 	var item_data = DataManager.get_item_data(item_id)
 	var is_stackable = item_data.get("stackable", true)  # Default: stackable
-	var max_portions = item_data.get("max_portions", 0)  # 0 = nessuna porzione
+	# CORREZIONE: accesso corretto a max_portions nelle properties
+	var max_portions = 0
+	if item_data.has("properties") and item_data.properties.has("max_portions"):
+		max_portions = item_data.properties.max_portions
+	else:
+		# Fallback per retrocompatibilità (formato legacy)
+		max_portions = item_data.get("max_portions", 0)
 	
 	# Cerca se l'oggetto è già nell'inventario
 	var existing_slot = _find_inventory_slot(item_id)

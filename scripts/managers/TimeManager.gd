@@ -79,7 +79,6 @@ func advance_time_by_moves(moves: int = 1) -> void:
 		return
 	
 	var previous_hour = current_hour
-	var previous_day = current_day
 	
 	# Aggiorna contatore movimenti totali
 	total_moves += moves
@@ -89,11 +88,11 @@ func advance_time_by_moves(moves: int = 1) -> void:
 	var total_minutes = (current_hour * 60) + current_minute + minutes_to_add
 	
 	# Calcola nuova ora e minuto
-	var new_hour = int(total_minutes / 60) % 24
+	var new_hour = int(total_minutes / 60.0) % 24
 	var new_minute = total_minutes % 60
 	
 	# Gestisci cambio giorno se necessario
-	var days_passed = int(total_minutes / (24 * 60))
+	var days_passed = int(total_minutes / (24.0 * 60))
 	if days_passed > 0:
 		current_day += days_passed
 		# Debug rimosso per ridurre log
@@ -113,6 +112,34 @@ func advance_time_by_moves(moves: int = 1) -> void:
 	
 	# Controlla penalità sopravvivenza (alle 19:00)
 	_check_survival_penalty(previous_hour, current_hour)
+
+## Avanza il tempo fino a una specifica ora del giorno
+## Usato per la funzionalità notturna del rifugio (avanza fino alle 6:00)
+## @param target_hour: int ora target (0-23)
+func advance_time_until_hour(target_hour: int) -> void:
+	if target_hour < 0 or target_hour > 23:
+		print("⚠️ TimeManager: Ora target non valida: ", target_hour)
+		return
+	
+	var moves_needed = 0
+	var temp_hour = current_hour
+	var temp_minute = current_minute
+	
+	# Calcola quanti movimenti servono per raggiungere l'ora target
+	while temp_hour != target_hour:
+		# Ogni movimento avanza di 30 minuti
+		var total_minutes = (temp_hour * 60) + temp_minute + 30
+		temp_hour = int(total_minutes / 60.0) % 24
+		temp_minute = total_minutes % 60
+		moves_needed += 1
+		
+		# Sicurezza: evita loop infiniti
+		if moves_needed > 48:  # Massimo 24 ore = 48 movimenti
+			print("⚠️ TimeManager: Troppi movimenti per raggiungere l'ora ", target_hour)
+			break
+	
+	print("🕐 TimeManager: Avanzando di ", moves_needed, " movimenti fino alle ", target_hour, ":00")
+	advance_time_by_moves(moves_needed)
 
 # ========================================
 # API PUBBLICA - QUERY STATO

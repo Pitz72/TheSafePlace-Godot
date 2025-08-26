@@ -121,7 +121,10 @@ func add_inventory_item_to_display_with_selection(item: Dictionary, is_selected:
 	
 	if has_portions:
 		var current_portions = item.instance_data.portions
-		var max_portions = item_data.get("max_portions", current_portions) if item_data else current_portions
+		# Accesso corretto a max_portions nelle properties
+		var max_portions = current_portions  # fallback
+		if item_data and item_data.has("properties") and item_data.properties.has("max_portions"):
+			max_portions = item_data.properties.max_portions
 		portions_info = "(%d/%d)" % [current_portions, max_portions]
 	
 	# Costruisci il testo base con porzioni se presenti

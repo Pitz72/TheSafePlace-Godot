@@ -57,8 +57,12 @@ signal combat_action(action: String)
 ## @param new_state: InputState nuovo stato
 signal state_changed(old_state: InputState, new_state: InputState)
 
-## Emesso per comando livellamento personaggio (L) - M3.T1
+## Emesso per livellamento personaggio (L) - M3.T1
 signal level_up_request()
+
+## Emesso per azioni rifugio (1-4 quando in rifugio)
+## @param action_index: int numero azione (1-4)
+signal shelter_action_requested(action_index: int)
 
 
 
@@ -169,15 +173,25 @@ func _handle_global_input(event: InputEvent) -> bool:
 		action_cancel.emit()
 		return true
 	
-	# PROBLEMA RISOLTO: Hotkey numerici 1-9 SEMPRE attivi (globali)
+	# GESTIONE HOTKEY NUMERICI 1-9: Inventario VS Azioni Rifugio
 	for i in range(1, 10):
 		var key_code = KEY_1 + (i - 1)  # KEY_1, KEY_2, ..., KEY_9
 		if Input.is_key_pressed(key_code):
 			if debug_input:
 				# Debug rimosso per ridurre log
 				pass
-			inventory_use_item.emit(i)
-			return true
+			
+			# CONTROLLO MODALITÀ RIFUGIO
+			var main_game = get_node("/root/MainGame")
+			if main_game and main_game.has_method("get") and main_game.get("is_in_shelter") == true:
+				# In rifugio: emetti azione rifugio (solo per 1-4)
+				if i <= 4:
+					shelter_action_requested.emit(i)
+					return true
+			else:
+				# Modalità normale: usa oggetto inventario
+				inventory_use_item.emit(i)
+				return true
 	
 	# M3.T1: Comando livellamento personaggio (L) - SEMPRE attivo
 	if Input.is_key_pressed(KEY_L):

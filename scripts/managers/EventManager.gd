@@ -21,13 +21,14 @@ var current_event: Dictionary = {}
 var current_event_id: String = ""
 
 # Configurazione probabilità eventi per bioma (v0.3.5 - Aumentate per migliore gameplay)
+# NOTA: Montagne rimosse in quanto invalicabili - eventi redistribuiti su altri biomi
 var biome_event_chances: Dictionary = {
-	"pianure": 0.35,     # Era 0.15 - Aumentato per più eventi
-	"foreste": 0.45,     # Era 0.20 - Foreste più pericolose
-	"villaggi": 0.55,    # Era 0.25 - Villaggi più interessanti
-	"citta": 0.65,       # Era 0.30 - Città più dinamiche
-	"fiumi": 0.40,       # Era 0.18 - Attraversamenti più avventurosi
-	"montagne": 0.30     # Era 0.12 - Montagne più sfidanti
+	"pianure": 0.38,     # Era 0.35 - Aumentato per compensare montagne
+	"foreste": 0.48,     # Era 0.45 - Aumentato per più diversità eventi natura
+	"villaggi": 0.58,    # Era 0.55 - Aumentato per più eventi sociali
+	"citta": 0.68,       # Era 0.65 - Aumentato per più eventi urbani
+	"fiumi": 0.43        # Era 0.40 - Aumentato per attraversamenti più dinamici
+	# montagne: RIMOSSO - terreno invalicabile, eventi redistribuiti
 }
 
 func _ready():

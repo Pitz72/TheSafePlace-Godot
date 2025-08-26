@@ -143,7 +143,10 @@ func _build_stats_text() -> String:
 	# Porzioni se presenti
 	if _current_item.instance_data.has("portions"):
 		var current_portions = _current_item.instance_data.portions
-		var max_portions = _current_item_data.get("max_portions", current_portions)
+		# Accesso corretto a max_portions nelle properties  
+		var max_portions = current_portions  # fallback
+		if _current_item_data.has("properties") and _current_item_data.properties.has("max_portions"):
+			max_portions = _current_item_data.properties.max_portions
 		stats_parts.append("Porzioni: %d/%d" % [current_portions, max_portions])
 	
 	# Statistiche specifiche per categoria
@@ -256,8 +259,10 @@ func _build_stats_pairs() -> Array[Dictionary]:
 	# Porzioni se presenti
 	if _current_item.instance_data.has("portions"):
 		var current_portions = _current_item.instance_data.portions
-		var properties = _current_item_data.get("properties", {})
-		var max_portions = properties.get("max_portions", current_portions)
+		# Accesso corretto a max_portions nelle properties
+		var max_portions = current_portions  # fallback
+		if _current_item_data.has("properties") and _current_item_data.properties.has("max_portions"):
+			max_portions = _current_item_data.properties.max_portions
 		pairs.append({"key": "Porzioni:", "value": "%d/%d" % [current_portions, max_portions]})
 	
 	# Statistiche specifiche per categoria
