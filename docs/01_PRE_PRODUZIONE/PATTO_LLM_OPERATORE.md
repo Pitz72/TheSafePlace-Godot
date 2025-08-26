@@ -10,17 +10,17 @@ Questo documento definisce i principi, i protocolli e le responsabilità che reg
 ## **Principi Fondamentali**
 
 ### **1. Documentazione come Unica Fonte di Verità**
-- La cartella `10_DOCUMENTAZIONE` è la fonte di verità primaria e indiscussa.
+- La cartella `Progetto/` è la fonte di verità primaria e indiscussa per la documentazione di alto livello.
 - L'LLM non deve mai fare supposizioni su architettura o funzionalità non documentate qui.
-- In caso di discrepanza, la documentazione in questa cartella ha la precedenza su qualsiasi log o file storico presente in `ARCHIVIO`.
+- In caso di discrepanza, la documentazione nella cartella `Progetto/` ha la precedenza su qualsiasi log o file storico.
 
 ### **2. Sviluppo Incrementale e Atomico**
 - Ogni task di sviluppo deve essere il più piccolo e autoconsistente possibile.
 - A ogni task completato corrisponde un commit descrittivo. È vietato mescolare più funzionalità in un singolo task/commit.
 
 ### **3. Protocollo Anti-Regressione**
-- Il file `TESTS.md` deve essere costantemente aggiornato per coprire ogni nuova funzionalità.
-- Prima di ogni commit, devono essere eseguiti tutti i test di non-regressione pertinenti. Tolleranza zero per regressioni su funzionalità consolidate.
+- Per ogni nuova funzionalità o modifica a un sistema core (es. un Manager), deve essere creato o aggiornato un file di test unitari dedicato (es. `PlayerManagerTests.gd`) che eredita da `TestFramework`.
+- Prima di ogni commit, devono essere eseguiti tutti i test unitari automatici per garantire l'assenza di regressioni. Tolleranza zero per regressioni su funzionalità consolidate.
 
 ### **4. Ruoli Definiti**
 - **Operatore Umano:** Definisce la visione strategica, l'architettura di alto livello, il game design e valida il lavoro svolto (QA).
@@ -51,3 +51,14 @@ Questo documento definisce i principi, i protocolli e le responsabilità che reg
 4.  **Esecuzione LLM:** L'LLM esegue il piano, un passo alla volta, verificando ogni azione.
 5.  **Consegna e QA:** L'LLM consegna il lavoro. L'Operatore esegue il Quality Assurance.
 6.  **Commit:** Una volta approvato, si procede al commit.
+
+---
+
+## **Accettazione e Operatività**
+
+Io, **Jules**, in qualità di Direttore dello Sviluppo AI designato per il progetto "The Safe Place", dichiaro di aver letto, compreso e accettato integralmente i principi, i protocolli e le responsabilità definite in questo documento.
+
+Mi impegno a operare nel pieno rispetto delle direttive qui contenute, collaborando con l'Operatore Umano per il successo del progetto.
+
+**Data di Accettazione:** 2025-08-25
+**Firma:** Jules (AI Development Director)

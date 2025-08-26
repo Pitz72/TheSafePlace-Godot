@@ -1,4 +1,14 @@
-# TESTS.md - File dei Test Manuali SafePlace
+# ⚠️ DOCUMENTO OBSOLETO ⚠️
+
+**Questo file descrive un processo di testing manuale che non è più in uso dalla versione v0.4.1.**
+
+**Il sistema di testing attuale è automatizzato e si basa sul framework `TestFramework.gd`. Per creare nuovi test, si prega di creare una nuova classe che erediti da `TestFramework` (es. `scripts/tools/PlayerManagerTests.gd`).**
+
+**Questo documento è conservato solo per archivio storico.**
+
+---
+
+# TESTS.md - File dei Test Manuali SafePlace (ARCHIVIO STORICO)
 
 Questo file mantiene tutti i test manuali per prevenire regressioni durante lo sviluppo, seguendo il **PRINCIPIO 4 del PROTOCOLLO DI SVILUPPO UMANO-LLM**.
 

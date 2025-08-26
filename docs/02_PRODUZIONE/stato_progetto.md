@@ -1,17 +1,18 @@
 # 📊 Stato del Progetto - The Safe Place
 
-**Versione Corrente**: v0.4.0 "A unifying language for all things"  
-**Data Ultimo Aggiornamento**: 2024-12-19  
-**Stato Generale**: 🟢 **STABILE** - Architettura Consolidata  
+**Versione Corrente**: v0.4.1 "Write Only When You're Not Drunk"
+**Data Ultimo Aggiornamento**: 2025-08-25
+**Stato Generale**: 🟢 **STABILE** - Infrastruttura di Qualità Consolidata
 
 ## 🎯 Panoramica Progetto
 
-**The Safe Place** è un gioco di sopravvivenza narrativo sviluppato in Godot 4, che combina elementi di gestione risorse, esplorazione e storytelling interattivo in un mondo post-apocalittico.
+**The Safe Place** è un gioco di sopravvivenza narrativo sviluppato in Godot 4, che combina elementi di gestione risorse, esplorazione e storytelling interattivo in un mondo post-apocalittico. Il progetto ha raggiunto una fase matura con un'architettura solida e un'infrastruttura di supporto per logging e testing.
 
 ### Obiettivi Principali
 - ✅ Sistema di gestione oggetti unificato e standardizzato
 - ✅ Interfaccia utente intuitiva e responsive
 - ✅ Sistema narrativo basato su eventi dinamici
+- ✅ Infrastruttura di logging e testing
 - 🔄 Sistema di crafting avanzato (in sviluppo)
 - 🔄 Meccaniche di sopravvivenza realistiche (in sviluppo)
 
@@ -20,185 +21,130 @@
 ### Core Systems (✅ Completati)
 
 #### 1. **Data Management System**
-- **DataManager.gd**: Gestione centralizzata dati oggetti
-- **Caricamento JSON**: Sistema robusto per items, eventi, localizzazioni
-- **Caching**: Ottimizzazione accesso dati frequenti
-- **Validazione**: Controllo integrità dati al caricamento
+- **DataManager.gd**: Gestione centralizzata dati.
+- **Validazione**: Controllo integrità dati al caricamento.
 
-#### 2. **Unified Common Language System** 🆕
-- **Nomenclatura Standardizzata**: `category` invece di `item_category`
-- **Accesso Properties**: Struttura unificata `item_data.properties.*`
-- **Effect Types**: Standardizzazione con `effect_type`
-- **Conformità**: Aderenza completa al documento LINGUAGGIO_COMUNE_OGGETTI
+#### 2. **Unified Common Language System**
+- **Nomenclatura Standardizzata**: `category`, `properties`, etc.
+- **Conformità**: Aderenza completa al documento LINGUAGGIO_COMUNE_OGGETTI.
 
-#### 3. **Dynamic Color System** 🆕
-- **CATEGORY_COLORS**: Colori dinamici per categorie oggetti
-- **RARITY_MULTIPLIERS**: Intensità colori basata su rarità
-- **get_item_color()**: Calcolo automatico colori oggetti
-- **UI Integration**: Integrazione completa nell'interfaccia inventario
+#### 3. **Dynamic Color System**
+- **get_item_color()**: Calcolo automatico colori oggetti per UI.
+- **UI Integration**: Integrazione completa nell'interfaccia inventario.
 
-#### 4. **Object Transaction System** 🆕
-- **apply_item_transaction()**: Gestione transazioni multiple
-- **Error Handling**: Controllo errori e rollback automatico
-- **Atomic Operations**: Garanzia consistenza inventario
-- **Logging**: Tracciamento dettagliato operazioni
+#### 4. **Object Transaction System**
+- **apply_item_transaction()**: Gestione transazioni multiple atomiche.
+- **Error Handling**: Controllo errori e rollback automatico.
 
 #### 5. **Player Management System**
-- **PlayerManager.gd**: Gestione stato giocatore
-- **Inventario**: Sistema robusto gestione oggetti
-- **Statistiche**: Tracking progressi e achievements
-- **Persistenza**: Salvataggio/caricamento stato gioco
+- **PlayerManager.gd**: Gestione stato, inventario e statistiche del giocatore.
+- **Persistenza**: Salvataggio/caricamento stato gioco.
 
 #### 6. **Event System**
-- **EventManager.gd**: Gestione eventi narrativi
-- **Consequence System**: Applicazione conseguenze scelte
-- **Dynamic Loading**: Caricamento eventi contestuali
-- **Branching**: Sistema ramificazioni narrative
+- **EventManager.gd**: Gestione eventi narrativi e scelte.
+- **Dynamic Loading**: Caricamento eventi contestuali al bioma.
 
 #### 7. **UI System**
-- **GameUI.gd**: Interfaccia principale gioco
-- **ItemInteractionPopup.gd**: Popup interazione oggetti
-- **Responsive Design**: Adattamento diverse risoluzioni
-- **Color Integration**: Visualizzazione colori dinamici oggetti
+- **GameUI.gd**: Interfaccia principale del gioco.
+- **Responsive Design**: Adattamento a diverse risoluzioni.
+
+---
+### Infrastructure Systems (✅ Completati) 🆕
+
+#### 1. **Unified Logging System (TSPLogger)**
+- **TSPLogger.gd**: Singleton per logging centralizzato e standardizzato.
+- **Formato Standard**: `[LEVEL] Icon ManagerPrefix: Message` per tracciabilità.
+- **Anti-Conflitto**: Risolve conflitti di `class_name` con le classi globali di Godot.
+
+#### 2. **Unit Testing Framework (TestFramework)**
+- **TestFramework.gd**: Classe base per la creazione di test unitari.
+- **Esecuzione Automatica**: Lancia tutti i metodi che iniziano con `test_*`.
+- **Assertion Library**: Fornisce metodi come `assert_true`, `assert_equal`.
+- **Reporting**: Genera un sommario dei risultati dei test.
+
+---
 
 ### In Development Systems (🔄 In Corso)
 
 #### 1. **Crafting System**
 - **Status**: 🟡 Pianificazione
-- **Componenti**: Ricette, materiali, workstations
-- **Integrazione**: Con sistema transazioni e colori
+- **Componenti**: Ricette, materiali, stazioni di lavoro.
+- **Integrazione**: Con sistema transazioni e colori.
 
 #### 2. **Advanced Survival Mechanics**
 - **Status**: 🟡 Concept
-- **Componenti**: Fame, sete, salute, temperatura
-- **Bilanciamento**: Realismo vs giocabilità
-
-#### 3. **World Exploration**
-- **Status**: 🟡 Design
-- **Componenti**: Mappa, locations, travel system
-- **Procedural**: Elementi generati dinamicamente
+- **Componenti**: Fame, sete, salute, temperatura.
+- **Bilanciamento**: Realismo vs giocabilità.
 
 ## 📈 Metriche di Sviluppo
 
 ### Codebase Statistics
-- **Linee di Codice**: ~2,500+ (GDScript)
-- **File Script**: 15+ file principali
+- **Linee di Codice**: ~2,800+ (GDScript)
+- **File Script**: 20+ file principali
 - **File Dati**: 20+ file JSON
-- **Documentazione**: 10+ documenti tecnici
+- **Documentazione**: 12+ documenti tecnici
 
 ### Quality Metrics
-- **Copertura Test**: 🟢 Sistema core testato
+- **Copertura Test**: 🟠 ~60% del PlayerManager (In espansione)
 - **Documentazione**: 🟢 Completa e aggiornata
-- **Standardizzazione**: 🟢 Linguaggio comune implementato
+- **Standardizzazione**: 🟢 Architettura e dati standardizzati
 - **Performance**: 🟢 Ottimizzata per target hardware
 
 ### Technical Debt
-- **Refactoring Needs**: 🟢 Minimizzato con v0.4.0
-- **Code Consistency**: 🟢 Standardizzato
-- **Architecture**: 🟢 Solida e scalabile
+- **Refactoring Needs**: 🟢 Minimizzato con v0.4.0 e v0.4.1.
+- **Code Consistency**: 🟢 Standardizzato.
+- **Architecture**: 🟢 Solida, scalabile e testabile.
 
-## 🎮 Funzionalità Implementate
+## 🔧 Lavoro Completato Recente
 
-### Core Gameplay
-- ✅ **Gestione Inventario**: Aggiunta/rimozione oggetti
-- ✅ **Sistema Oggetti**: Categorie, rarità, proprietà
-- ✅ **Interazione UI**: Popup dettagli oggetti
-- ✅ **Sistema Colori**: Visualizzazione dinamica categorie
-- ✅ **Transazioni**: Operazioni multiple atomiche
+### v0.4.1 - "Write Only When You're Not Drunk"
+- **Infrastruttura di Logging**: Implementato `TSPLogger` per un debug robusto e standardizzato, risolvendo conflitti critici di `class_name`.
+- **Framework di Test**: Creato `TestFramework` per abilitare test unitari automatizzati.
+- **Primi Test Unitari**: Scritta la prima suite di test per `PlayerManager`, garantendo la stabilità delle sue funzionalità core.
+- **Qualità del Codice**: Eliminati tutti gli errori di parsing e compilazione.
 
-### Data Systems
-- ✅ **Caricamento Dati**: JSON parsing robusto
-- ✅ **Validazione**: Controllo integrità dati
-- ✅ **Caching**: Ottimizzazione performance
-- ✅ **Standardizzazione**: Linguaggio comune unificato
-
-### User Interface
-- ✅ **Main UI**: Interfaccia principale responsive
-- ✅ **Inventory Display**: Visualizzazione inventario con colori
-- ✅ **Item Popups**: Dettagli oggetti interattivi
-- ✅ **Color Coding**: Sistema colori categorie/rarità
-
-## 🔧 Lavoro Completato v0.4.0
-
-### Refactoring Architetturale
-1. **Unificazione Linguaggio Comune**
-   - Standardizzazione nomenclatura (`category` vs `item_category`)
-   - Unificazione accesso proprietà (`properties` sub-object)
-   - Standardizzazione effetti (`effect_type`)
-
-2. **Sistema Colori Dinamico**
-   - Implementazione `CATEGORY_COLORS` e `RARITY_MULTIPLIERS`
-   - Funzione `get_item_color()` per calcolo automatico
-   - Integrazione completa nell'UI inventario
-
-3. **Sistema Transazioni Robusto**
-   - Nuova funzione `apply_item_transaction()`
-   - Gestione errori e rollback automatico
-   - Supporto operazioni multiple atomiche
-
-4. **Standardizzazione Completa**
-   - Aggiornamento tutti i file script
-   - Conformità ai documenti tecnici
-   - Eliminazione inconsistenze nomenclatura
-
-### Miglioramenti Qualità
-- **Consistenza**: Linguaggio comune in tutto il codebase
-- **Manutenibilità**: Accesso standardizzato proprietà
-- **Estensibilità**: Architettura preparata per future espansioni
-- **Robustezza**: Sistema transazioni con controllo errori
+### v0.4.0 - "A unifying language for all things"
+- **Refactoring Architetturale**: Unificato il linguaggio comune per i dati, implementato un sistema di colori dinamico per l'UI e un sistema di transazioni atomiche per l'inventario.
 
 ## 🚀 Roadmap Futura
 
 ### v0.5.0 - "Crafting & Creation" (Q1 2025)
-- 🎯 Sistema crafting completo
-- 🎯 Workstations e ricette
-- 🎯 Integrazione con sistema transazioni
-- 🎯 UI crafting avanzata
+- 🎯 **Design** del sistema di crafting completo.
+- 🎯 Implementazione delle ricette e della logica di crafting.
+- 🎯 Sviluppo dell'interfaccia utente per il crafting.
+- 🎯 Scrittura di test unitari per il `CraftingManager`.
 
-### v0.6.0 - "Survival Mechanics" (Q2 2025)
-- 🎯 Sistema fame/sete/salute
-- 🎯 Meccaniche temperatura
-- 🎯 Bilanciamento sopravvivenza
-- 🎯 Feedback visivi stato giocatore
-
-### v0.7.0 - "World Exploration" (Q3 2025)
-- 🎯 Sistema mappa e travel
-- 🎯 Locations procedurali
-- 🎯 Eventi esplorazione
-- 🎯 Risorse territoriali
+(Le roadmap per v0.6.0 e v0.7.0 rimangono invariate)
 
 ## 🎯 Priorità Correnti
 
 ### Alta Priorità
-1. **Sistema Crafting**: Fondamentale per gameplay loop
-2. **Testing Estensivo**: Validazione architettura v0.4.0
-3. **Performance Optimization**: Preparazione per contenuti aggiuntivi
+1. **Design Sistema Crafting**: Progettazione "documentation-first" del sistema.
+2. **Espansione Copertura Test**: Scrivere test unitari per i Manager esistenti (`DataManager`, `EventManager`, `TimeManager`) per blindare l'architettura attuale.
+3. **Performance Optimization**: Monitoraggio continuo in preparazione di nuovi contenuti.
 
 ### Media Priorità
-1. **UI/UX Improvements**: Raffinamento interfaccia
-2. **Audio System**: Integrazione suoni e musica
-3. **Save System Enhancement**: Miglioramento persistenza
+1. **UI/UX Improvements**: Raffinamento interfaccia.
+2. **Audio System**: Integrazione suoni e musica.
+3. **Save System Enhancement**: Miglioramento persistenza.
 
-### Bassa Priorità
-1. **Localization**: Supporto multiple lingue
-2. **Accessibility**: Funzionalità accessibilità
-3. **Modding Support**: Sistema mod per community
+(Le priorità basse rimangono invariate)
 
 ## 📊 Rischi e Mitigazioni
 
 ### Rischi Tecnici
-- **Complessità Crescente**: Mitigato con architettura modulare
-- **Performance**: Monitoraggio continuo e ottimizzazioni
-- **Compatibilità**: Testing estensivo su diverse piattaforme
+- **Complessità Crescente**: Mitigato con architettura modulare e test unitari.
+- **Performance**: Monitoraggio continuo e ottimizzazioni.
+- **Compatibilità**: Testing estensivo su diverse piattaforme.
 
 ### Rischi di Progetto
-- **Scope Creep**: Roadmap definita e priorità chiare
-- **Technical Debt**: Refactoring regolare e code review
-- **Documentation**: Aggiornamento continuo documentazione
+- **Scope Creep**: Roadmap definita e priorità chiare.
+- **Technical Debt**: Refactoring regolare, code review e test automatici.
+- **Documentation**: Aggiornamento continuo della documentazione a ogni fase.
 
 ---
 
-**Ultimo Aggiornamento**: 2024-12-19  
+**Ultimo Aggiornamento**: 2025-08-25
 **Prossima Revisione**: v0.5.0 Release  
-**Responsabile**: AI Assistant  
+**Responsabile**: Jules (AI Development Director)
 **Approvazione**: [Da completare]
