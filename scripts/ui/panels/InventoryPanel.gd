@@ -30,7 +30,7 @@ func _ready():
 		InputManager.inventory_navigate.connect(_on_inventory_navigate)
 	update_panel()
 
-func update_panel():
+func update_panel(_arg1 = null, _arg2 = null):
 	"""Aggiorna pannello inventario dinamicamente con sistema di selezione"""
 	# Verifica che inventory_list esista
 	if not inventory_list:
@@ -180,10 +180,10 @@ func _on_inventory_navigate(direction: Vector2i):
 	"""Callback: navigazione inventario con WASD/frecce"""
 	if not is_inventory_active:
 		return  # Ignora se inventario non attivo
-	
+
 	if not PlayerManager or PlayerManager.inventory.size() == 0:
 		return  # Nessun oggetto da navigare
-	
+
 	# Logica navigazione inventario
 	if direction.y == -1:  # SU
 		selected_inventory_index -= 1
@@ -193,6 +193,202 @@ func _on_inventory_navigate(direction: Vector2i):
 		selected_inventory_index += 1
 		if selected_inventory_index >= PlayerManager.inventory.size():
 			selected_inventory_index = 0  # Wrap around al primo
-	
+
 	print("InventoryPanel: 🎯 Navigazione inventario: index %d" % selected_inventory_index)
 	update_panel()  # Aggiorna evidenziazione
+	_scroll_to_selected_item()  # Scrolling automatico
+
+# ====================
+# NAVIGAZIONE AVANZATA KEYBOARD-ONLY
+# ====================
+
+func _input(event):
+	"""Gestisce input aggiuntivi per navigazione avanzata"""
+	if not is_inventory_active or not event.is_pressed():
+		return
+
+	if event is InputEventKey:
+		match event.keycode:
+			KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9:
+				# Selezione diretta con numeri (1-9)
+				var item_number = event.keycode - KEY_1  # 0-8
+				if item_number < PlayerManager.inventory.size():
+					selected_inventory_index = item_number
+					print("InventoryPanel: 🔢 Selezione diretta: slot %d" % (item_number + 1))
+					update_panel()
+					_scroll_to_selected_item()
+					get_viewport().set_input_as_handled()
+
+			KEY_ENTER, KEY_SPACE:
+				# Usa oggetto selezionato
+				_use_selected_item()
+				get_viewport().set_input_as_handled()
+
+			KEY_I:
+				# Toggle inventario (ridondante ma comodo)
+				_on_inventory_toggle()
+				get_viewport().set_input_as_handled()
+
+func _use_selected_item():
+	"""Usa l'oggetto attualmente selezionato"""
+	if not is_inventory_active or not PlayerManager or PlayerManager.inventory.size() == 0:
+		return
+
+	if selected_inventory_index >= 0 and selected_inventory_index < PlayerManager.inventory.size():
+		var selected_item = PlayerManager.inventory[selected_inventory_index]
+		var item_id = selected_item.get("id", "")
+
+		if item_id.is_empty():
+			print("InventoryPanel: ❌ Oggetto senza ID selezionato")
+			return
+
+		# Ottieni dati oggetto
+		var item_data = DataManager.get_item_data(item_id)
+		if item_data.is_empty():
+			print("InventoryPanel: ❌ Dati oggetto non trovati: %s" % item_id)
+			return
+
+		var category = item_data.get("category", "").to_upper()
+
+		# Logica uso basata su categoria
+		match category:
+			"CONSUMABLE":
+				_use_consumable_item(selected_item, item_data)
+			"WEAPON", "ARMOR":
+				_equip_item(selected_item, item_data)
+			_:
+				# Per altri tipi, mostra popup interazione
+				_show_item_interaction_popup(selected_item)
+
+func _use_consumable_item(item: Dictionary, item_data: Dictionary):
+	"""Usa un oggetto consumabile"""
+	var item_id = item.get("id", "")
+	var properties = item_data.get("properties", {})
+	var effects = properties.get("effects", [])
+
+	if effects.is_empty():
+		print("InventoryPanel: ⚠️ Consumabile senza effetti: %s" % item_id)
+		return
+
+	# Applica effetti
+	var success = _apply_consumable_effects(effects, item)
+
+	if success:
+		# Rimuovi una unità dall'inventario
+		PlayerManager.remove_item(item_id, 1)
+		print("InventoryPanel: ✅ Consumabile usato: %s" % item_data.get("name", item_id))
+	else:
+		print("InventoryPanel: ❌ Errore nell'uso del consumabile")
+
+func _apply_consumable_effects(effects: Array, item: Dictionary) -> bool:
+	"""Applica gli effetti di un consumabile"""
+	for effect in effects:
+		var effect_type = effect.get("effect_type", "")
+		var amount = effect.get("amount", 0)
+
+		match effect_type:
+			"heal":
+				PlayerManager.modify_hp(amount)
+				print("InventoryPanel: ❤️ HP +%d" % amount)
+			"nourish":
+				PlayerManager.modify_food(amount)
+				print("InventoryPanel: 🍖 Fame +%d" % amount)
+			"hydrate":
+				PlayerManager.modify_water(amount)
+				print("InventoryPanel: 💧 Sete +%d" % amount)
+			_:
+				print("InventoryPanel: ❓ Effetto sconosciuto: %s" % effect_type)
+
+	return true
+
+func _equip_item(item: Dictionary, item_data: Dictionary):
+	"""Equipa un oggetto (arma o armatura)"""
+	var item_id = item.get("id", "")
+	var category = item_data.get("category", "").to_upper()
+
+	var success = false
+	match category:
+		"WEAPON":
+			success = PlayerManager.equip_weapon(item_id)
+			if success:
+				print("InventoryPanel: ⚔️ Arma equipaggiata: %s" % item_data.get("name", item_id))
+		"ARMOR":
+			success = PlayerManager.equip_armor(item_id)
+			if success:
+				print("InventoryPanel: 🛡️ Armatura equipaggiata: %s" % item_data.get("name", item_id))
+
+	if not success:
+		print("InventoryPanel: ❌ Impossibile equipaggiare: %s" % item_data.get("name", item_id))
+
+func _show_item_interaction_popup(item: Dictionary):
+	"""Mostra popup interazione per oggetti complessi"""
+	# Trova GameUI e chiama la funzione
+	var game_ui = get_tree().get_first_node_in_group("gameui")
+	if game_ui and game_ui.has_method("_open_item_interaction_popup"):
+		game_ui._open_item_interaction_popup(item)
+		print("InventoryPanel: 📋 Popup interazione mostrato per: %s" % item.get("id", "sconosciuto"))
+
+func _scroll_to_selected_item():
+	"""Scrolling automatico per mantenere l'oggetto selezionato visibile"""
+	# Nota: Questa funzione richiede accesso al ScrollContainer
+	# Per ora è un placeholder per future implementazioni
+	pass
+
+# ====================
+# GESTIONE STATO AVANZATA
+# ====================
+
+func get_selected_item() -> Dictionary:
+	"""Restituisce l'oggetto attualmente selezionato"""
+	if not PlayerManager or PlayerManager.inventory.size() == 0 or selected_inventory_index < 0:
+		return {}
+
+	if selected_inventory_index < PlayerManager.inventory.size():
+		return PlayerManager.inventory[selected_inventory_index]
+
+	return {}
+
+func get_selected_item_data() -> Dictionary:
+	"""Restituisce i dati dell'oggetto selezionato"""
+	var selected_item = get_selected_item()
+	if selected_item.is_empty():
+		return {}
+
+	var item_id = selected_item.get("id", "")
+	return DataManager.get_item_data(item_id)
+
+func is_item_selected() -> bool:
+	"""Verifica se c'è un oggetto selezionato"""
+	return selected_inventory_index >= 0 and selected_inventory_index < PlayerManager.inventory.size()
+
+# ====================
+# DEBUG E TESTING
+# ====================
+
+func debug_add_test_items():
+	"""Aggiunge oggetti di test per debugging"""
+	if not PlayerManager:
+		return
+
+	var test_items = [
+		{"id": "ration_pack", "quantity": 3},
+		{"id": "water_bottle", "quantity": 2},
+		{"id": "rusty_knife", "quantity": 1},
+		{"id": "cloth_scraps", "quantity": 5}
+	]
+
+	for item in test_items:
+		PlayerManager.add_item(item.id, item.quantity)
+
+	print("InventoryPanel: 🔧 Oggetti di test aggiunti")
+	update_panel()
+
+func debug_clear_inventory():
+	"""Svuota l'inventario per testing"""
+	if not PlayerManager:
+		return
+
+	PlayerManager.inventory.clear()
+	selected_inventory_index = 0
+	print("InventoryPanel: 🔧 Inventario svuotato")
+	update_panel()

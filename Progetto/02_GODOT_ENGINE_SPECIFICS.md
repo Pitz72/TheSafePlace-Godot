@@ -1,4 +1,4 @@
-# ⚙️ GODOT ENGINE SPECIFICS - THE SAFE PLACE v0.4.0
+# ⚙️ GODOT ENGINE SPECIFICS - THE SAFE PLACE v0.9.5
 
 ## 🎯 **OVERVIEW TECNICO GODOT**
 
@@ -19,9 +19,9 @@ Architecture: 64-bit
 ### **Project Configuration (project.godot)**
 ```ini
 [application]
-config/name="The Safe Place v0.4.0 - A unifying language for all things"
-config/description="Un GDR di sopravvivenza post-apocalittico ispirato ai terminali anni 80"
-run/main_scene="res://scenes/MainGame.tscn"
+config/name="The Safe Place v0.9.5 - All the Story you don't know"
+config/description="Narrative Revolution - Sistema eventi espanso con quest principale completa e easter eggs segreti"
+run/main_scene="res://scenes/MainMenu.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
 
 [gui]
@@ -46,17 +46,27 @@ InputManager="*res://scripts/managers/InputManager.gd"
 TimeManager="*res://scripts/managers/TimeManager.gd"
 EventManager="*res://scripts/managers/EventManager.gd"
 SkillCheckManager="*res://scripts/managers/SkillCheckManager.gd"
+QuestManager="*res://scripts/managers/QuestManager.gd"
+NarrativeManager="*res://scripts/managers/NarrativeManager.gd"
+CraftingManager="*res://scripts/managers/CraftingManager.gd"
+CombatManager="*res://scripts/managers/CombatManager.gd"
+SaveLoadManager="*res://scripts/managers/SaveLoadManager.gd"
 ```
 
 ### **Autoload Order di Inizializzazione**
 ```
-1. ThemeManager    (Tema e font)
-2. DataManager     (Database JSON)
-3. PlayerManager   (Stato giocatore)
-4. InputManager    (Sistema input)
-5. TimeManager     (Sistema temporale)
-6. EventManager    (Eventi e skill check)
+1. ThemeManager      (Tema e font)
+2. DataManager       (Database JSON)
+3. PlayerManager     (Stato giocatore)
+4. InputManager      (Sistema input)
+5. TimeManager       (Sistema temporale)
+6. EventManager      (Eventi e skill check)
 7. SkillCheckManager (Logic skill check)
+8. QuestManager      (Sistema missioni)
+9. NarrativeManager  (Sistema narrativo)
+10. CraftingManager  (Sistema crafting)
+11. CombatManager    (Sistema combattimento)
+12. SaveLoadManager  (Sistema salvataggio)
 ```
 
 ### **Dipendenze tra Autoload**
@@ -67,7 +77,15 @@ PlayerManager (usa DataManager per validazione)
     ↓
 EventManager (usa DataManager + PlayerManager)
     ↓
-Altri manager (usano PlayerManager per stato)
+QuestManager (dipende da PlayerManager + DataManager)
+    ↓
+NarrativeManager (dipende da PlayerManager)
+    ↓
+CraftingManager (dipende da PlayerManager + DataManager)
+    ↓
+CombatManager (dipende da PlayerManager + EventManager)
+    ↓
+SaveLoadManager (dipende da tutti i manager per salvataggio)
 ```
 
 ---
@@ -343,9 +361,10 @@ func _input(event):
 
 ### **Manager Initialization Order**
 ```
-1. Autoload _ready() chiamati in ordine autoload
-2. MainGame._ready() 
+1. Autoload _ready() chiamati in ordine autoload (12 manager)
+2. MainGame._ready()
    ├── EventManager.initialize_events()
+   ├── QuestManager.initialize_quests()
    ├── PlayerManager.prepare_new_character_data()
    └── Connessione segnali globali
 3. GameUI._ready()
@@ -665,6 +684,6 @@ Fonts (.ttf):
 
 ---
 
-**Versione:** v0.4.0 "A unifying language for all things"  
-**Data:** 21 Agosto 2025  
+**Versione:** v0.9.5 "All the Story you don't know"
+**Data:** 23 Settembre 2025
 **Target:** LLM Technical Analysis - Godot Implementation

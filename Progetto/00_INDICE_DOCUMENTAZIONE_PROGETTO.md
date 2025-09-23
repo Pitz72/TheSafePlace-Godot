@@ -1,4 +1,4 @@
-# 📋 INDICE DOCUMENTAZIONE TECNICA PROGETTO - THE SAFE PLACE v0.4.0
+# 📋 INDICE DOCUMENTAZIONE TECNICA PROGETTO - THE SAFE PLACE v0.9.6
 
 ## 🎯 Scopo della Documentazione
 
@@ -38,7 +38,16 @@ Questa documentazione tecnica è specificatamente progettata per **Large Languag
 - `13_THEME_SYSTEM.md` - Temi grafici: CRT, font, colori
 - `14_INPUT_SYSTEM.md` - Gestione input: comandi, hotkey, stati
 
-#### **15 - ANALISI TECNICA**
+#### **15 - SISTEMI AVANZATI (v0.9.6)**
+- `27_COMBAT_SYSTEM.md` - Sistema combattimento turn-based
+- `28_CRAFTING_SYSTEM.md` - Sistema crafting e produzione
+- `29_NARRATIVE_SYSTEM.md` - Sistema narrativo e ricordi
+- `30_QUEST_SYSTEM.md` - Sistema missioni e progressione
+- `31_SAVE_LOAD_SYSTEM.md` - Sistema salvataggio e caricamento
+
+#### **16 - ANALISI TECNICA**
+
+#### **16 - ANALISI TECNICA**
 - `15_CODE_PATTERNS.md` - Pattern architetturali utilizzati nel codice
 - `16_SIGNAL_SYSTEM.md` - Sistema di segnali e comunicazione tra componenti
 - `17_PERFORMANCE_CONSIDERATIONS.md` - Ottimizzazioni e considerazioni prestazionali
@@ -81,13 +90,13 @@ Questa documentazione tecnica è specificatamente progettata per **Large Languag
 
 ## 📊 **METRICHE DEL PROGETTO**
 
-### **Statistiche Codebase (v0.4.0)**
+### **Statistiche Codebase (v0.9.6)**
 - **Linguaggio:** GDScript (Godot 4.x)
-- **Files totali:** ~150+ file
-- **Linee di codice:** ~15,000+ LOC
-- **Manager singleton:** 7 principali
-- **Scene:** 25+ file .tscn
-- **Database JSON:** 15+ file
+- **Files totali:** ~200+ file
+- **Linee di codice:** ~20,000+ LOC
+- **Manager singleton:** 12 principali
+- **Scene:** 30+ file .tscn
+- **Database JSON:** 20+ file
 
 ### **Struttura Database**
 - **Oggetti totali:** 50+ items categorizzati
@@ -127,9 +136,10 @@ Questa documentazione tecnica è specificatamente progettata per **Large Languag
 
 ## 📝 **METADATI DOCUMENTAZIONE**
 
-- **Versione progetto:** v0.4.0 "A unifying language for all things"
-- **Versione documentazione:** 1.0
+- **Versione progetto:** v0.9.6 "Taste my fists, you bumpkin!"
+- **Versione documentazione:** 2.0
 - **Data creazione:** 21 Agosto 2025
+- **Data aggiornamento:** 23 Settembre 2025 (v0.9.6)
 - **Target:** LLM e sviluppatori AI
 - **Formato:** Markdown con sintassi GitHub
 - **Encoding:** UTF-8

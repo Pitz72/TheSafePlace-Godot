@@ -13,7 +13,7 @@ func _ready():
 	# Manteniamo questo comportamento per ora.
 	update_panel()
 
-func update_panel():
+func update_panel(_new_hour: int = -1, _new_minute: int = -1):
 	"""Aggiorna pannello informazioni (posizione, luogo, ora) - M3.T2 Sistema Temporale"""
 	# NOTA: Posizione e luogo ora gestiti da _on_player_moved() in real-time
 	# Questo aggiorna solo l'ora usando TimeManager

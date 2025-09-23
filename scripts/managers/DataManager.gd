@@ -314,7 +314,11 @@ func _validate_item_properties(item_data: Dictionary) -> bool:
 ## @param item_id: ID univoco dell'oggetto
 ## @return: Dictionary con dati oggetto, o {} se non trovato
 func get_item_data(item_id: String) -> Dictionary:
-	# Cerca nei database modulari
+	# Prima cerca nel database unificato (più efficiente)
+	if items.has(item_id):
+		return items[item_id].duplicate(true)
+
+	# Fallback: cerca nei database modulari (per compatibilità)
 	var databases = [weapons, armor, consumables, crafting_materials, ammo, misc_items, materials, unique_items, quest_items]
 
 	for db in databases:
@@ -322,10 +326,6 @@ func get_item_data(item_id: String) -> Dictionary:
 			return db[item_id].duplicate(true)
 
 	# Item non trovato
-	return {}
-	if items.has(item_id):
-		return items[item_id]
-	
 	print("⚠️ DataManager: Oggetto non trovato: %s" % item_id)
 	return {}
 
@@ -584,25 +584,24 @@ func print_loading_report() -> void:
 	
 	print("=".repeat(50) + "\n")
   
-## Carica database oggetti modulari dalla cartella categories  
-func _load_items_database_modular() - 
-	print("[DataManager] Caricamento database oggetti modulari...")  
-ECHO attivo.
-	# Carica file categorizzati  
-	var category_files = {  
-		"weapons": "res://data/items/categories/weapons.json",  
-		"consumables": "res://data/items/categories/consumables.json",  
-		"misc": "res://data/items/categories/misc.json",  
-		"materials": "res://data/items/categories/materials.json"  
-	}  
-ECHO attivo.
-	for category in category_files.keys():  
-		var file_path = category_files[category]  
-		var data = _load_json_file(file_path)  
-		if data and data.has(category):  
-			set(category + "_items", data[category])  
-			print("   ? %s: %d item" % [category.capitalize(), data[category].size()])  
-		else:  
-			print("   ?? Errore caricamento %s" % category)  
-ECHO attivo.
-	print("[DataManager] Database oggetti modulari caricati") 
+## Carica database oggetti modulari dalla cartella categories
+func _load_items_database_modular() -> void:
+	print("[DataManager] Caricamento database oggetti modulari...")
+	# Carica file categorizzati
+	var category_files = {
+		"weapons": "res://data/items/categories/weapons.json",
+		"consumables": "res://data/items/categories/consumables.json",
+		"misc": "res://data/items/categories/misc.json",
+		"materials": "res://data/items/categories/materials.json"
+	}
+
+	for category in category_files.keys():
+		var file_path = category_files[category]
+		var data = _load_json_file(file_path)
+		if data and data.has(category):
+			set(category + "_items", data[category])
+			print("   ✅ %s: %d item" % [category.capitalize(), data[category].size()])
+		else:
+			print("   ❌ Errore caricamento %s" % category)
+
+	print("[DataManager] Database oggetti modulari caricati")

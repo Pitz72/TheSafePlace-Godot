@@ -1,15 +1,15 @@
 {
-  "repair_cloth": {
-    "id": "repair_cloth",
-    "name": "Ripara Stoffa",
-    "description": "Ripara un pezzo di stoffa strappato per creare un panno pulito",
+  "repair_metal": {
+    "id": "repair_metal",
+    "name": "Ripara Metallo",
+    "description": "Ripara un pezzo di metallo danneggiato",
     "category": "crafting",
     "materials": [
-      {"id": "cloth_scraps", "quantity": 2}
+      {"id": "metal_scrap", "quantity": 2}
     ],
     "tools": [],
     "output": {
-      "id": "cloth_clean",
+      "id": "metal_piece",
       "quantity": 1
     },
     "required_skill": 0,
@@ -19,200 +19,36 @@
   "sharpen_knife": {
     "id": "sharpen_knife",
     "name": "Affila Coltello",
-    "description": "Affila un coltello arrugginito su una pietra",
+    "description": "Affila un coltello usando metallo di scarto",
     "category": "weapon_maintenance",
     "materials": [
-      {"id": "weapon_knife_rusty", "quantity": 1}
+      {"id": "folding_knife", "quantity": 1},
+      {"id": "metal_scrap", "quantity": 1}
     ],
-    "tools": ["whetstone"],
+    "tools": [],
     "output": {
-      "id": "weapon_knife_sharp",
+      "id": "folding_knife",
       "quantity": 1
     },
     "required_skill": 5,
     "requires_workbench": false,
     "crafting_time": 60
   },
-  "make_bandage": {
-    "id": "make_bandage",
-    "name": "Crea Bende",
-    "description": "Crea bende pulite da pezzi di stoffa",
-    "category": "medical",
-    "materials": [
-      {"id": "cloth_clean", "quantity": 1}
-    ],
-    "tools": [],
-    "output": {
-      "id": "bandages_clean",
-      "quantity": 2
-    },
-    "required_skill": 0,
-    "requires_workbench": false,
-    "crafting_time": 45
-  },
-  "craft_ration_pack": {
-    "id": "craft_ration_pack",
-    "name": "Prepara Razione Alimentare",
-    "description": "Combina ingredienti per creare una razione alimentare",
+  "make_food": {
+    "id": "make_food",
+    "name": "Prepara Cibo",
+    "description": "Prepara una barretta energetica da cibo in scatola",
     "category": "food",
     "materials": [
-      {"id": "canned_food", "quantity": 1},
-      {"id": "water_purified", "quantity": 1}
+      {"id": "canned_food", "quantity": 2}
     ],
     "tools": [],
     "output": {
-      "id": "ration_pack",
+      "id": "energy_bar",
       "quantity": 1
     },
-    "required_skill": 8,
+    "required_skill": 3,
     "requires_workbench": true,
-    "crafting_time": 90
-  },
-  "make_molotov": {
-    "id": "make_molotov",
-    "name": "Crea Molotov",
-    "description": "Crea una bottiglia incendiaria",
-    "category": "weapon",
-    "materials": [
-      {"id": "glass_bottle", "quantity": 1},
-      {"id": "cloth_clean", "quantity": 1},
-      {"id": "alcohol", "quantity": 1}
-    ],
-    "tools": [],
-    "output": {
-      "id": "weapon_molotov",
-      "quantity": 1
-    },
-    "required_skill": 12,
-    "requires_workbench": true,
-    "crafting_time": 120
-  },
-  "craft_lockpick": {
-    "id": "craft_lockpick",
-    "name": "Crea Grimaldello",
-    "description": "Forgia un grimaldello da metallo di scarto",
-    "category": "tool",
-    "materials": [
-      {"id": "metal_scraps", "quantity": 2}
-    ],
-    "tools": ["hammer", "anvil"],
-    "output": {
-      "id": "lockpick",
-      "quantity": 1
-    },
-    "required_skill": 15,
-    "requires_workbench": true,
-    "crafting_time": 180
-  },
-  "make_explosive_trap": {
-    "id": "make_explosive_trap",
-    "name": "Crea Trappola Esplosiva",
-    "description": "Assembla una trappola esplosiva da componenti chimici",
-    "category": "trap",
-    "materials": [
-      {"id": "chemicals", "quantity": 2},
-      {"id": "metal_scraps", "quantity": 1},
-      {"id": "wire", "quantity": 1}
-    ],
-    "tools": ["pliers", "soldering_iron"],
-    "output": {
-      "id": "explosive_trap",
-      "quantity": 1
-    },
-    "required_skill": 20,
-    "requires_workbench": true,
-    "crafting_time": 300
-  },
-  "brew_antidote": {
-    "id": "brew_antidote",
-    "name": "Prepara Antidoto",
-    "description": "Prepara un antidoto da erbe medicinali",
-    "category": "medical",
-    "materials": [
-      {"id": "medicinal_herbs", "quantity": 3},
-      {"id": "water_purified", "quantity": 1}
-    ],
-    "tools": ["mortar_pestle"],
-    "output": {
-      "id": "antidote",
-      "quantity": 1
-    },
-    "required_skill": 18,
-    "requires_workbench": true,
-    "crafting_time": 240
-  },
-  "forge_improved_knife": {
-    "id": "forge_improved_knife",
-    "name": "Forgia Coltello Migliorato",
-    "description": "Forgia un coltello migliorato con guardia",
-    "category": "weapon",
-    "materials": [
-      {"id": "weapon_knife_sharp", "quantity": 1},
-      {"id": "metal_scraps", "quantity": 3},
-      {"id": "leather_strip", "quantity": 1}
-    ],
-    "tools": ["hammer", "anvil", "tongs"],
-    "output": {
-      "id": "weapon_knife_improved",
-      "quantity": 1
-    },
-    "required_skill": 25,
-    "requires_workbench": true,
-    "crafting_time": 360
-  },
-  "craft_radio": {
-    "id": "craft_radio",
-    "name": "Assembla Radio",
-    "description": "Assembla una radio funzionante da componenti elettronici",
-    "category": "electronics",
-    "materials": [
-      {"id": "electronic_parts", "quantity": 5},
-      {"id": "wire", "quantity": 3},
-      {"id": "battery", "quantity": 1}
-    ],
-    "tools": ["soldering_iron", "multimeter"],
-    "output": {
-      "id": "radio",
-      "quantity": 1
-    },
-    "required_skill": 22,
-    "requires_workbench": true,
-    "crafting_time": 420
-  },
-  "make_armor_patches": {
-    "id": "make_armor_patches",
-    "name": "Crea Toppe per Armatura",
-    "description": "Crea toppe rinforzate per riparare armature",
-    "category": "armor_maintenance",
-    "materials": [
-      {"id": "cloth_clean", "quantity": 2},
-      {"id": "metal_scraps", "quantity": 1}
-    ],
-    "tools": ["needle_thread"],
-    "output": {
-      "id": "armor_patches",
-      "quantity": 3
-    },
-    "required_skill": 10,
-    "requires_workbench": false,
-    "crafting_time": 90
-  },
-  "brew_stimulant": {
-    "id": "brew_stimulant",
-    "name": "Prepara Stimolante",
-    "description": "Prepara uno stimolante da caffeina e zuccheri",
-    "category": "consumable",
-    "materials": [
-      {"id": "coffee_beans", "quantity": 2},
-      {"id": "sugar_pack", "quantity": 1}
-    ],
-    "tools": ["pot_pan"],
-    "output": {
-      "id": "stimulant_dose",
-      "quantity": 2
-    },
-    "required_skill": 14,
-    "requires_workbench": true,
-    "crafting_time": 150
+    "crafting_time": 45
   }
 }

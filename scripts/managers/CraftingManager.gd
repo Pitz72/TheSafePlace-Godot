@@ -231,7 +231,7 @@ func get_recipe_data(recipe_id: String) -> Dictionary:
 
 ## Ottiene tutte le ricette disponibili
 func get_available_recipes() -> Array[String]:
-	var available = []
+	var available: Array[String] = []
 	for recipe_id in unlocked_recipes:
 		if recipes_database.has(recipe_id):
 			available.append(recipe_id)
@@ -239,7 +239,7 @@ func get_available_recipes() -> Array[String]:
 
 ## Ottiene le ricette che possono essere craftate (materiali disponibili)
 func get_craftable_recipes() -> Array[String]:
-	var craftable = []
+	var craftable: Array[String] = []
 
 	for recipe_id in unlocked_recipes:
 		var recipe_data = get_recipe_data(recipe_id)

@@ -1,4 +1,4 @@
-# 🏠 The Safe Place v0.9.5 "All the Story you don't know"
+# 🏠 The Safe Place v0.9.6 "Taste my fists, you bumpkin!"
 
 *Un GDR testuale enterprise-level con narrativa profonda e sistema eventi rivoluzionario*
 
@@ -19,7 +19,7 @@
 
 ## 🚀 Stato del Progetto
 
-**Versione Attuale**: v0.9.5 "All the Story you don't know"
+**Versione Attuale**: v0.9.6 "Taste my fists, you bumpkin!"
 
 ### ✅ Sistemi Implementati
 - ✅ **📖 Sistema Narrativo Completo**: 36 eventi unici con quest principale a 12 stadi
@@ -101,7 +101,9 @@ Progetto in sviluppo - Licenza da definire
 
 ## 🏷️ Tag e Versioni
 
-- `v0.9.0` - Surpassing React (Corrente)
+- `v0.9.6` - Taste my fists, you bumpkin! (Corrente)
+- `v0.9.5` - All the Story you don't know
+- `v0.9.0` - Surpassing React
 - `v0.4.1` - Write Only When You're Not Drunk
 - `v0.4.0` - A unifying language for all things
 - `v0.3.4` - To have a giant backpack
@@ -119,7 +121,7 @@ Progetto in sviluppo - Licenza da definire
 *Sviluppato con ❤️ e l'assistenza di Claude AI*
 
 [![Godot Engine](https://img.shields.io/badge/Godot-4.4.1-blue.svg)](https://godotengine.org/)
-[![Version](https://img.shields.io/badge/Version-v0.9.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-v0.9.6-green.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Enterprise%20Ready-brightgreen.svg)](docs/INDEX.md)
 
@@ -423,10 +425,10 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file [`LICENSE`](LICENS
 
 ---
 
-**🏠 The Safe Place v0.9.0 "Surpassing React"**
-*Enterprise-Grade Game Architecture che supera i framework moderni*
+**🏠 The Safe Place v0.9.6 "Taste my fists, you bumpkin!"**
+*Sistema di combattimento completamente stabile con interfaccia chiara e zero crash critici*
 
 ---
 
 *Ultimo aggiornamento: 23 Settembre 2025*
-*Versione README: v0.9.0*
+*Versione README: v0.9.6*

@@ -1,4 +1,4 @@
-# 📚 Indice della Documentazione - The Safe Place v0.4.1
+# 📚 Indice della Documentazione - The Safe Place v0.9.6
 
 Questa cartella contiene tutta la documentazione del progetto "The Safe Place", organizzata in modo logico e strutturato per facilitare la navigazione e la consultazione.
 
@@ -86,4 +86,4 @@ Tutti i contenuti narrativi e di gameplay:
 
 ---
 *Ultimo aggiornamento: 23 Settembre 2025*
-*Versione progetto: v0.9.5 "All the Story you don't know"*
+*Versione progetto: v0.9.6 "Taste my fists, you bumpkin!"*

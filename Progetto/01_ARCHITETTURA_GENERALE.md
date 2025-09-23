@@ -1,4 +1,4 @@
-# 🏗️ ARCHITETTURA GENERALE - THE SAFE PLACE v0.4.1
+# 🏗️ ARCHITETTURA GENERALE - THE SAFE PLACE v0.9.5
 
 ## 🎯 **OVERVIEW DEL SISTEMA**
 
@@ -34,7 +34,7 @@ The Safe Place è un **GDR testuale post-apocalittico** sviluppato in **Godot 4.
 
 ## 🧩 **COMPONENTI PRINCIPALI DEL SISTEMA**
 
-### **1. SINGLETON MANAGERS (7 Manager)**
+### **1. SINGLETON MANAGERS (12 Manager)**
 
 ```
 ThemeManager      → Gestione temi, font, colori CRT
@@ -44,6 +44,11 @@ InputManager      → Input events, hotkey, stati UI
 TimeManager       → Ciclo giorno/notte, sistema temporale
 EventManager      → Eventi casuali, skill check, biomi
 SkillCheckManager → Sistema test abilità, probabilità
+CombatManager     → Sistema combattimento turn-based
+CraftingManager   → Sistema crafting e produzione
+NarrativeManager  → Sistema narrativo e ricordi
+QuestManager      → Sistema missioni e progressione
+SaveLoadManager   → Sistema salvataggio e caricamento
 ```
 
 ### **1.1. DEVELOPMENT TOOLS (v0.4.1)**
@@ -262,13 +267,18 @@ Godot Engine 4.x
 
 ### **LAYER 2: GAME MANAGERS**
 ```
-Singleton Managers (7 systems)
+Singleton Managers (12 systems)
 ├── Data Layer (DataManager)
-├── Player State (PlayerManager) 
+├── Player State (PlayerManager)
 ├── World State (TimeManager)
 ├── Event Logic (EventManager + SkillCheckManager)
 ├── Input Handling (InputManager)
-└── Presentation (ThemeManager)
+├── Presentation (ThemeManager)
+├── Combat System (CombatManager)
+├── Crafting System (CraftingManager)
+├── Narrative System (NarrativeManager)
+├── Quest System (QuestManager)
+└── Persistence (SaveLoadManager)
 ```
 
 ### **LAYER 3: GAME SYSTEMS**
@@ -342,6 +352,11 @@ InputManager="*res://scripts/managers/InputManager.gd"
 TimeManager="*res://scripts/managers/TimeManager.gd"
 EventManager="*res://scripts/managers/EventManager.gd"
 SkillCheckManager="*res://scripts/managers/SkillCheckManager.gd"
+QuestManager="*res://scripts/managers/QuestManager.gd"
+NarrativeManager="*res://scripts/managers/NarrativeManager.gd"
+CraftingManager="*res://scripts/managers/CraftingManager.gd"
+CombatManager="*res://scripts/managers/CombatManager.gd"
+SaveLoadManager="*res://scripts/managers/SaveLoadManager.gd"
 ```
 
 ### **INPUT MAPPING**
@@ -472,27 +487,32 @@ Resolution: Target retro 640x480 scaled
 
 ## 🚧 **STATO ATTUALE SVILUPPO**
 
-### **✅ SISTEMI COMPLETI (v0.4.0)**
-- Core engine e manager system
+### **✅ SISTEMI COMPLETI (v0.9.5)**
+- Core engine e manager system (12 manager)
 - Player progression e character creation
-- Event system con skill check
-- Inventory system con hotkey
+- Event system con skill check avanzato
+- Inventory system con hotkey e transazioni
 - Time management con ciclo giorno/notte
 - World exploration con mappa 250x250
-- UI completa a 8 pannelli
+- UI completa a 8 pannelli + popup avanzati
 - CRT theming con shader customizzati
-
-### **🔄 IN SVILUPPO**
-- Sistema combattimento avanzato
-- Sistema salvataggio/caricamento
-- Espansione contenuti narrativi
+- Sistema combattimento turn-based
+- Sistema crafting con workbench
+- Sistema narrativo con ricordi e empatia
 - Sistema quest strutturato
+- Sistema salvataggio/caricamento completo
+
+### **🔄 IN OTTIMIZZAZIONE**
+- Performance optimization per contenuti espansi
+- Balancing avanzato dei sistemi di gioco
+- Espansione contenuti narrativi
+- Testing end-to-end completo
 
 ### **📋 ROADMAP PROSSIME VERSIONI**
-- v0.5.0: Combat System completo
-- v0.6.0: Save/Load + Quest system
-- v0.7.0: Advanced content + balancing
-- v1.0.0: Release candidato finale
+- v1.0.0: Release finale con contenuti completi
+- v1.1.0: Modding support e API pubbliche
+- v1.2.0: Multiplayer foundation
+- v2.0.0: Expanded world e nuove meccaniche
 
 ---
 
@@ -523,6 +543,6 @@ Resolution: Target retro 640x480 scaled
 
 ---
 
-**Versione:** v0.4.0 "A unifying language for all things"  
-**Data:** 21 Agosto 2025  
+**Versione:** v0.9.5 "All the Story you don't know"
+**Data:** 23 Settembre 2025
 **Target:** LLM Technical Analysis

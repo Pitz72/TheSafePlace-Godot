@@ -9,7 +9,7 @@ func _ready():
 		PlayerManager.inventory_changed.connect(update_panel)
 	update_panel()
 
-func update_panel():
+func update_panel(_arg1 = null, _arg2 = null):
 	"""Aggiorna pannello equipaggiamento corrente"""
 	if not PlayerManager:
 		if weapon_label:

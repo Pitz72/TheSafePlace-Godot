@@ -42,6 +42,7 @@ signal event_choice_resolved(result_text: String, narrative_log: String, skill_c
 @onready var player_manager: PlayerManager
 @onready var data_manager: DataManager
 @onready var quest_manager: QuestManager
+@onready var combat_manager: Node
 
 # Cache eventi per performance
 var cached_events: Dictionary = {}
@@ -73,6 +74,7 @@ func initialize_events():
 	player_manager = get_node("/root/PlayerManager")
 	data_manager = get_node("/root/DataManager")
 	quest_manager = get_node("/root/QuestManager")
+	combat_manager = get_node("/root/CombatManager")
 
 	if not player_manager:
 		print("[EventManager] ERRORE: PlayerManager non trovato!")
@@ -84,6 +86,10 @@ func initialize_events():
 
 	if not quest_manager:
 		print("[EventManager] ERRORE: QuestManager non trovato!")
+		return
+
+	if not combat_manager:
+		print("[EventManager] ERRORE: CombatManager non trovato!")
 		return
 	
 	# Carica e organizza eventi
@@ -374,6 +380,7 @@ func process_event_choice(event_id: String, choice_index: int) -> void:
 
 		# Avvia combattimento dopo un breve delay per mostrare il messaggio
 		call_deferred("_start_combat_after_delay", enemy_id)
+		return  # Importante: return dopo aver avviato il combattimento
 
 	elif choice.has("skillCheck"):
 		var check_data = choice.skillCheck
@@ -403,8 +410,8 @@ func process_event_choice(event_id: String, choice_index: int) -> void:
 func _start_combat_after_delay(enemy_id: String) -> void:
 	await get_tree().create_timer(1.5).timeout  # Breve pausa drammatica
 
-	if CombatManager:
-		var success = CombatManager.start_combat(enemy_id)
+	if combat_manager:
+		var success = combat_manager.start_combat(enemy_id)
 		if success:
 			print("[EventManager] Combattimento avviato con successo contro: ", enemy_id)
 		else:
@@ -483,7 +490,7 @@ func _load_events_from_biomes_dir(seen_ids: Dictionary) -> void:
 	while file_name != "":
 		if not dir.current_is_dir() and file_name.ends_with(".json"):
 			var rel_path := "data/events/biomes/" + file_name
-			var json_obj := data_manager.load_json_file(rel_path)
+			var json_obj: Dictionary = data_manager.load_json_file(rel_path)
 			if json_obj:
 				print("   ✅ Caricato: ", file_name)
 				for biome_key in json_obj.keys():
@@ -500,6 +507,47 @@ func _load_events_from_biomes_dir(seen_ids: Dictionary) -> void:
 								seen_ids[ev_id] = true
 		file_name = dir.get_next()
 	dir.list_dir_end()
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INTEGRAZIONE COMBAT SYSTEM
+# ═══════════════════════════════════════════════════════════════════════════════
+
+## Triggera un incontro nemico da un evento
+func trigger_enemy_encounter(biome: String) -> void:
+	print("[EventManager] Trigger incontro nemico in bioma: ", biome)
+
+	# Seleziona nemico basato su bioma
+	var enemy_id = _select_random_enemy_for_biome(biome)
+
+	if enemy_id.is_empty():
+		print("[EventManager] Nessun nemico disponibile per bioma: ", biome)
+		return
+
+	# Avvia combattimento
+	if combat_manager and combat_manager.start_combat(enemy_id):
+		event_triggered.emit({
+			"type": "combat",
+			"enemy_id": enemy_id,
+			"description": "Sei stato attaccato!"
+		})
+		print("[EventManager] Incontro nemico triggerato: ", enemy_id)
+	else:
+		print("[EventManager] ERRORE: Impossibile avviare combattimento")
+
+## Seleziona un nemico casuale per il bioma
+func _select_random_enemy_for_biome(biome: String) -> String:
+	# Mappatura bioma → nemici possibili
+	var biome_enemies = {
+		"foreste": ["wolf", "bandit"],
+		"pianure": ["wolf", "bandit", "mutant"],
+		"città": ["bandit", "mutant"],
+		"villaggi": ["bandit"],
+		"fiumi": ["wolf", "mutant"],
+		"ristoro": ["bandit"]
+	}
+
+	var enemies = biome_enemies.get(biome, ["wolf"])
+	return enemies[randi() % enemies.size()]
 
 # Funzione rimossa: _load_unique_events
 # Gli eventi unici sono ora caricati tramite unique_events.json nella directory biomes

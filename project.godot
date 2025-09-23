@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="The Safe Place v0.9.5 - All the Story you don't know"
+config/name="The Safe Place v0.9.6 - Taste my fists, you bumpkin!"
 config/description="Narrative Revolution - Sistema eventi espanso con quest principale completa e easter eggs segreti"
 run/main_scene="res://scenes/MainMenu.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
@@ -24,7 +24,6 @@ InputManager="*res://scripts/managers/InputManager.gd"
 TimeManager="*res://scripts/managers/TimeManager.gd"
 EventManager="*res://scripts/managers/EventManager.gd"
 SkillCheckManager="*res://scripts/managers/SkillCheckManager.gd"
-QuestManager="*res://scripts/managers/QuestManager.gd"
 QuestManager="*res://scripts/managers/QuestManager.gd"
 NarrativeManager="*res://scripts/managers/NarrativeManager.gd"
 CraftingManager="*res://scripts/managers/CraftingManager.gd"

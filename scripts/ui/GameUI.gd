@@ -11,6 +11,8 @@ const ItemInteractionPopup = preload("res://scenes/ui/popups/ItemInteractionPopu
 const LevelUpPopup = preload("res://scenes/ui/popups/LevelUpPopup.tscn")
 const EventPopupScene = preload("res://scenes/ui/popups/EventPopup.tscn")
 const CharacterCreationPopup = preload("res://scenes/ui/popups/CharacterCreationPopup.tscn")
+const CombatPopupScene = preload("res://scenes/ui/popups/CombatPopup.tscn")
+const CraftingPopupScene = preload("res://scenes/ui/popups/CraftingPopup.tscn")
 
 # ═══ REFERENZE NODI PANNELLI ═══
 
@@ -33,6 +35,10 @@ var event_popup_instance: Control = null
 var is_event_popup_active: bool = false
 var character_creation_popup_instance: CanvasLayer = null
 var is_character_creation_popup_active: bool = false
+var combat_popup_instance: Control = null
+var is_combat_popup_active: bool = false
+var crafting_popup_instance: Control = null
+var is_crafting_popup_active: bool = false
 
 # ═══ INIZIALIZZAZIONE PRINCIPALE ═══
 
@@ -46,6 +52,8 @@ func _ready():
 	_connect_input_manager()
 	_connect_time_manager_signals()
 	_initialize_event_system()
+	_initialize_combat_system()
+	_initialize_crafting_system()
 	call_deferred("_force_status_update")
 	_connect_main_game_signals()
 	_setup_panel_references()
@@ -306,6 +314,122 @@ func _on_popup_closed():
 
 func is_event_system_active() -> bool:
 	return is_event_popup_active
+
+# ═══ SISTEMA COMBATTIMENTO UI ═══
+
+func _initialize_combat_system():
+	if CombatManager:
+		CombatManager.combat_started.connect(_on_combat_started)
+		CombatManager.combat_ended.connect(_on_combat_ended)
+		print("✅ GameUI: Sistema combattimento inizializzato")
+
+func _on_combat_started(enemy_data: Dictionary):
+	if is_combat_popup_active:
+		return
+
+	if not combat_popup_instance:
+		_create_combat_popup()
+
+	if combat_popup_instance:
+		combat_popup_instance.show_combat_popup(enemy_data)
+		is_combat_popup_active = true
+		print("⚔️ GameUI: CombatPopup mostrato per nemico:", enemy_data.get("name", "Sconosciuto"))
+
+func _on_combat_ended(result: CombatManager.CombatResult, rewards: Dictionary):
+	# Mostra risultati combattimento nel log
+	var result_message = ""
+	match result:
+		CombatManager.CombatResult.PLAYER_VICTORY:
+			result_message = "[color=green]🎉 Vittoria! Hai sconfitto il nemico![/color]"
+		CombatManager.CombatResult.ENEMY_VICTORY:
+			result_message = "[color=red]💀 Sconfitta! Il nemico ti ha sopraffatto![/color]"
+		CombatManager.CombatResult.PLAYER_FLED:
+			result_message = "[color=yellow]🏃 Sei riuscito a fuggire![/color]"
+		CombatManager.CombatResult.TIMEOUT:
+			result_message = "[color=gray]⏰ Il combattimento è terminato per timeout[/color]"
+
+	add_log_message(result_message)
+
+	# Mostra ricompense se presenti
+	if not rewards.is_empty():
+		var reward_message = "[color=#00ff00]Ricompense ottenute:[/color]\n"
+		for item_id in rewards.keys():
+			var quantity = rewards[item_id]
+			var item_data = DataManager.get_item_data(item_id)
+			var item_name = item_data.get("name", item_id) if not item_data.is_empty() else item_id
+			reward_message += "• %dx %s\n" % [quantity, item_name]
+		add_log_message(reward_message)
+
+	# Chiudi popup combattimento
+	is_combat_popup_active = false
+
+	# Aggiorna UI
+	update_all_ui()
+
+func _create_combat_popup():
+	combat_popup_instance = CombatPopupScene.instantiate()
+	add_child(combat_popup_instance)
+	combat_popup_instance.popup_closed.connect(_on_combat_popup_closed)
+
+func _on_combat_popup_closed():
+	is_combat_popup_active = false
+	print("⚔️ GameUI: CombatPopup chiuso")
+
+func is_combat_system_active() -> bool:
+	return is_combat_popup_active
+
+# ═══ SISTEMA CRAFTING UI ═══
+
+func _initialize_crafting_system():
+	if CraftingManager:
+		CraftingManager.workbench_access_changed.connect(_on_workbench_access_changed)
+		print("✅ GameUI: Sistema crafting inizializzato")
+
+func _on_workbench_access_changed(has_access: bool):
+	if has_access and not is_crafting_popup_active:
+		_show_crafting_interface()
+	elif not has_access and is_crafting_popup_active:
+		_hide_crafting_interface()
+
+func _show_crafting_interface():
+	if is_crafting_popup_active:
+		return
+
+	if not crafting_popup_instance:
+		_create_crafting_popup()
+
+	if crafting_popup_instance:
+		crafting_popup_instance.show_crafting_popup()
+		is_crafting_popup_active = true
+		print("🔨 GameUI: CraftingPopup mostrato")
+
+func _hide_crafting_interface():
+	if crafting_popup_instance:
+		crafting_popup_instance._close_popup()
+	is_crafting_popup_active = false
+	print("🔨 GameUI: CraftingPopup nascosto")
+
+func _create_crafting_popup():
+	crafting_popup_instance = CraftingPopupScene.instantiate()
+	add_child(crafting_popup_instance)
+	crafting_popup_instance.popup_closed.connect(_on_crafting_popup_closed)
+	crafting_popup_instance.crafting_completed.connect(_on_crafting_completed)
+
+func _on_crafting_popup_closed():
+	is_crafting_popup_active = false
+	print("🔨 GameUI: CraftingPopup chiuso")
+
+func _on_crafting_completed(item_id: String, quantity: int):
+	# Mostra messaggio di successo
+	var item_data = DataManager.get_item_data(item_id)
+	var item_name = item_data.get("name", item_id) if not item_data.is_empty() else item_id
+	add_log_message("[color=#00FF00]🔨 Crafting completato: %dx %s[/color]" % [quantity, item_name])
+
+	# Aggiorna UI
+	update_all_ui()
+
+func is_crafting_system_active() -> bool:
+	return is_crafting_popup_active
 
 # ═══ UTILITY ═══
 

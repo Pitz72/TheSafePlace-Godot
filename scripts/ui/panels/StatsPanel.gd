@@ -13,7 +13,7 @@ func _ready():
 		PlayerManager.stats_changed.connect(update_panel)
 	update_panel()
 
-func update_panel():
+func update_panel(_arg1 = null, _arg2 = null):
 	"""Aggiorna pannello statistiche RPG - M3.T1 con sistema progressione"""
 	if not PlayerManager:
 		return

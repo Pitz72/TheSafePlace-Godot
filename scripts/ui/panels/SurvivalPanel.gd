@@ -13,7 +13,7 @@ func _ready():
 	# Chiama un primo aggiornamento per assicurarsi che i dati siano visibili all'avvio
 	update_panel()
 
-func update_panel():
+func update_panel(_arg1 = null, _arg2 = null):
 	"""Aggiorna pannello sopravvivenza (HP, Food, Water, Status)"""
 	if not PlayerManager:
 		print("SurvivalPanel: ❌ PlayerManager non disponibile")

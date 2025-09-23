@@ -1,8 +1,8 @@
-# 🎛️ SINGLETON MANAGERS SYSTEM - THE SAFE PLACE v0.4.0
+# 🎛️ SINGLETON MANAGERS SYSTEM - THE SAFE PLACE v0.9.5
 
 ## 🎯 **OVERVIEW SISTEMA MANAGERS**
 
-Il progetto utilizza un sistema di **7 Singleton Managers** implementati tramite il sistema Autoload di Godot. Ogni manager ha responsabilità specifiche e ben definite, comunicando attraverso il sistema di segnali per mantenere il disaccoppiamento architetturale.
+Il progetto utilizza un sistema di **12 Singleton Managers** implementati tramite il sistema Autoload di Godot. Ogni manager ha responsabilità specifiche e ben definite, comunicando attraverso il sistema di segnali per mantenere il disaccoppiamento architetturale.
 
 ---
 
@@ -498,17 +498,309 @@ var terminal_colors: Dictionary = {
 
 ---
 
+## ⚔️ **8. COMBATMANAGER**
+
+### **Responsabilità Principali**
+- Gestione sistema combattimento turn-based
+- Calcolo danni e risoluzione combattimenti
+- Gestione stati combattimento (idle, player_turn, enemy_turn)
+- Integrazione con PlayerManager per statistiche
+- Sistema di escalation difficoltà nemici
+
+### **File:** `scripts/managers/CombatManager.gd`
+
+### **Struttura Stato Combattimento**
+```gdscript
+enum CombatState {
+    IDLE,           # Nessun combattimento attivo
+    PLAYER_TURN,    # Turno del giocatore
+    ENEMY_TURN,     # Turno del nemico
+    RESOLVING,      # Risoluzione turno
+    ENDED           # Combattimento terminato
+}
+
+# Stato corrente combattimento
+var current_combat_state: CombatState = CombatState.IDLE
+var current_enemy: Dictionary = {}
+var combat_log: Array = []
+```
+
+### **API Pubbliche Principali**
+```gdscript
+# Inizio combattimento
+func start_combat(enemy_id: String) -> bool
+
+# Azioni giocatore
+func process_player_action(action: String, target: String = "") -> Dictionary
+
+# Risoluzione turno nemico
+func process_enemy_turn() -> Dictionary
+
+# Fine combattimento
+func end_combat(result: String) -> void
+
+# Utility combattimento
+func calculate_damage(attacker_stats: Dictionary, weapon_data: Dictionary) -> int
+func get_available_actions() -> Array
+func get_combat_state() -> Dictionary
+```
+
+### **Segnali Emessi**
+```gdscript
+signal combat_started(enemy_data: Dictionary)          # Combattimento iniziato
+signal combat_ended(result: String, rewards: Dictionary) # Combattimento finito
+signal turn_changed(new_state: CombatState)            # Cambio turno
+signal damage_dealt(amount: int, is_player_damage: bool) # Danno inflitto
+signal combat_action_performed(action: String, success: bool) # Azione eseguita
+```
+
+---
+
+## 🔨 **9. CRAFTINGMANAGER**
+
+### **Responsabilità Principali**
+- Gestione sistema crafting e produzione
+- Validazione ricette e materiali richiesti
+- Calcolo qualità prodotti basata su materiali
+- Sistema workbench per rifugi
+- Progressione abilità crafting
+
+### **File:** `scripts/managers/CraftingManager.gd`
+
+### **Struttura Sistema Crafting**
+```gdscript
+# Database ricette
+var crafting_recipes: Dictionary = {}
+
+# Stato workbench
+var workbench_active: bool = false
+var current_workbench_level: int = 1
+
+# Statistiche crafting
+var crafting_skill: int = 1
+var crafted_items_count: int = 0
+```
+
+### **API Pubbliche Principali**
+```gdscript
+# Sistema workbench
+func set_workbench_access(has_access: bool) -> void
+func get_available_recipes() -> Array
+
+# Crafting operations
+func can_craft_recipe(recipe_id: String) -> bool
+func craft_item(recipe_id: String) -> Dictionary
+
+# Sistema qualità
+func calculate_craft_quality(materials_used: Array) -> float
+func get_quality_multiplier(quality: float) -> float
+
+# Progressione
+func improve_crafting_skill(experience: int) -> void
+func get_crafting_skill_level() -> int
+```
+
+### **Segnali Emessi**
+```gdscript
+signal workbench_access_changed(has_access: bool)      # Accesso workbench cambiato
+signal item_crafted(item_data: Dictionary, quality: float) # Oggetto crafted
+signal crafting_skill_improved(new_level: int)        # Abilità crafting migliorata
+signal recipe_unlocked(recipe_id: String)              # Ricetta sbloccata
+```
+
+---
+
+## 📖 **10. NARRATIVEMANAGER**
+
+### **Responsabilità Principali**
+- Gestione stato emotivo del giocatore
+- Sistema ricordi familiari e lore
+- Calcolo empatia con personaggi
+- Influenza narrativa basata su scelte passate
+- Sistema di immersione narrativa
+
+### **File:** `scripts/managers/NarrativeManager.gd`
+
+### **Struttura Stato Narrativo**
+```gdscript
+# Stato emotivo
+var emotional_state: Dictionary = {
+    "current_state": "cold_pragmatic",  # Stato corrente
+    "connection_level": 1,              # Livello connessione (1-5)
+    "morality_alignment": 0,            # Allineamento morale (-10 a +10)
+    "trust_level": 0                    # Livello fiducia (-5 a +5)
+}
+
+# Sistema ricordi
+var memories_unlocked: Array = []
+var character_empathy: Dictionary = {}  # Empatia per personaggio
+var lore_progression: Dictionary = {}   # Progressione storia
+```
+
+### **API Pubbliche Principali**
+```gdscript
+# Stato emotivo
+func get_emotional_state() -> Dictionary
+func update_emotional_state(trigger: String, intensity: int) -> void
+
+# Sistema ricordi
+func unlock_memory(memory_id: String) -> bool
+func get_memory_count() -> int
+func has_memory(memory_id: String) -> bool
+
+# Empatia personaggi
+func update_character_empathy(character: String, change: int) -> void
+func get_character_relationship(character: String) -> String
+
+# Progressione narrativa
+func advance_lore_progression(lore_id: String) -> void
+func get_lore_completion_percentage() -> float
+```
+
+### **Segnali Emessi**
+```gdscript
+signal emotional_state_changed(new_state: Dictionary)  # Stato emotivo cambiato
+signal memory_unlocked(memory_id: String)              # Ricordo sbloccato
+signal empathy_changed(character: String, new_level: int) # Empatia cambiata
+signal lore_progressed(lore_id: String, progress: float) # Progressione lore
+```
+
+---
+
+## 🎯 **11. QUESTMANAGER**
+
+### **Responsabilità Principali**
+- Gestione sistema missioni strutturato
+- Progressione quest principale e secondarie
+- Tracking obiettivi e condizioni completamento
+- Sistema ricompense quest
+- Integrazione narrativa con eventi
+
+### **File:** `scripts/managers/QuestManager.gd`
+
+### **Struttura Sistema Quest**
+```gdscript
+# Database quest
+var main_quest: Dictionary = {}
+var side_quests: Dictionary = {}
+var completed_quests: Array = []
+
+# Stato attivo
+var active_quests: Dictionary = {}
+var quest_progress: Dictionary = {}  # Progress per quest
+
+# Sistema obiettivi
+var quest_objectives: Dictionary = {}
+var objective_tracking: Dictionary = {}
+```
+
+### **API Pubbliche Principali**
+```gdscript
+# Inizializzazione
+func initialize_quests() -> void
+
+# Gestione quest
+func start_quest(quest_id: String) -> bool
+func complete_quest(quest_id: String) -> bool
+func abandon_quest(quest_id: String) -> bool
+
+# Tracking obiettivi
+func update_quest_progress(quest_id: String, objective_id: String, progress: int) -> void
+func check_quest_completion(quest_id: String) -> bool
+
+# Query
+func get_active_quests() -> Array
+func get_quest_details(quest_id: String) -> Dictionary
+func get_quest_progress(quest_id: String) -> Dictionary
+```
+
+### **Segnali Emessi**
+```gdscript
+signal quest_started(quest_id: String)                 # Quest avviata
+signal quest_completed(quest_id: String, rewards: Dictionary) # Quest completata
+signal quest_progress_updated(quest_id: String, objective: String) # Progress aggiornato
+signal quest_failed(quest_id: String)                  # Quest fallita
+signal objective_completed(quest_id: String, objective_id: String) # Obiettivo completato
+```
+
+---
+
+## 💾 **12. SAVELOADMANAGER**
+
+### **Responsabilità Principali**
+- Sistema completo salvataggio/caricamento
+- Serializzazione stato di gioco completo
+- Gestione slot salvataggio multipli
+- Backup automatico e recovery
+- Integrazione con tutti i manager
+
+### **File:** `scripts/managers/SaveLoadManager.gd`
+
+### **Struttura Sistema Salvataggio**
+```gdscript
+# Slot salvataggio
+var available_saves: Array = []
+var current_save_slot: int = -1
+var auto_save_enabled: bool = true
+
+# Dati salvataggio
+var save_data_structure: Dictionary = {
+    "metadata": {},
+    "player": {},
+    "world": {},
+    "quests": {},
+    "narrative": {},
+    "combat": {},
+    "inventory": {},
+    "timestamp": 0
+}
+```
+
+### **API Pubbliche Principali**
+```gdscript
+# Operazioni salvataggio
+func save_game(slot: int = -1) -> bool
+func quick_save() -> bool
+func auto_save() -> void
+
+# Operazioni caricamento
+func load_game(slot: int) -> bool
+func quick_load() -> bool
+
+# Gestione slot
+func get_available_save_slots() -> Array
+func delete_save_slot(slot: int) -> bool
+func get_save_metadata(slot: int) -> Dictionary
+
+# Utility
+func validate_save_data(save_data: Dictionary) -> bool
+func create_backup(slot: int) -> bool
+```
+
+### **Segnali Emessi**
+```gdscript
+signal game_saved(slot: int, success: bool)            # Gioco salvato
+signal game_loaded(slot: int, success: bool)           # Gioco caricato
+signal save_slot_created(slot: int)                     # Slot creato
+signal save_slot_deleted(slot: int)                     # Slot eliminato
+signal auto_save_completed(success: bool)               # Auto-save completato
+```
+
+---
+
 ## 🔄 **INTER-MANAGER COMMUNICATION**
 
 ### **Dependency Graph**
 ```
 ThemeManager ← (utilizzato da) GameUI
     ↑
-DataManager ← PlayerManager ← EventManager
-    ↑             ↑              ↑
-    └─── InputManager ←──── TimeManager
-                ↑
-           SkillCheckManager
+DataManager ← PlayerManager ← EventManager ← CombatManager
+    ↑             ↑              ↑              ↑
+    └─── InputManager ←──── TimeManager ←──── CraftingManager
+                ↑                    ↑              ↑
+           SkillCheckManager ←──── NarrativeManager
+                                      ↑
+                                 QuestManager ← SaveLoadManager
 ```
 
 ### **Signal Chain Examples**
@@ -656,13 +948,19 @@ signal resources_changed  # Singolo segnale per HP/Food/Water
 5. TimeManager._ready()      # Inizializza tempo gioco
 6. EventManager._ready()     # Prepara sistema eventi
 7. SkillCheckManager._ready() # Setup formule skill check
+8. QuestManager._ready()     # Sistema missioni
+9. NarrativeManager._ready() # Sistema narrativo
+10. CraftingManager._ready() # Sistema crafting
+11. CombatManager._ready()   # Sistema combattimento
+12. SaveLoadManager._ready() # Sistema salvataggio
 
-8. MainGame._ready()         # Coordinamento generale
-   ├── EventManager.initialize_events()  # Post-init eventi
-   ├── PlayerManager.prepare_new_character_data()
-   └── Signal connections
+13. MainGame._ready()        # Coordinamento generale
+    ├── EventManager.initialize_events()  # Post-init eventi
+    ├── QuestManager.initialize_quests()  # Post-init quest
+    ├── PlayerManager.prepare_new_character_data()
+    └── Signal connections
 
-9. GameUI._ready()           # Setup UI e world scene
+14. GameUI._ready()          # Setup UI e world scene
 ```
 
 ### **Dependencies Check**
@@ -724,16 +1022,21 @@ Logger.debug("ThemeManager", "Shader compilation details")
 
 ### **Manager Log Prefixes**
 ```
-🗄️ DataManager    - Database operations and validation
-👤 PlayerManager   - Player state and progression  
-🎭 EventManager    - Event triggering and processing
-⏰ TimeManager     - Time system and penalties
-⌨️ InputManager    - Input processing and states
-🎨 ThemeManager    - UI theming and resources
-🎲 SkillCheckManager - Skill test calculations
-🎮 MainGame        - Game flow coordination
-🗺️ World          - Map and movement systems
-🖥️ GameUI         - UI updates and interactions
+🗄️ DataManager       - Database operations and validation
+👤 PlayerManager      - Player state and progression
+🎭 EventManager       - Event triggering and processing
+⏰ TimeManager        - Time system and penalties
+⌨️ InputManager       - Input processing and states
+🎨 ThemeManager       - UI theming and resources
+🎲 SkillCheckManager  - Skill test calculations
+⚔️ CombatManager      - Combat system and resolution
+🔨 CraftingManager    - Crafting and production
+📖 NarrativeManager   - Emotional state and memories
+🎯 QuestManager       - Quest tracking and progression
+💾 SaveLoadManager    - Save/load operations
+ MainGame           - Game flow coordination
+🗺️ World             - Map and movement systems
+🖥️ GameUI            - UI updates and interactions
 ```
 
 ### **Usage Examples**
@@ -753,6 +1056,6 @@ Logger.error("EventManager", "Evento malformato: %s" % event_id)
 
 ---
 
-**Versione:** v0.4.0 "A unifying language for all things"  
-**Data:** 21 Agosto 2025  
+**Versione:** v0.9.5 "All the Story you don't know"
+**Data:** 23 Settembre 2025
 **Target:** LLM Technical Analysis - Singleton Architecture
