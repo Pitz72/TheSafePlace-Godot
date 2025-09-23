@@ -193,16 +193,21 @@ func _on_player_moved(position: Vector2i, terrain_type: String):
 	# GESTIONE STATO RIFUGIO
 	var was_in_shelter = is_in_shelter
 	is_in_shelter = (new_biome == "ristoro")
-	
-	# Se lo stato rifugio è cambiato, emetti segnale
+
+	# Se lo stato rifugio è cambiato, emetti segnale e aggiorna crafting
 	if was_in_shelter != is_in_shelter:
 		shelter_status_changed.emit(is_in_shelter)
+		_update_crafting_access(is_in_shelter)
 		print("🏠 Stato rifugio cambiato: %s" % ["ENTRATO" if is_in_shelter else "USCITO"])
+
+		# Se entriamo in un rifugio di giorno, mostra popup opzioni
+		if is_in_shelter and not TimeManager.is_night():
+			_show_day_shelter_popup()
 	
 	# GESTIONE RIFUGIO NOTTURNO
 	if is_in_shelter and TimeManager.is_night():
-		print("🌙 Rifugio notturno - mostra popup riposo")
-		_show_night_shelter_popup()
+		print("🌙 Rifugio notturno - unica opzione: riposo completo fino al mattino")
+		_shelter_night_rest()
 		return  # Non continuare con eventi normali
 
 	# Controlla se il bioma è cambiato per il messaggio narrativo
@@ -351,36 +356,98 @@ func _shelter_action_search_resources():
 		PlayerManager.narrative_log_generated.emit("[color=#ff6666]Cerchi accuratamente ma non trovi nulla di utile. Qualcuno è già passato di qui.[/color]")
 		PlayerManager.narrative_log_generated.emit("[color=#888888]Tempo trascorso: 30 minuti[/color]")
 
-# Azione rifugio: Banco da Lavoro (Non ancora implementato)
+# Azione rifugio: Banco da Lavoro
 func _shelter_action_workbench():
-	PlayerManager.narrative_log_generated.emit("[color=#888888]Il banco da lavoro è troppo danneggiato per essere utilizzato al momento.[/color]")
+	if CraftingManager and CraftingManager.has_workbench():
+		_show_crafting_interface()
+	else:
+		PlayerManager.narrative_log_generated.emit("[color=#888888]Il banco da lavoro è troppo danneggiato per essere utilizzato al momento.[/color]")
 
 # Azione rifugio: Lascia il Rifugio
 func _shelter_action_leave():
 	PlayerManager.narrative_log_generated.emit("[color=#ffdd00]Lasci il rifugio e ti prepari a continuare il viaggio.[/color]")
 
-# Mostra popup per il rifugio notturno
-func _show_night_shelter_popup():
-	print("🌙 Mostrando popup rifugio notturno")
-	
-	# Carica e istanzia la scena RestNightPopup
-	var popup_scene = preload("res://scenes/ui/popups/RestNightPopup.tscn")
-	var popup_instance = popup_scene.instantiate()
-	
-	# Aggiungi popup alla scena principale
-	get_tree().current_scene.add_child(popup_instance)
-	
-	# Connetti segnale di chiusura per cleanup
-	popup_instance.popup_closed.connect(_on_rest_night_popup_closed.bind(popup_instance))
-	
-	# Mostra il popup
-	popup_instance.show_night_shelter()
+# Mostra popup per il rifugio diurno con opzioni
+func _show_day_shelter_popup():
+	print("☀️ Mostrando popup rifugio diurno")
 
-func _on_rest_night_popup_closed(popup_instance):
-	print("🌅 Popup rifugio notturno chiuso")
+	# Carica e istanzia la scena ShelterPopup
+	var popup_scene = load("res://scenes/ui/popups/ShelterPopup.tscn")
+	if popup_scene == null:
+		push_error("MainGame: Impossibile caricare ShelterPopup.tscn")
+		return
+
+	var popup_instance = popup_scene.instantiate()
+	print("🏠 Popup istanziato: %s" % popup_instance)
+
+	# Aggiungi popup al GameUI (CanvasLayer) invece che alla scena principale
+	var game_ui = get_node("/root/MainGame/GameUI/GameUI")
+	if game_ui:
+		game_ui.add_child(popup_instance)
+		print("🏠 Popup aggiunto al GameUI (CanvasLayer)")
+	else:
+		push_error("MainGame: GameUI non trovato per aggiungere popup")
+		return
+
+	# Connetti segnali
+	popup_instance.popup_closed.connect(_on_shelter_popup_closed.bind(popup_instance))
+	popup_instance.shelter_action_requested.connect(_on_shelter_action_requested)
+	print("🏠 Segnali popup connessi")
+
+	# Mostra il popup con opzioni diurne
+	popup_instance.show_day_shelter()
+	print("🏠 show_day_shelter() chiamato")
+
+# Riposo notturno completo fino alle 6:00 del mattino
+func _shelter_night_rest():
+	print("🌙 Iniziando riposo notturno completo nel rifugio")
+
+	# Calcola ore fino alle 6:00 del mattino
+	var current_hour = TimeManager.current_hour
+	var hours_until_morning = (24 - current_hour) + 6  # Da ora fino a mezzanotte + fino alle 6
+
+	# Converti in mosse (ogni mossa = 30 minuti)
+	var moves = hours_until_morning * 2
+
+	# Applica riposo completo
+	TimeManager.advance_time_by_moves(moves)
+	TimeManager.current_hour = 6  # Forza alle 6:00
+	TimeManager.current_minute = 0
+
+	# Recupero completo (più del riposo normale)
+	PlayerManager.modify_hp(50)  # Recupero maggiore per riposo notturno
+	PlayerManager.modify_food(-20)  # Consumo notturno fame
+	PlayerManager.modify_water(-30)  # Consumo notturno sete
+
+	# Messaggio narrativo
+	PlayerManager.narrative_log_generated.emit("[color=#4169E1]Passi la notte al sicuro nel rifugio. Ti svegli riposato alle 6:00 del mattino.[/color]")
+	PlayerManager.narrative_log_generated.emit("[color=#888888]Notte trascorsa: Recuperi 50 HP ma consumi risorse per il riposo.[/color]")
+
+	print("🌅 Riposo notturno completato - ora: 06:00")
+
+func _on_shelter_popup_closed(popup_instance):
+	print("🏠 Popup rifugio chiuso")
 	# Rimuovi popup dalla scena
 	if popup_instance and is_instance_valid(popup_instance):
 		popup_instance.queue_free()
+
+# Aggiorna l'accesso al crafting nei rifugi
+func _update_crafting_access(has_access: bool):
+	if CraftingManager:
+		CraftingManager.set_workbench_access(has_access)
+		print("🔨 Accesso crafting aggiornato: %s" % ("ABILITATO" if has_access else "DISABILITATO"))
+
+# Mostra l'interfaccia di crafting
+func _show_crafting_interface():
+	print("🔨 Apertura interfaccia crafting...")
+	# Per ora, mostra semplicemente le ricette disponibili
+	var recipes = CraftingManager.get_craftable_recipes()
+	var message = "[color=#00ff00]Ricette disponibili al banco da lavoro:[/color]\n"
+	for recipe_id in recipes:
+		var recipe = CraftingManager.get_recipe_data(recipe_id)
+		if recipe:
+			message += "• %s\n" % recipe.get("name", recipe_id)
+	PlayerManager.narrative_log_generated.emit(message)
 
 # Ottieni oggetti casuali trovabili nel rifugio
 func _get_random_shelter_items(count: int) -> Array[Dictionary]:
@@ -411,6 +478,6 @@ func _debug_force_night():
 	PlayerManager.narrative_log_generated.emit("[color=#ffaa00]DEBUG: Ora forzata a 20:00 per test popup notturno[/color]")
 
 func _input(event):
-	# DEBUG: Premi F10 per forzare la notte
-	if event.is_pressed() and event.keycode == KEY_F10:
+	# DEBUG: Premi F10 per forzare la notte (solo per eventi tastiera)
+	if event is InputEventKey and event.is_pressed() and event.keycode == KEY_F10:
 		_debug_force_night()

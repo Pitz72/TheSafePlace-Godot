@@ -24,7 +24,7 @@ func _on_shelter_status_changed(in_shelter: bool):
 	print("🏠 CommandsPanel: Stato rifugio cambiato - %s" % ["ENTRATO" if in_shelter else "USCITO"])
 	
 	# Aggiorna immediatamente i comandi se non siamo in modalità inventario
-	if inventory_panel == null or not inventory_panel.is_active:
+	if inventory_panel == null or not inventory_panel.is_inventory_active:
 		update_panel(false)
 
 func update_panel(is_inventory_active: bool):
@@ -43,14 +43,20 @@ func update_panel(is_inventory_active: bool):
 	if is_in_shelter and not _is_night():
 		command1_label.text = "[1] Riposa\n(Recupera 10 HP, +2 ore)"
 		command2_label.text = "[2] Cerca Risorse\n(+30 min, skill check)"
-		command3_label.text = "[3] Banco da Lavoro\n(Non disponibile)\n[4] Lascia il Rifugio"
+		var workbench_status = "Disponibile" if (CraftingManager and CraftingManager.has_workbench()) else "Non disponibile"
+		command3_label.text = "[3] Banco da Lavoro\n(%s)\n[4] Lascia il Rifugio" % workbench_status
 		return
 	
 	# MODALITÀ MAPPA NORMALE
 	command1_label.text = "[WASD] Movimento\n[I]nventario\n[R]iposa"
 	command2_label.text = "[L]ivella Personaggio\n[S]alva\n[C]arica"
-	command3_label.text = "[ESC] Menu"
+	command3_label.text = "[Q]uest\n[E]motional State\n[ESC] Menu"
 
 # Utility per controllare se è notte
 func _is_night() -> bool:
 	return TimeManager and TimeManager.is_night()
+
+## Imposta il riferimento al pannello inventario
+func set_inventory_panel(panel) -> void:
+	inventory_panel = panel
+	print("✅ CommandsPanel: Riferimento inventory_panel impostato")

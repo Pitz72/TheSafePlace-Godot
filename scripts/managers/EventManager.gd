@@ -326,7 +326,16 @@ func process_event_choice(event_id: String, choice_index: int) -> void:
 	var skill_check_details = {}
 
 	# --- INIZIO LOGICA DI RISOLUZIONE ---
-	if choice.has("skillCheck"):
+	if choice.has("combat_trigger"):
+		# TRIGGER COMBATTIMENTO
+		var enemy_id = choice.get("combat_trigger")
+		result_text = choice.get("resultText", "Ti prepari al combattimento!")
+		narrative_log = result_text
+
+		# Avvia combattimento dopo un breve delay per mostrare il messaggio
+		call_deferred("_start_combat_after_delay", enemy_id)
+
+	elif choice.has("skillCheck"):
 		var check_data = choice.skillCheck
 		skill_check_details = SkillCheckManager.perform_check(check_data.stat, check_data.difficulty)
 
@@ -339,7 +348,7 @@ func process_event_choice(event_id: String, choice_index: int) -> void:
 			if choice.has("penalty"):
 				_apply_penalty(choice.penalty)
 	else:
-		# Scelta senza skill check
+		# Scelta senza skill check o combattimento
 		result_text = choice.get("resultText", "Azione completata.")
 		if choice.has("reward"):
 			PlayerManager.apply_item_transaction(choice.reward)
@@ -349,6 +358,19 @@ func process_event_choice(event_id: String, choice_index: int) -> void:
 
 	narrative_log = result_text
 	event_choice_resolved.emit(result_text, narrative_log, skill_check_details)
+
+## Avvia combattimento dopo un breve delay per permettere all'evento di chiudersi
+func _start_combat_after_delay(enemy_id: String) -> void:
+	await get_tree().create_timer(1.5).timeout  # Breve pausa drammatica
+
+	if CombatManager:
+		var success = CombatManager.start_combat(enemy_id)
+		if success:
+			print("[EventManager] Combattimento avviato con successo contro: ", enemy_id)
+		else:
+			print("[EventManager] ERRORE: Impossibile avviare combattimento contro: ", enemy_id)
+	else:
+		print("[EventManager] ERRORE: CombatManager non disponibile")
 
 
 

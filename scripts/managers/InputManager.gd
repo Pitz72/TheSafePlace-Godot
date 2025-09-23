@@ -64,6 +64,12 @@ signal level_up_request()
 ## @param action_index: int numero azione (1-4)
 signal shelter_action_requested(action_index: int)
 
+## Emesso per richiesta interfaccia quest
+signal quest_interface_requested
+
+## Emesso per richiesta stato emotivo
+signal emotional_state_requested
+
 
 
 # ========================================
@@ -200,9 +206,25 @@ func _handle_global_input(event: InputEvent) -> bool:
 			pass
 		level_up_request.emit()
 		return true
-	
+
+	# Comando interfaccia quest (Q) - SEMPRE attivo
+	if Input.is_key_pressed(KEY_Q):
+		if debug_input:
+			# Debug rimosso per ridurre log
+			pass
+		quest_interface_requested.emit()
+		return true
+
+	# Comando stato emotivo (E) - SEMPRE attivo
+	if Input.is_key_pressed(KEY_E):
+		if debug_input:
+			# Debug rimosso per ridurre log
+			pass
+		emotional_state_requested.emit()
+		return true
+
 	# M3.T3: Debug system removed - production ready
-	
+
 	# M3.T4.2: Gestione input di debug (F9)
 	_handle_debug_input(event)
 

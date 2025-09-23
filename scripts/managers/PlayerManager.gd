@@ -85,6 +85,38 @@ var available_stat_points: int = 0
 var active_statuses: Array[Status] = []
 
 # ========================================
+# SISTEMA STATO EMOTIVO (NARRATIVO)
+# ========================================
+
+## Livello di comprensione generale della storia
+var understanding_level: int = 0
+
+## Livello empatia per personaggi chiave
+var character_empathy: Dictionary = {
+	"elian": 0,      # Padre - Elian
+	"lena": 0,       # Madre - Lena (ricordi)
+	"ultimo": 0      # Se stesso
+}
+
+## Forza dei ricordi chiave
+var memory_strength: Dictionary = {
+	"silence": 0,        # Il silenzio della fine
+	"water_lesson": 0,   # La lezione dell'acqua
+	"blood_taste": 0,    # Il sapore del sangue
+	"darkness_lesson": 0,# Imparare il buio
+	"burden": 0,         # Il fardello del padre
+	"angels": 0,         # Gli angeli della cenere
+	"confession": 0,     # La confessione
+	"truth": 0           # La verità finale
+}
+
+## Saggezza accumulata
+var total_wisdom: int = 0
+
+## Stato emotivo corrente
+var current_emotional_state: int = 0  # 0=Cold, 1=Guarded, 2=Open, 3=Connected, 4=Transformed
+
+# ========================================
 # INVENTARIO E EQUIPAGGIAMENTO
 # ========================================
 
@@ -737,7 +769,13 @@ func get_save_data() -> Dictionary:
 		# M3.T1: Dati progressione per salvataggio
 		"experience": experience,
 		"experience_for_next_point": experience_for_next_point,
-		"available_stat_points": available_stat_points
+		"available_stat_points": available_stat_points,
+		# Sistema narrativo
+		"understanding_level": understanding_level,
+		"character_empathy": character_empathy.duplicate(),
+		"memory_strength": memory_strength.duplicate(),
+		"total_wisdom": total_wisdom,
+		"current_emotional_state": current_emotional_state
 	}
 
 ## Carica lo stato del personaggio da un Dictionary (per caricamento salvataggio)
@@ -753,18 +791,25 @@ func load_save_data(save_data: Dictionary) -> void:
 	inventory = save_data.get("inventory", [])
 	equipped_weapon = save_data.get("equipped_weapon", {})
 	equipped_armor = save_data.get("equipped_armor", {})
-	
+
 	# M3.T1: Carica dati progressione
 	experience = save_data.get("experience", 0)
 	experience_for_next_point = save_data.get("experience_for_next_point", 100)
 	available_stat_points = save_data.get("available_stat_points", 0)
-	
+
+	# Sistema narrativo
+	understanding_level = save_data.get("understanding_level", 0)
+	character_empathy = save_data.get("character_empathy", {})
+	memory_strength = save_data.get("memory_strength", {})
+	total_wisdom = save_data.get("total_wisdom", 0)
+	current_emotional_state = save_data.get("current_emotional_state", 0)
+
 	# Emetti segnali per aggiornare UI
 	resources_changed.emit()
 	stats_changed.emit()
 	inventory_changed.emit()
-	
-	print("✅ PlayerManager: Dati caricati da salvataggio (inclusa progressione)")
+
+	print("✅ PlayerManager: Dati caricati da salvataggio (inclusa progressione e stato emotivo)")
 
 # ========================================
 # API SISTEMA PROGRESSIONE (M3.T1)

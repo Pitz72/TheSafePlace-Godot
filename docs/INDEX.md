@@ -1,4 +1,4 @@
-# 📚 Indice della Documentazione - The Safe Place
+# 📚 Indice della Documentazione - The Safe Place v0.4.1
 
 Questa cartella contiene tutta la documentazione del progetto "The Safe Place", organizzata in modo logico e strutturato per facilitare la navigazione e la consultazione.
 
@@ -85,5 +85,5 @@ Tutti i contenuti narrativi e di gameplay:
 - I contenuti di gioco vanno in `04_CONTENUTI_DI_GIOCO/`
 
 ---
-*Ultimo aggiornamento: 28 Gennaio 2025*
-*Versione progetto: v0.3.5 "Colors and Separation"*
+*Ultimo aggiornamento: 22 Settembre 2025*
+*Versione progetto: v0.4.1 "Write Only When You're Not Drunk"*

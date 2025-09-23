@@ -10,9 +10,9 @@ config_version=5
 
 [application]
 
-config/name="The Safe Place v0.4.1 - Write Only When You're Not Drunk"
-config/description="Un GDR di sopravvivenza post-apocalittico ispirato ai terminali anni 80 - Sistema di logging consolidato e architettura anti-conflitti"
-run/main_scene="res://scenes/MainGame.tscn"
+config/name="The Safe Place v0.9.0 - Surpassing React"
+config/description="Enterprise-Grade Game Architecture - Architettura enterprise che supera i framework moderni in performance e scalabilità"
+run/main_scene="res://scenes/MainMenu.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
 
 [autoload]
@@ -24,6 +24,11 @@ InputManager="*res://scripts/managers/InputManager.gd"
 TimeManager="*res://scripts/managers/TimeManager.gd"
 EventManager="*res://scripts/managers/EventManager.gd"
 SkillCheckManager="*res://scripts/managers/SkillCheckManager.gd"
+QuestManager="*res://scripts/managers/QuestManager.gd"
+NarrativeManager="*res://scripts/managers/NarrativeManager.gd"
+CraftingManager="*res://scripts/managers/CraftingManager.gd"
+CombatManager="*res://scripts/managers/CombatManager.gd"
+SaveLoadManager="*res://scripts/managers/SaveLoadManager.gd"
 
 [gui]
 

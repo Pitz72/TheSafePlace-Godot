@@ -14,13 +14,13 @@ const CharacterCreationPopup = preload("res://scenes/ui/popups/CharacterCreation
 
 # ═══ REFERENZE NODI PANNELLI ═══
 
-@onready var survival_panel: PanelContainer = $MainLayout/ThreeColumnLayout/LeftPanel/SurvivalPanel
-@onready var inventory_panel: PanelContainer = $MainLayout/ThreeColumnLayout/LeftPanel/InventoryPanel
-@onready var log_panel: PanelContainer = $MainLayout/ThreeColumnLayout/CenterPanel/LogPanel
-@onready var info_panel: PanelContainer = $MainLayout/ThreeColumnLayout/RightPanel/InfoPanel
-@onready var stats_panel: PanelContainer = $MainLayout/ThreeColumnLayout/RightPanel/StatsPanel
-@onready var equipment_panel: PanelContainer = $MainLayout/ThreeColumnLayout/RightPanel/EquipmentPanel
-@onready var commands_panel: PanelContainer = $MainLayout/ThreeColumnLayout/RightPanel/CommandsPanel
+@onready var survival_panel = $MainLayout/ThreeColumnLayout/LeftPanel/SurvivalPanel
+@onready var inventory_panel = $MainLayout/ThreeColumnLayout/LeftPanel/InventoryPanel
+@onready var log_panel = $MainLayout/ThreeColumnLayout/CenterPanel/LogPanel
+@onready var info_panel = $MainLayout/ThreeColumnLayout/RightPanel/InfoPanel
+@onready var stats_panel = $MainLayout/ThreeColumnLayout/RightPanel/StatsPanel
+@onready var equipment_panel = $MainLayout/ThreeColumnLayout/RightPanel/EquipmentPanel
+@onready var commands_panel = $MainLayout/ThreeColumnLayout/RightPanel/CommandsPanel
 
 # Pannello Mappa (Center Panel)
 @onready var map_display: TextureRect = $MainLayout/ThreeColumnLayout/CenterPanel/MapPanel/MapVBox/MapDisplay
@@ -47,6 +47,8 @@ func _ready():
 	_connect_time_manager_signals()
 	_initialize_event_system()
 	call_deferred("_force_status_update")
+	_connect_main_game_signals()
+	_setup_panel_references()
 	# La creazione del personaggio è ora gestita da MainGame.gd
 
 # ═══ VERIFICA E SETUP INIZIALE ═══
@@ -84,6 +86,8 @@ func _connect_input_manager():
 	InputManager.action_cancel.connect(_on_action_cancel)
 	InputManager.action_confirm.connect(_on_action_confirm)
 	InputManager.level_up_request.connect(_on_level_up_request)
+	InputManager.quest_interface_requested.connect(_on_quest_interface_requested)
+	InputManager.emotional_state_requested.connect(_on_emotional_state_requested)
 
 func _connect_time_manager_signals():
 	if not TimeManager:
@@ -92,6 +96,23 @@ func _connect_time_manager_signals():
 	TimeManager.day_changed.connect(_on_day_changed)
 	TimeManager.night_started.connect(_on_night_started)
 	TimeManager.day_started.connect(_on_day_started)
+
+func _connect_main_game_signals():
+	# Connetti al segnale di cambio stato rifugio per aggiornare l'UI
+	var main_game = get_node("/root/MainGame")
+	if main_game and main_game.has_signal("shelter_status_changed"):
+		main_game.shelter_status_changed.connect(_on_shelter_status_changed)
+		print("✅ GameUI connesso a MainGame.shelter_status_changed")
+
+func _setup_panel_references():
+	# Imposta i riferimenti incrociati tra pannelli
+	if commands_panel and commands_panel.has_method("set_inventory_panel"):
+		commands_panel.set_inventory_panel(inventory_panel)
+		print("✅ GameUI: Riferimento inventory_panel impostato in CommandsPanel")
+	elif commands_panel:
+		# Fallback: imposta direttamente la variabile se esiste
+		commands_panel.inventory_panel = inventory_panel
+		print("✅ GameUI: Riferimento inventory_panel impostato direttamente in CommandsPanel")
 
 # ═══ CALLBACK SEGNALI ═══
 
@@ -111,6 +132,11 @@ func _on_night_started():
 func _on_day_started():
 	if log_panel and log_panel.has_method("add_log_message"):
 		log_panel.add_log_message("[color=#ffff40]☀️ Sorge il sole. Un nuovo giorno di sopravvivenza inizia.[/color]")
+
+func _on_shelter_status_changed(_in_shelter: bool):
+	# Aggiorna l'UI quando cambia lo stato rifugio
+	print("GameUI: 🏠 Stato rifugio cambiato, aggiornando UI")
+	update_all_ui()
 
 func _on_inventory_use_item(slot_number: int):
 	if not PlayerManager or PlayerManager.inventory.size() == 0:
@@ -133,6 +159,18 @@ func _on_action_confirm():
 		_open_selected_item_popup()
 	else:
 		print("GameUI: ✅ Azione confirm (nessuna azione definita)")
+
+func _on_save_request():
+	if SaveLoadManager:
+		_show_save_interface()
+	else:
+		add_log_message("Sistema di salvataggio non disponibile")
+
+func _on_load_request():
+	if SaveLoadManager:
+		_show_load_interface()
+	else:
+		add_log_message("Sistema di caricamento non disponibile")
 
 # ═══ AGGIORNAMENTO UI - MASTER FUNCTION ═══
 
@@ -195,6 +233,12 @@ func _open_level_up_popup():
 func _on_level_up_popup_closed(popup_instance):
 	if popup_instance and is_instance_valid(popup_instance):
 		popup_instance.queue_free()
+
+func _on_quest_interface_requested():
+	_show_quest_interface()
+
+func _on_emotional_state_requested():
+	_show_emotional_state()
 
 func show_character_creation_popup(char_data: Dictionary):
 	if is_character_creation_popup_active: return
@@ -276,3 +320,61 @@ func debug_world_viewport():
 func _force_status_update():
 	# Funzione per forzare l'aggiornamento dello status
 	pass
+
+# Mostra interfaccia di salvataggio
+func _show_save_interface():
+	var save_slots = SaveLoadManager.get_available_save_slots()
+	var message = "[color=#00ff00]SALVATAGGIO PARTITA[/color]\n\n"
+	message += "Slot disponibili:\n"
+
+	for i in range(save_slots.size()):
+		var slot_info = save_slots[i]
+		message += "[%d] %s\n" % [i+1, slot_info.name]
+
+	message += "\nPremi 1-3 per salvare in uno slot"
+	add_log_message(message)
+
+# Mostra interfaccia di caricamento
+func _show_load_interface():
+	var save_slots = SaveLoadManager.get_available_save_slots()
+	var message = "[color=#ffff00]CARICAMENTO PARTITA[/color]\n\n"
+	message += "Partite salvate:\n"
+
+	for i in range(save_slots.size()):
+		var slot_info = save_slots[i]
+		message += "[%d] %s - %s\n" % [i+1, slot_info.name, slot_info.date]
+
+	message += "\nPremi 1-3 per caricare una partita"
+	add_log_message(message)
+
+# Mostra interfaccia quest
+func _show_quest_interface():
+	if not QuestManager:
+		add_log_message("Sistema quest non disponibile")
+		return
+
+	var active_quests = QuestManager.get_active_quests()
+	var message = "[color=#ff00ff]MISSIONI ATTIVE[/color]\n\n"
+
+	if active_quests.size() == 0:
+		message += "Nessuna missione attiva al momento."
+	else:
+		for quest in active_quests:
+			message += "• %s\n" % quest.title
+			message += "  %s\n" % quest.description
+
+	add_log_message(message)
+
+# Mostra stato emotivo del giocatore
+func _show_emotional_state():
+	if not NarrativeManager:
+		add_log_message("Sistema narrativo non disponibile")
+		return
+
+	var emotional_state = NarrativeManager.get_emotional_state()
+	var message = "[color=#ff6600]STATO EMOTIVO[/color]\n\n"
+	message += "Stato attuale: %s\n" % emotional_state.current_state
+	message += "Livello connessione: %d/5\n" % emotional_state.connection_level
+	message += "Ricordi sbloccati: %d/8" % emotional_state.memories_unlocked
+
+	add_log_message(message)

@@ -62,6 +62,11 @@ var items: Dictionary = {}
 var _total_items_loaded: int = 0
 var _loading_errors: Array[String] = []
 
+# CACHE PERFORMANCE
+var _name_search_cache: Dictionary = {}  # Cache per ricerche nome
+var _category_cache: Dictionary = {}     # Cache per categorie
+var _rarity_cache: Dictionary = {}       # Cache per rarità
+
 # ========================================
 # INIZIALIZZAZIONE
 # ========================================
@@ -112,44 +117,80 @@ func _load_all_data() -> void:
 
 ## Helper per caricare e parsare singoli file JSON con gestione errori robusta
 func _load_json_file(file_path: String) -> Dictionary:
-	var file = FileAccess.open(file_path, FileAccess.READ)
-	
-	# Gestione errore: file non trovato
-	if file == null:
+	# Verifica esistenza file prima dell'apertura
+	if not FileAccess.file_exists(file_path):
 		var error_msg = "File non trovato: %s" % file_path
 		_loading_errors.append(error_msg)
-		print("❌ %s" % error_msg)
+		push_error("DataManager: %s" % error_msg)
 		return {}
-	
-	# Lettura contenuto file
+
+	var file = FileAccess.open(file_path, FileAccess.READ)
+
+	# Gestione errori FileAccess specifici
+	if file == null:
+		var error_code = FileAccess.get_open_error()
+		var error_msg = "Errore accesso file %s: %s (codice %d)" % [
+			file_path,
+			_get_file_access_error_message(error_code),
+			error_code
+		]
+		_loading_errors.append(error_msg)
+		push_error("DataManager: %s" % error_msg)
+		return {}
+
+	# Lettura contenuto file con controllo dimensione
 	var file_content = file.get_as_text()
 	file.close()
-	
-	# Parsing JSON
+
+	# Verifica contenuto non vuoto
+	if file_content.is_empty():
+		var error_msg = "File vuoto: %s" % file_path
+		_loading_errors.append(error_msg)
+		push_error("DataManager: %s" % error_msg)
+		return {}
+
+	# Parsing JSON con validazione avanzata
 	var json = JSON.new()
 	var parse_result = json.parse(file_content)
-	
+
 	# Gestione errore: JSON non valido
 	if parse_result != OK:
-		var error_msg = "JSON non valido in %s - Errore linea %d: %s" % [
-			file_path, 
-			json.get_error_line(), 
+		var error_msg = "JSON malformato in %s - Linea %d: %s" % [
+			file_path,
+			json.get_error_line(),
 			json.get_error_message()
 		]
 		_loading_errors.append(error_msg)
-		print("❌ %s" % error_msg)
+		push_error("DataManager: %s" % error_msg)
 		return {}
-	
+
 	# Verifica che sia un Dictionary
 	var data = json.data
 	if not data is Dictionary:
-		var error_msg = "Formato JSON non valido in %s - Root deve essere un Object" % file_path
+		var error_msg = "Struttura JSON invalida in %s - Root deve essere un Object, trovato %s" % [
+			file_path,
+			type_string(typeof(data))
+		]
 		_loading_errors.append(error_msg)
-		print("❌ %s" % error_msg)
+		push_error("DataManager: %s" % error_msg)
 		return {}
-	
-	print("   ✅ Caricato: %s" % file_path.get_file())
+
+	print("   ✅ Caricato: %s (%d caratteri)" % [file_path.get_file(), file_content.length()])
 	return data
+
+## Converte codici errore FileAccess in messaggi leggibili
+func _get_file_access_error_message(error_code: int) -> String:
+	match error_code:
+		ERR_FILE_NOT_FOUND:
+			return "File non trovato"
+		ERR_FILE_NO_PERMISSION:
+			return "Permessi insufficienti"
+		ERR_FILE_CANT_OPEN:
+			return "Impossibile aprire il file"
+		ERR_FILE_CANT_READ:
+			return "Impossibile leggere il file"
+		_:
+			return "Errore sconosciuto (%d)" % error_code
 
 ## Unisce tutti i database di oggetti in un singolo dizionario per accesso rapido
 func _merge_item_databases() -> void:
@@ -286,17 +327,24 @@ func get_rarity_data(rarity_name: String) -> Dictionary:
 	print("⚠️ DataManager: Rarità non trovata: %s" % rarity_name)
 	return {}
 
-## Restituisce tutti gli oggetti di una categoria specifica
+## Restituisce tutti gli oggetti di una categoria specifica (con cache)
 ## @param category: Categoria oggetti ("WEAPON", "ARMOR", "CONSUMABLE", etc.)
 ## @return: Dictionary con oggetti della categoria
 func get_items_by_category(category: String) -> Dictionary:
+	# Controlla cache prima
+	if _category_cache.has(category):
+		return _category_cache[category].duplicate()
+
 	var filtered_items: Dictionary = {}
-	
+
 	for item_id in items:
 		var item_data = items[item_id]
 		if item_data.has("category") and item_data.category == category:
 			filtered_items[item_id] = item_data
-	
+
+	# Salva in cache
+	_category_cache[category] = filtered_items.duplicate()
+
 	return filtered_items
 
 ## Restituisce tutti gli oggetti di una sottocategoria specifica
@@ -312,33 +360,49 @@ func get_items_by_subcategory(subcategory: String) -> Dictionary:
 	
 	return filtered_items
 
-## Restituisce tutti gli oggetti di una rarità specifica
+## Restituisce tutti gli oggetti di una rarità specifica (con cache)
 ## @param rarity: Livello rarità ("COMMON", "RARE", "LEGENDARY", etc.)
 ## @return: Dictionary con oggetti della rarità
 func get_items_by_rarity(rarity: String) -> Dictionary:
+	# Controlla cache prima
+	if _rarity_cache.has(rarity):
+		return _rarity_cache[rarity].duplicate()
+
 	var filtered_items: Dictionary = {}
-	
+
 	for item_id in items:
 		var item_data = items[item_id]
 		if item_data.has("rarity") and item_data.rarity == rarity:
 			filtered_items[item_id] = item_data
-	
+
+	# Salva in cache
+	_rarity_cache[rarity] = filtered_items.duplicate()
+
 	return filtered_items
 
-## Cerca oggetti per nome (ricerca fuzzy case-insensitive)
+## Cerca oggetti per nome (ricerca fuzzy case-insensitive con cache)
 ## @param search_term: Termine di ricerca
 ## @return: Array di ID oggetti che matchano
 func search_items_by_name(search_term: String) -> Array[String]:
-	var results: Array[String] = []
 	var search_lower = search_term.to_lower()
-	
+
+	# Controlla cache prima
+	if _name_search_cache.has(search_lower):
+		return _name_search_cache[search_lower].duplicate()
+
+	var results: Array[String] = []
+
+	# Pre-calcola lowercase names per performance
 	for item_id in items:
 		var item_data = items[item_id]
 		if item_data.has("name"):
 			var name_lower = item_data.name.to_lower()
 			if name_lower.contains(search_lower):
 				results.append(item_id)
-	
+
+	# Salva in cache per ricerche future
+	_name_search_cache[search_lower] = results.duplicate()
+
 	return results
 
 ## Verifica se un oggetto esiste nel database
