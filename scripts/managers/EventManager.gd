@@ -1,3 +1,33 @@
+# =============================================================================
+# 🛡️ SISTEMA EVENTI NARRATIVI - CODICE IMMUTABILE
+# =============================================================================
+#
+# ⚠️  ATTENZIONE: IL SISTEMA EVENTI È CONSIDERATO IMMUTABILE
+#
+# Gli eventi narrativi e le loro conseguenze sono stati progettati per creare
+# momenti memorabili e scelte significative nel mondo post-apocalittico.
+# Ogni evento contribuisce all'immersione e alla narrativa ramificata.
+#
+# 🚫 NESSUN LLM DEVE MODIFICARE:
+#    - I testi degli eventi esistenti
+#    - Le conseguenze degli eventi
+#    - La logica di triggering eventi
+#    - I messaggi di risultato eventi
+#    - Le probabilità di spawn eventi
+#
+# 📋 AUTORIZZAZIONE RICHIESTA PER:
+#    - Aggiunta di nuovi eventi con testi originali
+#    - Modifiche al bilanciamento probabilità
+#    - Nuovi tipi di conseguenze eventi
+#    - Estensioni del sistema skill check
+#
+# 🎯 MOTIVAZIONE:
+#    Gli eventi sono i momenti chiave dell'esperienza narrativa.
+#    Ogni modifica potrebbe alterare il bilanciamento e l'immersione.
+#
+# 🔒 FIRMA DI PROTEZIONE: ELIANO_EVENTS_IMMUTABLE_V1.0
+# =============================================================================
+
 # EventManager.gd
 # Singleton per la gestione degli eventi del gioco
 # Gestisce il triggering, processing e applicazione conseguenze degli eventi
@@ -11,6 +41,7 @@ signal event_choice_resolved(result_text: String, narrative_log: String, skill_c
 # Riferimenti ai manager
 @onready var player_manager: PlayerManager
 @onready var data_manager: DataManager
+@onready var quest_manager: QuestManager
 
 # Cache eventi per performance
 var cached_events: Dictionary = {}
@@ -41,13 +72,18 @@ func initialize_events():
 	# Ottieni riferimenti ai manager
 	player_manager = get_node("/root/PlayerManager")
 	data_manager = get_node("/root/DataManager")
-	
+	quest_manager = get_node("/root/QuestManager")
+
 	if not player_manager:
 		print("[EventManager] ERRORE: PlayerManager non trovato!")
 		return
-		
+
 	if not data_manager:
 		print("[EventManager] ERRORE: DataManager non trovato!")
+		return
+
+	if not quest_manager:
+		print("[EventManager] ERRORE: QuestManager non trovato!")
 		return
 	
 	# Carica e organizza eventi
@@ -63,7 +99,7 @@ func _load_and_cache_events():
 	cached_events.clear()
 	biome_event_pools.clear()
 	
-	# Lista dei file eventi da caricare
+	# Lista dei file eventi da caricare (inclusi i file completi)
 	var event_files = [
 		"res://data/events/biomes/city_events.json",
 		"res://data/events/biomes/forest_events.json",
@@ -71,7 +107,11 @@ func _load_and_cache_events():
 		"res://data/events/biomes/rest_stop_events.json",
 		"res://data/events/biomes/river_events.json",
 		"res://data/events/biomes/unique_events.json",
-		"res://data/events/biomes/village_events.json"
+		"res://data/events/biomes/village_events.json",
+		"res://data/events/biomes/city_events_complete.json",
+		"res://data/events/biomes/village_events_complete.json",
+		"res://data/events/biomes/river_events_complete.json",
+		"res://data/events/biomes/rest_stop_events_complete.json"
 	]
 	
 	# Carica ogni file

@@ -52,7 +52,7 @@
     },
     {
       "id": "carrot",
-      "category": "CONSUMABLE", 
+      "category": "CONSUMABLE",
       "subcategory": "FOOD",
       "max_stack": 20,
       "properties": {
@@ -63,7 +63,7 @@
     {
       "id": "potato",
       "category": "CONSUMABLE",
-      "subcategory": "FOOD", 
+      "subcategory": "FOOD",
       "max_stack": 20,
       "properties": {
         "energy_value": 25,
@@ -143,6 +143,54 @@
       "max_stack": 40,
       "properties": {
         "malleable": true
+      }
+    },
+    {
+      "id": "MANUAL_MEDICAL_BASIC",
+      "category": "BOOK",
+      "subcategory": "MANUAL",
+      "max_stack": 3,
+      "properties": {
+        "skill_type": "medical",
+        "skill_level": "basic",
+        "readable": true,
+        "teaches_skill": "first_aid"
+      }
+    },
+    {
+      "id": "MANUAL_MEDICAL_ADVANCED",
+      "category": "BOOK",
+      "subcategory": "MANUAL",
+      "max_stack": 2,
+      "properties": {
+        "skill_type": "medical",
+        "skill_level": "advanced",
+        "readable": true,
+        "teaches_skill": "surgery"
+      }
+    },
+    {
+      "id": "MANUAL_WEAPONS_BASIC",
+      "category": "BOOK",
+      "subcategory": "MANUAL",
+      "max_stack": 3,
+      "properties": {
+        "skill_type": "weapons",
+        "skill_level": "basic",
+        "readable": true,
+        "teaches_skill": "marksmanship"
+      }
+    },
+    {
+      "id": "MANUAL_WEAPONS_ADVANCED",
+      "category": "BOOK",
+      "subcategory": "MANUAL",
+      "max_stack": 2,
+      "properties": {
+        "skill_type": "weapons",
+        "skill_level": "advanced",
+        "readable": true,
+        "teaches_skill": "tactics"
       }
     }
   ]

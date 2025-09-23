@@ -1,274 +1,256 @@
+# QuestManager.gd
+# Singleton per la gestione delle quest principali e secondarie
+# Gestisce progressione, obiettivi e ricompense delle quest
+
 extends Node
 
-## QuestManager Singleton - The Safe Place v0.4.1
-##
-## Gestisce il sistema di quest strutturato con frammenti, riflessioni e milestone emotivi
-## Implementa il sistema narrativo profondo del GDD React adattato per Godot
-##
-## Architettura: Singleton (Autoload) per accesso globale al sistema quest
-
-# ========================================
-# ENUM E COSTANTI
-# ========================================
-
-enum QuestStage {
-	INACTIVE = 0,
-	ACTIVE = 1,
-	COMPLETED = 2,
-	FAILED = 3
-}
-
-enum FragmentType {
-	NARRATIVE = 0,    # Frammento narrativo principale
-	REFLECTION = 1,   # Riflessione personale
-	MILESTONE = 2     # Milestone emotivo
-}
-
-# ========================================
-# SEGNALI PUBBLICI
-# ========================================
-
-signal quest_stage_changed(quest_id: String, new_stage: QuestStage)
-signal fragment_unlocked(fragment_id: String, fragment_type: FragmentType)
-signal emotional_milestone_reached(milestone_id: String)
+# Segnali per comunicazione con altri sistemi
+signal quest_started(quest_id: String)
+signal quest_progressed(quest_id: String, stage_id: String)
 signal quest_completed(quest_id: String)
+signal quest_stage_unlocked(stage_id: String)
 
-# ========================================
-# VARIABILI STATO QUEST
-# ========================================
+# Riferimenti ai manager
+@onready var player_manager: PlayerManager
+@onready var data_manager: DataManager
 
-## Database quest caricato
-var quest_database: Dictionary = {}
+# Stato delle quest
+var active_quests: Dictionary = {}
+var completed_quests: Array = []
+var quest_progress: Dictionary = {}
 
-## Stato corrente delle quest
-var quest_states: Dictionary = {}  # quest_id -> QuestStage
+# Quest principale
+var main_quest_id: String = "main_quest_ultimate_surviver"
+var main_quest_stages: Array = []
 
-## Frammenti sbloccati
-var unlocked_fragments: Array[String] = []
+func _ready():
+	print("QuestManager pronto.")
 
-## Riflessioni disponibili
-var available_reflections: Array[String] = []
+# Inizializza il sistema quest
+func initialize_quests():
+	print("[QuestManager] Inizializzazione sistema quest...")
 
-## Milestone emotivi raggiunti
-var reached_milestones: Array[String] = []
+	# Ottieni riferimenti ai manager
+	player_manager = get_node("/root/PlayerManager")
+	data_manager = get_node("/root/DataManager")
 
-# ========================================
-# INIZIALIZZAZIONE
-# ========================================
-
-func _ready() -> void:
-	print("📜 QuestManager: Inizializzazione sistema quest...")
-	_load_quest_database()
-	_initialize_quest_states()
-	print("✅ QuestManager: Sistema quest pronto")
-
-## Carica il database quest dal file JSON
-func _load_quest_database() -> void:
-	var quest_file = "res://data/quests/main_quest.json"
-	quest_database = DataManager.load_json_file(quest_file)
-
-	if quest_database.is_empty():
-		push_error("QuestManager: Impossibile caricare database quest")
+	if not player_manager:
+		print("[QuestManager] ERRORE: PlayerManager non trovato!")
 		return
 
-	print("📜 QuestManager: Caricato database quest con %d quest" % quest_database.size())
-
-## Inizializza lo stato di tutte le quest
-func _initialize_quest_states() -> void:
-	if not quest_database.has("MAIN_QUEST"):
-		push_error("QuestManager: Database quest non contiene MAIN_QUEST")
+	if not data_manager:
+		print("[QuestManager] ERRORE: DataManager non trovato!")
 		return
 
-	var main_quest = quest_database["MAIN_QUEST"]
-	for stage_data in main_quest:
-		var quest_id = stage_data.get("id", "")
-		if quest_id != "":
-			quest_states[quest_id] = QuestStage.INACTIVE
+	# Carica la quest principale
+	load_main_quest()
 
-	# Attiva la prima quest per default
-	if quest_states.size() > 0:
-		var first_quest = quest_states.keys()[0]
-		quest_states[first_quest] = QuestStage.ACTIVE
-		print("📜 QuestManager: Attivata quest iniziale: %s" % first_quest)
+	print("[QuestManager] Sistema quest inizializzato")
 
-# ========================================
-# API GESTIONE QUEST
-# ========================================
+# Carica la quest principale dal file JSON
+func load_main_quest():
+	var quest_file = "res://data/quests/main_quest_complete.json"
+	var quest_data = data_manager.load_json_file(quest_file)
 
-## Verifica se una quest è attiva
-func is_quest_active(quest_id: String) -> bool:
-	return quest_states.get(quest_id, QuestStage.INACTIVE) == QuestStage.ACTIVE
+	if quest_data and quest_data.has("main_quest"):
+		var main_quest = quest_data.main_quest
+		main_quest_id = main_quest.id
+		main_quest_stages = main_quest.stages
 
-## Verifica se una quest è completata
-func is_quest_completed(quest_id: String) -> bool:
-	return quest_states.get(quest_id, QuestStage.INACTIVE) == QuestStage.COMPLETED
+		# Inizializza la quest principale se non è già attiva
+		if not active_quests.has(main_quest_id):
+			start_quest(main_quest_id)
 
-## Ottiene lo stato corrente di una quest
-func get_quest_state(quest_id: String) -> QuestStage:
-	return quest_states.get(quest_id, QuestStage.INACTIVE)
+		print("[QuestManager] Quest principale caricata: ", main_quest.title)
+	else:
+		print("[QuestManager] ERRORE: Impossibile caricare la quest principale")
 
-## Ottiene i dati di una quest specifica
-func get_quest_data(quest_id: String) -> Dictionary:
-	if not quest_database.has("MAIN_QUEST"):
-		return {}
-
-	for stage_data in quest_database["MAIN_QUEST"]:
-		if stage_data.get("id", "") == quest_id:
-			return stage_data
-
-	return {}
-
-## Avanza una quest allo stage successivo
-func advance_quest(quest_id: String) -> bool:
-	var current_state = get_quest_state(quest_id)
-	if current_state != QuestStage.ACTIVE:
-		print("⚠️ QuestManager: Impossibile avanzare quest %s (stato: %d)" % [quest_id, current_state])
+# Avvia una nuova quest
+func start_quest(quest_id: String) -> bool:
+	if active_quests.has(quest_id):
+		print("[QuestManager] Quest già attiva: ", quest_id)
 		return false
 
-	quest_states[quest_id] = QuestStage.COMPLETED
-	quest_stage_changed.emit(quest_id, QuestStage.COMPLETED)
-	quest_completed.emit(quest_id)
-
-	print("📜 QuestManager: Quest completata: %s" % quest_id)
-	return true
-
-# ========================================
-# SISTEMA FRAMMENTI NARRATIVI
-# ========================================
-
-## Sblocca un frammento narrativo
-func unlock_fragment(fragment_id: String, fragment_type: FragmentType = FragmentType.NARRATIVE) -> void:
-	if fragment_id in unlocked_fragments:
-		return  # Già sbloccato
-
-	unlocked_fragments.append(fragment_id)
-	fragment_unlocked.emit(fragment_id, fragment_type)
-
-	print("📜 QuestManager: Frammento sbloccato: %s (tipo: %d)" % [fragment_id, fragment_type])
-
-## Verifica se un frammento è sbloccato
-func is_fragment_unlocked(fragment_id: String) -> bool:
-	return fragment_id in unlocked_fragments
-
-## Ottiene tutti i frammenti sbloccati
-func get_unlocked_fragments() -> Array[String]:
-	return unlocked_fragments.duplicate()
-
-# ========================================
-# SISTEMA RIFLESSIONI
-# ========================================
-
-## Aggiunge una riflessione disponibile
-func add_available_reflection(reflection_id: String) -> void:
-	if reflection_id in available_reflections:
-		return  # Già disponibile
-
-	available_reflections.append(reflection_id)
-	print("📜 QuestManager: Riflessione disponibile: %s" % reflection_id)
-
-## Rimuove una riflessione (dopo che è stata letta)
-func remove_reflection(reflection_id: String) -> void:
-	available_reflections.erase(reflection_id)
-	print("📜 QuestManager: Riflessione rimossa: %s" % reflection_id)
-
-## Ottiene le riflessioni disponibili
-func get_available_reflections() -> Array[String]:
-	return available_reflections.duplicate()
-
-# ========================================
-# SISTEMA MILESTONE EMOTIVI
-# ========================================
-
-## Raggiunge un milestone emotivo
-func reach_emotional_milestone(milestone_id: String) -> void:
-	if milestone_id in reached_milestones:
-		return  # Già raggiunto
-
-	reached_milestones.append(milestone_id)
-	emotional_milestone_reached.emit(milestone_id)
-
-	print("💭 QuestManager: Milestone emotivo raggiunto: %s" % milestone_id)
-
-## Verifica se un milestone è stato raggiunto
-func is_milestone_reached(milestone_id: String) -> bool:
-	return milestone_id in reached_milestones
-
-## Ottiene tutti i milestone raggiunti
-func get_reached_milestones() -> Array[String]:
-	return reached_milestones.duplicate()
-
-# ========================================
-# SISTEMA TRIGGER QUEST
-# ========================================
-
-## Verifica i trigger di quest basati sul progresso del giocatore
-func check_quest_triggers() -> void:
-	var player_progress = PlayerManager.get_progression_data()
-	var current_level = player_progress.get("current_level", 1)
-
-	# Trigger basati su livello personaggio
-	_check_level_based_triggers(current_level)
-
-	# Trigger basati su giorni sopravvissuti
-	var survival_days = TimeManager.get_current_day()
-	_check_survival_based_triggers(survival_days)
-
-	# Trigger basati su bioma corrente (placeholder - da implementare)
-	var current_biome = "pianure"  # Placeholder
-	_check_biome_based_triggers(current_biome)
-
-## Controlla trigger basati sul livello del personaggio
-func _check_level_based_triggers(current_level: int) -> void:
-	match current_level:
-		2:
-			if not is_quest_active("mq_02_water"):
-				_activate_quest("mq_02_water")
-		3:
-			if not is_quest_active("mq_03_blood"):
-				_activate_quest("mq_03_blood")
-
-## Controlla trigger basati sui giorni di sopravvivenza
-func _check_survival_based_triggers(survival_days: int) -> void:
-	if survival_days >= 2 and not is_quest_active("mq_04_darkness"):
-		_activate_quest("mq_04_darkness")
-	elif survival_days >= 7 and not is_quest_active("mq_09_name"):
-		_activate_quest("mq_09_name")
-
-## Controlla trigger basati sul bioma corrente
-func _check_biome_based_triggers(current_biome: String) -> void:
-	if current_biome == "Ristoro" and not is_quest_active("mq_05_question"):
-		_activate_quest("mq_05_question")
-
-## Attiva una quest specifica
-func _activate_quest(quest_id: String) -> void:
-	if quest_states.has(quest_id):
-		quest_states[quest_id] = QuestStage.ACTIVE
-		quest_stage_changed.emit(quest_id, QuestStage.ACTIVE)
-		print("📜 QuestManager: Quest attivata: %s" % quest_id)
-
-# ========================================
-# API DEBUG E TESTING
-# ========================================
-
-## Forza l'attivazione di una quest (per debug)
-func debug_activate_quest(quest_id: String) -> void:
-	_activate_quest(quest_id)
-	print("🔧 DEBUG: Quest forzatamente attivata: %s" % quest_id)
-
-## Ottieni lo stato completo del sistema quest
-func get_quest_system_state() -> Dictionary:
-	return {
-		"quest_states": quest_states.duplicate(),
-		"unlocked_fragments": unlocked_fragments.duplicate(),
-		"available_reflections": available_reflections.duplicate(),
-		"reached_milestones": reached_milestones.duplicate()
+	active_quests[quest_id] = {
+		"id": quest_id,
+		"started_at": Time.get_unix_time_from_system(),
+		"progress": 0
 	}
 
-## Reset completo del sistema quest (per testing)
-func debug_reset_quest_system() -> void:
-	quest_states.clear()
-	unlocked_fragments.clear()
-	available_reflections.clear()
-	reached_milestones.clear()
-	_initialize_quest_states()
-	print("🔧 DEBUG: Sistema quest resettato")
+	quest_progress[quest_id] = {}
+
+	quest_started.emit(quest_id)
+	print("[QuestManager] Quest avviata: ", quest_id)
+	return true
+
+# Controlla se una condizione di trigger è soddisfatta
+func check_trigger_condition(condition: String) -> bool:
+	match condition:
+		"exploration_time > 30":
+			return get_exploration_time() > 30
+		"thirst_level > 70":
+			return player_manager.water < player_manager.max_water * 0.3
+		"hp < max_hp * 0.8":
+			return player_manager.hp < player_manager.max_hp * 0.8
+		"time_of_day == night":
+			return TimeManager.is_night()
+		"resting == true":
+			return is_player_resting()
+		"near_radiation_zone":
+			return is_near_radiation()
+		"inventory_weight > 80%":
+			return get_inventory_weight_percentage() > 80
+		"found_old_map":
+			return has_item("old_map")
+		"deep_reflection":
+			return randf() < 0.1  # 10% probabilità casuale
+		"crossroads_decision":
+			return randf() < 0.05  # 5% probabilità casuale
+		"near_safe_place":
+			return is_near_safe_place()
+		"reached_safe_place":
+			return has_reached_safe_place()
+		_:
+			return false
+
+# Calcola il tempo di esplorazione (in minuti)
+func get_exploration_time() -> int:
+	# Questa sarebbe implementata con il TimeManager
+	return 45  # Placeholder
+
+# Verifica se il giocatore sta riposando
+func is_player_resting() -> bool:
+	# Questa sarebbe collegata al sistema di riposo
+	return randf() < 0.3  # Placeholder
+
+# Verifica se il giocatore è vicino a una zona radioattiva
+func is_near_radiation() -> bool:
+	# Questa sarebbe collegata al sistema di biomi
+	return randf() < 0.2  # Placeholder
+
+# Calcola la percentuale di peso dell'inventario
+func get_inventory_weight_percentage() -> float:
+	# Questa sarebbe calcolata dall'inventario
+	return 85.0  # Placeholder
+
+# Verifica se il giocatore ha un item specifico
+func has_item(item_id: String) -> bool:
+	return player_manager.has_item(item_id)
+
+# Verifica se il giocatore è vicino al Safe Place
+func is_near_safe_place() -> bool:
+	# Questa sarebbe calcolata dalla posizione del giocatore
+	return randf() < 0.1  # Placeholder
+
+# Verifica se il giocatore ha raggiunto il Safe Place
+func has_reached_safe_place() -> bool:
+	# Questa sarebbe verificata dalla posizione finale
+	return quest_progress.get(main_quest_id, {}).get("reached_safe_place", false)
+
+# Prova ad attivare un evento di quest
+func try_trigger_quest_event(stage_id: String) -> bool:
+	if not active_quests.has(main_quest_id):
+		return false
+
+	# Trova lo stage corrispondente
+	var stage_data = null
+	for stage in main_quest_stages:
+		if stage.id == stage_id:
+			stage_data = stage
+			break
+
+	if not stage_data:
+		return false
+
+	# Verifica la condizione di trigger
+	var trigger_condition = stage_data.get("trigger_condition", "")
+	if trigger_condition and not check_trigger_condition(trigger_condition):
+		return false
+
+	# L'evento può essere triggerato
+	trigger_quest_stage(stage_id, stage_data)
+	return true
+
+# Attiva uno stage specifico della quest
+func trigger_quest_stage(stage_id: String, stage_data: Dictionary):
+	print("[QuestManager] Attivazione stage quest: ", stage_id)
+
+	# Segnala che lo stage è stato sbloccato
+	quest_stage_unlocked.emit(stage_id)
+
+	# Qui verrebbe mostrato l'evento narrativo al giocatore
+	# Per ora, applichiamo automaticamente il progresso
+	update_quest_progress(main_quest_id, stage_id, "completed")
+
+# Aggiorna il progresso di una quest
+func update_quest_progress(quest_id: String, stage_id: String, progress_type: String):
+	if not quest_progress.has(quest_id):
+		quest_progress[quest_id] = {}
+
+	quest_progress[quest_id][stage_id] = progress_type
+
+	quest_progressed.emit(quest_id, stage_id)
+
+	# Verifica se la quest è completata
+	check_quest_completion(quest_id)
+
+	print("[QuestManager] Progresso aggiornato: ", quest_id, " - ", stage_id, " - ", progress_type)
+
+# Verifica se una quest è stata completata
+func check_quest_completion(quest_id: String):
+	if quest_id == main_quest_id:
+		var final_stage = "mq_12_truth"
+		if quest_progress.get(quest_id, {}).get(final_stage) == "completed":
+			complete_quest(quest_id)
+
+# Completa una quest
+func complete_quest(quest_id: String):
+	if completed_quests.has(quest_id):
+		return
+
+	completed_quests.append(quest_id)
+	active_quests.erase(quest_id)
+
+	quest_completed.emit(quest_id)
+
+	print("[QuestManager] Quest completata: ", quest_id)
+
+	# Ricompense per il completamento della quest principale
+	if quest_id == main_quest_id:
+		grant_main_quest_rewards()
+
+# Concede le ricompense per il completamento della quest principale
+func grant_main_quest_rewards():
+	print("[QuestManager] Concessione ricompense quest principale")
+
+	# Ricompense narrative e materiali
+	player_manager.add_item("elian_letter", 1)
+	player_manager.add_item("safe_place_key", 1)
+
+	# Aumento permanente delle statistiche
+	player_manager.modify_stat("carisma", 2)
+	player_manager.modify_stat("intelligenza", 1)
+
+	# Messaggio narrativo finale
+	player_manager.narrative_log_generated.emit("[color=cyan]Hai completato il tuo viaggio. Ora conosci la verità. Il mondo continua... e anche tu.[/color]")
+
+# Ottieni informazioni su una quest
+func get_quest_info(quest_id: String) -> Dictionary:
+	return {
+		"id": quest_id,
+		"active": active_quests.has(quest_id),
+		"completed": completed_quests.has(quest_id),
+		"progress": quest_progress.get(quest_id, {})
+	}
+
+# Ottieni il progresso della quest principale
+func get_main_quest_progress() -> Dictionary:
+	return get_quest_info(main_quest_id)
+
+# Debug: mostra lo stato delle quest
+func print_quest_status():
+	print("\n=== STATO QUEST ===")
+	print("Quest attive: ", active_quests.keys())
+	print("Quest completate: ", completed_quests)
+	print("Progresso quest principale: ", quest_progress.get(main_quest_id, {}))
+	print("===================\n")

@@ -1,8 +1,38 @@
 extends Node2D
 class_name World
 
+# =============================================================================
+# 🛡️ SISTEMA NARRATIVO MOVIMENTO - CODICE IMMUTABILE
+# =============================================================================
+#
+# ⚠️  ATTENZIONE: I MESSAGGI NARRATIVI DI MOVIMENTO SONO IMMUTABILI
+#
+# I messaggi di movimento, terreno e transizioni in World.gd sono stati
+# progettati per creare un'esperienza di esplorazione unica e immersiva.
+# Ogni descrizione del terreno contribuisce all'atmosfera post-apocalittica.
+#
+# 🚫 NESSUN LLM DEVE MODIFICARE:
+#    - I messaggi di movimento e terreno
+#    - Le descrizioni dei biomi
+#    - I messaggi di attraversamento fiumi
+#    - La logica di emissione messaggi narrativi
+#    - I mapping terreno→bioma
+#
+# 📋 AUTORIZZAZIONE RICHIESTA PER:
+#    - Aggiunta di nuovi tipi di terreno con descrizioni specifiche
+#    - Nuovi messaggi di movimento speciali
+#    - Modifiche ai messaggi di penalità movimento
+#    - Nuove categorie di terreno esplorabili
+#
+# 🎯 MOTIVAZIONE:
+#    Questi messaggi creano il senso di esplorazione e scoperta.
+#    Sono essenziali per l'esperienza di viaggio nel mondo post-apocalittico.
+#
+# 🔒 FIRMA DI PROTEZIONE: ELIANO_MOVEMENT_IMMUTABLE_V1.0
+# =============================================================================
+
 # ============================================================================
-# WORLD SCRIPT FINALE v2.1 - The Safe Place 
+# WORLD SCRIPT FINALE v2.1 - The Safe Place
 # ============================================================================
 # Sistema completo di mondo interattivo con:
 # - TileMap ottimizzato per rendering

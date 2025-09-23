@@ -30,7 +30,7 @@
           "skillCheck": { "stat": "intelligenza", "difficulty": 10 },
           "successText": "All'interno trovi un piccolo magazzino di sopravvivenza: cibo in scatola, acqua pulita e medicine scadute ma ancora utilizzabili.",
           "failureText": "La capanna è stata già saccheggiata tempo fa. Non c'è rimasto nulla di utile, solo polvere e ragnatele.",
-          "items_gained": [{ "id": "canned_food", "quantity": 2 }, { "id": "water_purified", "quantity": 2 }, { "id": "expired_medicine", "quantity": 1 }]
+          "items_gained": [{ "id": "canned_food", "quantity": 2 }, { "id": "water_purified", "quantity": 2 }, { "id": "CRAFT_WOOD", "quantity": 4 }, { "id": "CRAFT_ROPE", "quantity": 2 }, { "id": "CRAFT_CLOTH", "quantity": 2 }]
         },
         {
           "text": "Riposati qui per un po'",
@@ -55,7 +55,7 @@
         {
           "text": "Raccogli legna secca alla base",
           "resultText": "Raccogli una buona quantità di legna secca e ben stagionata. Perfetta per fare fuoco.",
-          "items_gained": [{ "id": "dry_wood", "quantity": 4 }]
+          "items_gained": [{ "id": "CRAFT_WOOD", "quantity": 6 }]
         }
       ]
     },
@@ -224,6 +224,145 @@
           "successText": "Con qualche aggiustamento riesci a rendere la tenda di nuovo utilizzabile. Ora hai un riparo portatile.",
           "failureText": "La tenda è troppo danneggiata. Nel tentativo di ripararla la rovini completamente.",
           "items_gained": [{ "id": "portable_tent", "quantity": 1 }]
+        },
+        {
+          "id": "forest_glowing_mushrooms",
+          "title": "Funghi Luminosi",
+          "description": "Tra le radici di un albero antico, noti un gruppo di funghi che emanano una luce blu spettrale. Potrebbero essere commestibili o avere proprietà curative, ma anche velenosi.",
+          "biome": "foreste",
+          "choices": [
+            {
+              "text": "Raccoglili con cautela",
+              "skill_check": { "stat": "intelligenza", "difficulty": 12 },
+              "consequences_success": {
+                "narrative_text": "Riconosci questi funghi dalle tue letture pre-guerra. Sono commestibili e hanno proprietà curative. Ne raccogli diversi.",
+                "items_gained": [{ "id": "glowing_mushrooms", "quantity": 5 }]
+              },
+              "consequences_failure": {
+                "narrative_text": "Ne mangi uno per testarlo. È amaro ma non letale. Però ti senti strano, come se il mondo girasse più lentamente.",
+                "status_effects": ["SICK"]
+              }
+            },
+            {
+              "text": "Lasciali stare",
+              "resultText": "Meglio non rischiare. La natura post-apocalittica ha creato molte cose pericolose."
+            }
+          ]
+        },
+        {
+          "id": "forest_hidden_cabin",
+          "title": "Capanna Nascosta",
+          "description": "Tra gli alberi, noti una piccola capanna di legno ben nascosta. Sembra abbandonata ma potrebbe contenere risorse utili.",
+          "biome": "foreste",
+          "choices": [
+            {
+              "text": "Entra con cautela",
+              "skill_check": { "stat": "agilita", "difficulty": 11 },
+              "consequences_success": {
+                "narrative_text": "Ti muovi silenziosamente e entri. Dentro trovi una cassetta di medicinali scaduti ma ancora utilizzabili e alcune razioni militari.",
+                "items_gained": [{ "id": "expired_medicine", "quantity": 3 }, { "id": "canned_food", "quantity": 2 }]
+              },
+              "consequences_failure": {
+                "narrative_text": "Fai rumore entrando e svegli qualcosa. Un animale selvatico ti attacca, ferendoti prima di fuggire.",
+                "hp_change": -8
+              }
+            },
+            {
+              "text": "Controlla dalle finestre",
+              "skill_check": { "stat": "intelligenza", "difficulty": 9 },
+              "consequences_success": {
+                "narrative_text": "Guardando dentro, vedi che la capanna è vuota ma c'è un kit di riparazione abbandonato sul tavolo.",
+                "items_gained": [{ "id": "repair_kit", "quantity": 1 }]
+              },
+              "consequences_failure": {
+                "narrative_text": "Le finestre sono troppo sporche per vedere chiaramente. Non riesci a capire se valga la pena entrare."
+              }
+            }
+          ]
+        },
+        {
+          "id": "forest_poachers_camp",
+          "title": "Campo di Bracconieri",
+          "description": "Trovi un accampamento abbandonato di bracconieri. Ci sono tende, un fuoco spento e alcune trappole. Potrebbe esserci qualcosa di utile.",
+          "biome": "foreste",
+          "choices": [
+            {
+              "text": "Cerca nelle tende",
+              "skill_check": { "stat": "intelligenza", "difficulty": 10 },
+              "consequences_success": {
+                "narrative_text": "Trovi alcune munizioni per fucile e un coltello da caccia ben affilato.",
+                "items_gained": [{ "id": "rifle_ammo", "quantity": 15 }, { "id": "hunting_knife", "quantity": 1 }]
+              },
+              "consequences_failure": {
+                "narrative_text": "Mentre frughi, attivi una trappola nascosta che ti ferisce alla gamba.",
+                "hp_change": -12,
+                "status_effects": ["WOUNDED"]
+              }
+            },
+            {
+              "text": "Prendi solo il necessario e vai",
+              "resultText": "Vedi alcune cartucce per fucile abbandonate e le prendi velocemente.",
+              "items_gained": [{ "id": "shotgun_shells", "quantity": 8 }]
+            }
+          ]
+        },
+        {
+          "id": "forest_radioactive_zone",
+          "title": "Zona Radioattiva",
+          "description": "Entri in una zona dove gli alberi sembrano malati e contorti. L'aria ha un odore metallico strano. Potrebbe essere radioattiva.",
+          "biome": "foreste",
+          "choices": [
+            {
+              "text": "Attraversala velocemente",
+              "skill_check": { "stat": "vigore", "difficulty": 13 },
+              "consequences_success": {
+                "narrative_text": "Trattieni il respiro e corri attraverso. Riesci a passare con solo una leggera nausea.",
+                "hp_change": -5
+              },
+              "consequences_failure": {
+                "narrative_text": "La radioattività ti colpisce duramente. Ti senti debole e malato.",
+                "hp_change": -15,
+                "status_effects": ["SICK"]
+              }
+            },
+            {
+              "text": "Cerca un percorso alternativo",
+              "skill_check": { "stat": "intelligenza", "difficulty": 11 },
+              "consequences_success": {
+                "narrative_text": "Trovi un sentiero che aggira la zona contaminata, anche se ti costa tempo.",
+                "penalty": { "type": "time", "minutes": 45 }
+              },
+              "consequences_failure": {
+                "narrative_text": "Ti perdi cercando di aggirare la zona e finisci per passarci attraverso comunque.",
+                "hp_change": -8
+              }
+            }
+          ]
+        },
+        {
+          "id": "forest_wild_berries",
+          "title": "Bacche Selvatiche",
+          "description": "Vedi un cespuglio carico di bacche rosse. Potrebbero essere commestibili o velenose.",
+          "biome": "foreste",
+          "choices": [
+            {
+              "text": "Raccoglile con attenzione",
+              "skill_check": { "stat": "intelligenza", "difficulty": 10 },
+              "consequences_success": {
+                "narrative_text": "Riconosci queste bacche come sicure. Sono dolci e nutrienti.",
+                "items_gained": [{ "id": "wild_berries", "quantity": 8 }]
+              },
+              "consequences_failure": {
+                "narrative_text": "Ne mangi una per testare. È amara e ti senti male dopo poco.",
+                "hp_change": -6,
+                "status_effects": ["SICK"]
+              }
+            },
+            {
+              "text": "Lasciale perdere",
+              "resultText": "Meglio non rischiare. Continui il tuo cammino."
+            }
+          ]
         }
       ]
     }

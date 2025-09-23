@@ -49,6 +49,8 @@ var armor: Dictionary = {}
 var consumables: Dictionary = {}
 var crafting_materials: Dictionary = {}
 var ammo: Dictionary = {}
+var misc_items: Dictionary = {}
+var materials: Dictionary = {}
 var quest_items: Dictionary = {}
 
 ## Database unificato di tutti gli oggetti per accesso rapido
@@ -94,7 +96,8 @@ func _load_all_data() -> void:
 	if rarity_system.has("rarity_system"):
 		print("   ✅ Sistema rarità: %d livelli" % rarity_system.rarity_system.size())
 	
-	# 2. DATABASE OGGETTI CATEGORIZZATI
+	# 2. DATABASE OGGETTI CATEGORIZZATI (MODULARI)
+	_load_items_database_modular()
 	unique_items = _load_json_file("res://data/items/unique_items.json")
 	weapons = _load_json_file("res://data/items/weapons.json")
 	armor = _load_json_file("res://data/items/armor.json")
@@ -311,6 +314,15 @@ func _validate_item_properties(item_data: Dictionary) -> bool:
 ## @param item_id: ID univoco dell'oggetto
 ## @return: Dictionary con dati oggetto, o {} se non trovato
 func get_item_data(item_id: String) -> Dictionary:
+	# Cerca nei database modulari
+	var databases = [weapons, armor, consumables, crafting_materials, ammo, misc_items, materials, unique_items, quest_items]
+
+	for db in databases:
+		if db.has(item_id):
+			return db[item_id].duplicate(true)
+
+	# Item non trovato
+	return {}
 	if items.has(item_id):
 		return items[item_id]
 	
@@ -571,3 +583,26 @@ func print_loading_report() -> void:
 			print("   - %s" % error)
 	
 	print("=".repeat(50) + "\n")
+  
+## Carica database oggetti modulari dalla cartella categories  
+func _load_items_database_modular() - 
+	print("[DataManager] Caricamento database oggetti modulari...")  
+ECHO attivo.
+	# Carica file categorizzati  
+	var category_files = {  
+		"weapons": "res://data/items/categories/weapons.json",  
+		"consumables": "res://data/items/categories/consumables.json",  
+		"misc": "res://data/items/categories/misc.json",  
+		"materials": "res://data/items/categories/materials.json"  
+	}  
+ECHO attivo.
+	for category in category_files.keys():  
+		var file_path = category_files[category]  
+		var data = _load_json_file(file_path)  
+		if data and data.has(category):  
+			set(category + "_items", data[category])  
+			print("   ? %s: %d item" % [category.capitalize(), data[category].size()])  
+		else:  
+			print("   ?? Errore caricamento %s" % category)  
+ECHO attivo.
+	print("[DataManager] Database oggetti modulari caricati") 

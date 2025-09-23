@@ -1,10 +1,40 @@
 extends Node
 
+# =============================================================================
+# 🛡️ SISTEMA NARRATIVO - CODICE IMMUTABILE
+# =============================================================================
+#
+# ⚠️  ATTENZIONE: IL SISTEMA NARRATIVO È CONSIDERATO IMMUTABILE
+#
+# Il segnale narrative_log_generated e tutte le funzioni correlate al sistema
+# narrativo del diario di gioco sono stati progettati per essere perfetti.
+# Rappresentano l'anima narrativa dell'esperienza di gioco.
+#
+# 🚫 NESSUN LLM DEVE MODIFICARE:
+#    - Il segnale narrative_log_generated
+#    - Le funzioni _emit_narrative_message_for_use()
+#    - Le funzioni _get_narrative_message_for_equip()
+#    - I messaggi di sopravvivenza e stati
+#    - La logica di connessione al LogPanel
+#
+# 📋 AUTORIZZAZIONE RICHIESTA PER:
+#    - Aggiunta di nuovi tipi di messaggi narrativi
+#    - Modifiche al formato dei messaggi esistenti
+#    - Cambiamenti alla logica di emissione segnali
+#    - Nuove categorie di messaggi di gioco
+#
+# 🎯 MOTIVAZIONE:
+#    Il sistema narrativo è il cuore dell'immersione. Ogni parola conta
+#    per creare l'atmosfera unica del gioco post-apocalittico.
+#
+# 🔒 FIRMA DI PROTEZIONE: ELIANO_NARRATIVE_IMMUTABLE_V1.0
+# =============================================================================
+
 ## PlayerManager Singleton - The Safe Place v0.1.2
-## 
+##
 ## Gestisce tutti i dati del personaggio giocatore (statistiche, inventario, risorse).
 ## Progettato come Singleton (Autoload) per accesso globale allo stato del player.
-## 
+##
 ## Milestone 2: Gameplay Core - Sistema centrale di gestione personaggio
 ## Integrato con DataManager per validazione oggetti e proprietà avanzate.
 

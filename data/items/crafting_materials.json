@@ -197,6 +197,156 @@
       "stackable": true,
       "max_stack": 5,
       "properties": {}
+    },
+
+    "CRAFT_METAL_SCRAP": {
+      "id": "CRAFT_METAL_SCRAP",
+      "name": "Rottami Metallici",
+      "nameShort": "Rottami",
+      "description": "Pezzi di metallo assortiti recuperati da veicoli e strutture abbandonate. Base per molte riparazioni e costruzioni.",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "metal",
+      "rarity": "COMMON",
+      "weight": 0.8,
+      "value": 5,
+      "stackable": true,
+      "max_stack": 50,
+      "properties": {}
+    },
+
+    "CRAFT_WOOD": {
+      "id": "CRAFT_WOOD",
+      "name": "Legno da Lavoro",
+      "nameShort": "Legno",
+      "description": "Assi e tronchi di legno stagionato. Materiale base per costruzioni e riparazioni strutturali.",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "organic",
+      "rarity": "COMMON",
+      "weight": 2.0,
+      "value": 3,
+      "stackable": true,
+      "max_stack": 25,
+      "properties": {}
+    },
+
+    "CRAFT_CLOTH": {
+      "id": "CRAFT_CLOTH",
+      "name": "Stoffa/Tessuti",
+      "nameShort": "Stoffa",
+      "description": "Pezzi di tessuto e stoffa recuperati. Utile per riparare abiti, creare bende o imbottiture.",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "fiber",
+      "rarity": "COMMON",
+      "weight": 0.3,
+      "value": 4,
+      "stackable": true,
+      "max_stack": 30,
+      "properties": {}
+    },
+
+    "CRAFT_RUBBER": {
+      "id": "CRAFT_RUBBER",
+      "name": "Gomma",
+      "nameShort": "Gomma",
+      "description": "Pezzi di gomma e guarnizioni recuperate. Essenziali per tenute, isolamento e riparazioni meccaniche.",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "rubber",
+      "rarity": "UNCOMMON",
+      "weight": 0.4,
+      "value": 8,
+      "stackable": true,
+      "max_stack": 20,
+      "properties": {}
+    },
+
+    "CRAFT_ELECTRONICS": {
+      "id": "CRAFT_ELECTRONICS",
+      "name": "Componenti Elettronici",
+      "nameShort": "Elettronica",
+      "description": "Circuiti, chip e componenti elettronici recuperati. Necessari per riparare dispositivi tecnologici.",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "electronic",
+      "rarity": "UNCOMMON",
+      "weight": 0.2,
+      "value": 15,
+      "stackable": true,
+      "max_stack": 30,
+      "properties": {}
+    },
+
+    "CRAFT_PLASTIC": {
+      "id": "CRAFT_PLASTIC",
+      "name": "Plastica",
+      "nameShort": "Plastica",
+      "description": "Frammenti di plastica dura e resistente. Utile per contenitori, parti meccaniche e isolamento.",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "plastic",
+      "rarity": "COMMON",
+      "weight": 0.3,
+      "value": 2,
+      "stackable": true,
+      "max_stack": 40,
+      "properties": {}
+    },
+
+    "CRAFT_WIRE": {
+      "id": "CRAFT_WIRE",
+      "name": "Fili Elettrici",
+      "nameShort": "Fili",
+      "description": "Rotoli di filo elettrico isolato. Essenziale per riparazioni elettriche e connessioni.",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "wire",
+      "rarity": "UNCOMMON",
+      "weight": 0.5,
+      "value": 10,
+      "stackable": true,
+      "max_stack": 15,
+      "properties": {}
+    },
+
+    "CRAFT_SPRINGS": {
+      "id": "CRAFT_SPRINGS",
+      "name": "Molle",
+      "nameShort": "Molle",
+      "description": "Molle e componenti elastici di varie dimensioni. Utili per meccanismi e riparazioni.",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "mechanical",
+      "rarity": "UNCOMMON",
+      "weight": 0.3,
+      "value": 12,
+      "stackable": true,
+      "max_stack": 25,
+      "properties": {}
+    },
+
+    "CRAFT_GLASS": {
+      "id": "CRAFT_GLASS",
+      "name": "Vetro",
+      "nameShort": "Vetro",
+      "description": "Frammenti di vetro resistente. Può essere lavorato per creare contenitori o lenti.",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "glass",
+      "rarity": "COMMON",
+      "weight": 0.6,
+      "value": 3,
+      "stackable": true,
+      "max_stack": 20,
+      "properties": {}
+    },
+
+    "CRAFT_STEEL": {
+      "id": "CRAFT_STEEL",
+      "name": "Acciaio",
+      "nameShort": "Acciaio",
+      "description": "Lamiere e barre di acciaio di alta qualità. Materiale premium per costruzioni pesanti.",
+      "category": "CRAFTING_MATERIAL",
+      "subcategory": "metal",
+      "rarity": "RARE",
+      "weight": 3.0,
+      "value": 50,
+      "stackable": true,
+      "max_stack": 10,
+      "properties": {}
     }
   }
 }

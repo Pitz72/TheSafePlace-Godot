@@ -1,5 +1,35 @@
 extends Node
 
+# =============================================================================
+# 🛡️ SISTEMA NARRATIVO ATMOSFERA - CODICE IMMUTABILE
+# =============================================================================
+#
+# ⚠️  ATTENZIONE: I MESSAGGI NARRATIVI DI ATMOSFERA SONO IMMUTABILI
+#
+# I messaggi di benvenuto, atmosfera e transizioni narrative in MainGame.gd
+# sono stati scritti con cura per creare l'esperienza unica del gioco.
+# Ogni parola è stata scelta per immersione massima.
+#
+# 🚫 NESSUN LLM DEVE MODIFICARE:
+#    - I messaggi di benvenuto iniziali (_ready)
+#    - I messaggi di atmosfera (atmosphere_messages)
+#    - I messaggi di entrata bioma (biome_entry_messages)
+#    - La logica di emissione messaggi atmosferici
+#    - I messaggi di rifugio (shelter_actions)
+#
+# 📋 AUTORIZZAZIONE RICHIESTA PER:
+#    - Aggiunta di nuovi biomi con messaggi specifici
+#    - Nuovi tipi di messaggi atmosferici
+#    - Modifiche alla frequenza dei messaggi
+#    - Nuove categorie di eventi atmosferici
+#
+# 🎯 MOTIVAZIONE:
+#    Questi messaggi creano l'atmosfera unica del mondo post-apocalittico.
+#    Sono parte integrante dell'esperienza narrativa immersiva.
+#
+# 🔒 FIRMA DI PROTEZIONE: ELIANO_ATMOSPHERE_IMMUTABLE_V1.0
+# =============================================================================
+
 # Riferimenti ai manager
 @onready var event_manager: EventManager
 @onready var player_manager: PlayerManager
@@ -61,6 +91,7 @@ func _ready():
 	
 	# 1. Inizializza i manager che contengono dati
 	EventManager.initialize_events()
+	QuestManager.initialize_quests()
 	
 	# 2. Prepara dati personaggio (senza applicarli)
 	var char_data = PlayerManager.prepare_new_character_data()

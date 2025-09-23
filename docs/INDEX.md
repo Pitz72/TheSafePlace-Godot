@@ -85,5 +85,5 @@ Tutti i contenuti narrativi e di gameplay:
 - I contenuti di gioco vanno in `04_CONTENUTI_DI_GIOCO/`
 
 ---
-*Ultimo aggiornamento: 22 Settembre 2025*
-*Versione progetto: v0.4.1 "Write Only When You're Not Drunk"*
+*Ultimo aggiornamento: 23 Settembre 2025*
+*Versione progetto: v0.9.5 "All the Story you don't know"*

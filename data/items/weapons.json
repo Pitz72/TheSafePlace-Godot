@@ -219,6 +219,49 @@
         { "effect_type": "rapid_fire", "shots": 3 }
         ]
       }
+    },
+
+    "bear_trap": {
+      "id": "bear_trap",
+      "name": "Trappola per Orsi",
+      "nameShort": "Trappola",
+      "description": "Una trappola metallica pesante. Può essere usata per catturare animali o come arma improvvisata.",
+      "category": "WEAPON",
+      "subcategory": "trap",
+      "rarity": "UNCOMMON",
+      "weight": 3.0,
+      "value": 25,
+      "stackable": false,
+      "max_stack": 1,
+      "properties": {
+        "slot": "trap",
+        "durability": 50,
+        "maxDurability": 50,
+        "damage": { "min": 8, "max": 15, "bonus": 3 },
+        "effects": [
+          { "effect_type": "immobilize", "chance": 0.8 }
+        ]
+      }
+    },
+
+    "hunting_knife": {
+      "id": "hunting_knife",
+      "name": "Coltello da Caccia",
+      "nameShort": "Coltello Caccia",
+      "description": "Un coltello robusto da caccia con lama affilata. Perfetto per scuoiare animali e combattimenti ravvicinati.",
+      "category": "WEAPON",
+      "subcategory": "melee",
+      "rarity": "UNCOMMON",
+      "weight": 0.6,
+      "value": 30,
+      "stackable": false,
+      "max_stack": 1,
+      "properties": {
+        "slot": "main_hand",
+        "durability": 45,
+        "maxDurability": 45,
+        "damage": { "min": 4, "max": 8, "bonus": 1 }
+      }
     }
   }
 }

@@ -406,6 +406,157 @@
           { "effect_type": "jittery_effect", "duration": 180 }
         ]
       }
+    },
+
+    "canned_food": {
+      "id": "canned_food",
+      "name": "Cibo in Scatola",
+      "nameShort": "Scatoletta",
+      "description": "Cibo in scatola pre-guerra. Nutriente ma dal sapore metallico.",
+      "category": "CONSUMABLE",
+      "subcategory": "food",
+      "rarity": "COMMON",
+      "weight": 0.4,
+      "value": 6,
+      "stackable": true,
+      "max_stack": 15,
+      "properties": {
+        "effects": [
+          { "effect_type": "nourish", "amount": 25 }
+        ]
+      }
+    },
+
+    "painkillers": {
+      "id": "painkillers",
+      "name": "Antidolorifici",
+      "nameShort": "Antidolorifici",
+      "description": "Pillole per alleviare il dolore. Riduce temporaneamente la percezione del dolore.",
+      "category": "CONSUMABLE",
+      "subcategory": "medical",
+      "rarity": "UNCOMMON",
+      "weight": 0.1,
+      "value": 20,
+      "stackable": true,
+      "max_stack": 20,
+      "properties": {
+        "effects": [
+          { "effect_type": "pain_reduction", "amount": 0.5, "duration": 180 }
+        ]
+      }
+    },
+
+    "generic_meds": {
+      "id": "generic_meds",
+      "name": "Medicinali Generici",
+      "nameShort": "Medicinali",
+      "description": "Medicinali generici scaduti ma ancora utilizzabili per cure minori.",
+      "category": "CONSUMABLE",
+      "subcategory": "medical",
+      "rarity": "COMMON",
+      "weight": 0.2,
+      "value": 12,
+      "stackable": true,
+      "max_stack": 15,
+      "properties": {
+        "effects": [
+          { "effect_type": "heal", "amount": 15 }
+        ]
+      }
+    },
+
+    "sterile_gauze": {
+      "id": "sterile_gauze",
+      "name": "Garza Sterile",
+      "nameShort": "Garza",
+      "description": "Garza sterile per medicazioni. Previene infezioni quando applicata correttamente.",
+      "category": "CONSUMABLE",
+      "subcategory": "medical",
+      "rarity": "UNCOMMON",
+      "weight": 0.1,
+      "value": 8,
+      "stackable": true,
+      "max_stack": 25,
+      "properties": {
+        "effects": [
+          { "effect_type": "heal", "amount": 20 },
+          { "effect_type": "infection_resistance", "amount": 0.8, "duration": 300 }
+        ]
+      }
+    },
+
+    "medical_battery": {
+      "id": "medical_battery",
+      "name": "Batteria Medica",
+      "nameShort": "Batt. Medica",
+      "description": "Batteria speciale per dispositivi medici. Alta capacità e lunga durata.",
+      "category": "MISC",
+      "subcategory": "electronics",
+      "rarity": "UNCOMMON",
+      "weight": 0.3,
+      "value": 35,
+      "stackable": true,
+      "max_stack": 10,
+      "properties": {}
+    },
+
+    "fresh_fish": {
+      "id": "fresh_fish",
+      "name": "Pesce Fresco",
+      "nameShort": "Pesce",
+      "description": "Pesce appena pescato. Fresco e nutriente, ma deve essere cotto.",
+      "category": "CONSUMABLE",
+      "subcategory": "food",
+      "rarity": "COMMON",
+      "weight": 0.5,
+      "value": 8,
+      "stackable": true,
+      "max_stack": 8,
+      "properties": {
+        "effects": [
+          { "effect_type": "nourish", "amount": 20 },
+          { "effect_type": "parasite_risk", "chance": 0.3 }
+        ]
+      }
+    },
+
+    "wild_berries": {
+      "id": "wild_berries",
+      "name": "Bacche Selvatiche",
+      "nameShort": "Bacche",
+      "description": "Bacche raccolte in natura. Dolci e nutrienti, ma alcune potrebbero essere velenose.",
+      "category": "CONSUMABLE",
+      "subcategory": "food",
+      "rarity": "COMMON",
+      "weight": 0.2,
+      "value": 4,
+      "stackable": true,
+      "max_stack": 20,
+      "properties": {
+        "effects": [
+          { "effect_type": "nourish", "amount": 12 },
+          { "effect_type": "poison_chance", "chance": 0.2 }
+        ]
+      }
+    },
+
+    "edible_mushrooms": {
+      "id": "edible_mushrooms",
+      "name": "Funghi Commestibili",
+      "nameShort": "Funghi",
+      "description": "Funghi sicuri da mangiare. Nutrienti e facili da raccogliere.",
+      "category": "CONSUMABLE",
+      "subcategory": "food",
+      "rarity": "COMMON",
+      "weight": 0.3,
+      "value": 6,
+      "stackable": true,
+      "max_stack": 15,
+      "properties": {
+        "effects": [
+          { "effect_type": "nourish", "amount": 18 }
+        ]
+      }
     }
   }
 }

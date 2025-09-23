@@ -1,5 +1,31 @@
 extends PanelContainer
 
+# =============================================================================
+# 🛡️ SISTEMA DIARIO DI GIOCO - CODICE IMMUTABILE
+# =============================================================================
+#
+# ⚠️  ATTENZIONE: QUESTO CODICE È CONSIDERATO IMMUTABILE
+#
+# Il sistema del diario di gioco è stato progettato e implementato per essere
+# perfetto e completo. Rappresenta il cuore narrativo dell'esperienza di gioco.
+#
+# 🚫 NESSUN LLM DEVE MODIFICARE QUESTO CODICE SENZA AUTORIZZAZIONE ESPLICITA
+#    DEL PROPRIETARIO DEL PROGETTO (Eliano).
+#
+# 📋 AUTORIZZAZIONE RICHIESTA PER:
+#    - Modifiche al formato dei messaggi
+#    - Cambiamenti al sistema di timestamp
+#    - Alterazioni alla logica di scroll
+#    - Modifiche alla presentazione visuale
+#    - Cambiamenti al sistema di connessione segnali
+#
+# 🎯 MOTIVAZIONE:
+#    Il diario è l'elemento più importante dell'immersione narrativa.
+#    Ogni modifica potrebbe compromettere l'esperienza di gioco unica.
+#
+# 🔒 FIRMA DI PROTEZIONE: ELIANO_APPROVED_IMMUTABLE_V1.0
+# =============================================================================
+
 # Pannello Diario (Center Panel)
 @onready var log_display: RichTextLabel = $LogVBox/LogDisplay
 

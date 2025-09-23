@@ -1,6 +1,6 @@
-# 🏠 The Safe Place v0.9.0 "Surpassing React"
+# 🏠 The Safe Place v0.9.5 "All the Story you don't know"
 
-*Un GDR testuale enterprise-level che supera i framework moderni in architettura e performance*
+*Un GDR testuale enterprise-level con narrativa profonda e sistema eventi rivoluzionario*
 
 ## 📖 Descrizione del Progetto
 
@@ -8,36 +8,35 @@
 
 ### 🎯 Caratteristiche Principali
 
-- **🏗️ Architettura Enterprise**: 11 Singleton Managers con pattern design industriali
-- **📊 Sincronizzazione 100%**: Documentazione e codice perfettamente allineati
-- **🧪 Testing Industriale**: 95/95 test passati, framework automatizzato completo
+- **📖 Narrativa Rivoluzionaria**: Sistema eventi con 36 storie uniche e quest principale a 12 stadi
+- **🏆 Quest System Completo**: "L'Ultimo Sopravvissuto" con progressione narrativa profonda
+- **🥚 Easter Eggs Segreti**: 3 eventi ultra-rari con ricompense esclusive
+- **👻 Lore Horror**: Eventi sovrannaturali con "Angeli delle Ceneri"
+- **🏗️ Architettura Enterprise**: 8 Singleton Managers con pattern design industriali
+- **📊 Database Espanso**: 89 item unici con proprietà avanzate
+- **🧪 Testing Industriale**: Framework automatizzato con anti-regressione completa
 - **⚡ Performance Ottimale**: 60+ FPS, <100MB RAM, zero memory leaks
-- **🎮 Sistemi Avanzati**: Quest, Crafting, Combat, Narrative con database JSON
-- **🖥️ UI Professionale**: Popup interattivi, menu principale, gestione stati complessa
-- **💾 Persistenza Completa**: Salvataggio/caricamento con versioning
-- **🔧 Quality Assurance**: Error handling robusto, anti-regressione completa
 
 ## 🚀 Stato del Progetto
 
-**Versione Attuale**: v0.9.0 "Surpassing React"
+**Versione Attuale**: v0.9.5 "All the Story you don't know"
 
 ### ✅ Sistemi Implementati
-- ✅ **🏗️ Architettura Enterprise**: 11 Singleton Managers con pattern industriali
-- ✅ **📊 Sincronizzazione 100%**: Documentazione e codice perfettamente allineati
-- ✅ **🧪 Testing Industriale**: 95/95 test passati, framework automatizzato completo
+- ✅ **📖 Sistema Narrativo Completo**: 36 eventi unici con quest principale a 12 stadi
+- ✅ **🏆 Quest System Avanzato**: "L'Ultimo Sopravvissuto" con progressione automatica
+- ✅ **🥚 Easter Eggs**: 3 eventi segreti ultra-rari con ricompense esclusive
+- ✅ **👻 Eventi Lore**: "Ninnananna delle Ceneri" con incontro sovrannaturale
+- ✅ **🏗️ Architettura Enterprise**: 8 Singleton Managers con pattern industriali
+- ✅ **📊 Database Espanso**: 89 item unici con 37 nuove aggiunte
+- ✅ **🧪 Testing Industriale**: Framework automatizzato con anti-regressione v0.9.5
 - ✅ **⚡ Performance Ottimale**: 60+ FPS, <100MB RAM, zero memory leaks
-- ✅ **🎮 Sistemi Avanzati**: Quest, Crafting, Combat, Narrative con database JSON
-- ✅ **🖥️ UI Professionale**: Popup interattivi, menu principale, gestione stati complessa
-- ✅ **💾 Persistenza Completa**: Salvataggio/caricamento con versioning
-- ✅ **🔧 Quality Assurance**: Error handling robusto, anti-regressione completa
-- ✅ Sistema di Logging Unificato e Anti-Conflitti
-- ✅ Framework di Testing Unitario
-- ✅ Architettura Global Class Management
+- ✅ **🔧 Quality Assurance**: Error handling robusto, sincronizzazione 100%
 
 ### 🔄 In Sviluppo
 - 🔄 Sistema di Combattimento Avanzato
-- 🔄 Sistema di Progressione Personaggio
-- 🔄 Espansione Contenuti Narrativi
+- 🔄 Sistema di Salvataggio/Caricamento
+- 🔄 Multiple Endings basati su scelte
+- 🔄 Espansione Contenuti Secondari
 
 ## 🛠️ Tecnologie Utilizzate
 
