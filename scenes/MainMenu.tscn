@@ -21,6 +21,36 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
+[node name="LogoLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -320.0
+offset_top = 50.0
+offset_right = 320.0
+offset_bottom = 200.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.306, 0.631, 0.384, 1)
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 16
+text = "THE SAFE PLACE CHRONICLES
+████████╗██╗  ██╗███████╗    ███████╗ ██████╗██╗  ██╗ ██████╗
+╚══██╔══╝██║  ██║██╔════╝    ██╔════╝██╔════╝██║  ██║██╔═══██╗
+   ██║   ███████║█████╗      █████╗  ██║     ███████║██║   ██║
+   ██║   ██╔══██║██╔══╝      ██╔══╝  ██║     ██╔══██║██║   ██║
+   ██║   ██║  ██║███████╗    ███████╗╚██████╗██║  ██║╚██████╔╝
+   ╚═╝   ╚═╝  ╚═╝╚══════╝    ╚══════╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝
+OF THE
+     ██╗ ██████╗ ██╗   ██╗██████╗ ███╗   ██╗███████╗██╗   ██╗
+     ██║██╔═══██╗██║   ██║██╔══██╗████╗  ██║██╔════╝╚██╗ ██╔╝
+    ██║██║   ██║██║   ██║██████╔╝██╔██╗ ██║█████╗   ╚████╔╝
+   ██║██║   ██║██║   ██║██╔══██╗██║╚██╗██║██╔══╝    ╚██╔╝
+  ██║╚██████╔╝╚██████╔╝██║  ██║██║ ╚████║███████╗   ██║
+╚██║  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   "
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
@@ -29,51 +59,63 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -150.0
-offset_top = -100.0
+offset_top = 60.0
 offset_right = 150.0
-offset_bottom = 100.0
+offset_bottom = 220.0
 grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
-
-[node name="TitleLabel" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("2")
-theme_override_font_sizes/font_size = 24
-text = "THE SAFE PLACE"
-horizontal_alignment = 1
 
 [node name="SubtitleLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2")
 theme_override_font_sizes/font_size = 12
-text = "v0.5.0 - The Complete Narrative Experience"
+text = "v0.9.6.5 - Computer Boot System"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="NewGameButton" type="Button" parent="VBoxContainer"]
+[node name="NewGameLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.372549, 0.721569, 0.454902, 1)
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 16
+text = "[N] Nuova Partita"
+
+[node name="ResumeGameLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 16
+text = "[R] Riprendi Partita"
+
+[node name="LoadGameLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2")
 theme_override_font_sizes/font_size = 16
-text = "[N] Nuovo Gioco"
+text = "[C] Carica Partita"
 
-[node name="LoadGameButton" type="Button" parent="VBoxContainer"]
+[node name="InstructionsLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2")
 theme_override_font_sizes/font_size = 16
-text = "[C] Carica Gioco"
+text = "[I] Istruzioni"
 
-[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+[node name="StoryLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 16
+text = "[S] Storia"
 
-[node name="QuitButton" type="Button" parent="VBoxContainer"]
+[node name="SettingsLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 16
+text = "[O] Impostazioni"
+
+[node name="QuitLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2")
 theme_override_font_sizes/font_size = 16
 text = "[ESC] Esci"
-
-[connection signal="pressed" from="VBoxContainer/NewGameButton" to="." method="_on_new_game_pressed"]
-[connection signal="pressed" from="VBoxContainer/LoadGameButton" to="." method="_on_load_game_pressed"]
-[connection signal="pressed" from="VBoxContainer/QuitButton" to="." method="_on_quit_pressed"]

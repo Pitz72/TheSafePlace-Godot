@@ -2,23 +2,28 @@ extends Control
 
 ## MainMenu - Menu principale del gioco The Safe Place
 ##
-## Gestisce la navigazione del menu principale con supporto keyboard e mouse
-## Fornisce accesso a Nuovo Gioco, Carica Gioco, Esci
+## Gestisce la navigazione del menu principale con supporto keyboard-only
+## Fornisce accesso a tutte le opzioni tramite navigazione freccia su/giù
 
 # ========================================
 # RIFERIMENTI NODI
 # ========================================
 
-@onready var new_game_button: Button = $VBoxContainer/NewGameButton
-@onready var load_game_button: Button = $VBoxContainer/LoadGameButton
-@onready var quit_button: Button = $VBoxContainer/QuitButton
+@onready var new_game_label: Label = $VBoxContainer/NewGameLabel
+@onready var resume_game_label: Label = $VBoxContainer/ResumeGameLabel
+@onready var load_game_label: Label = $VBoxContainer/LoadGameLabel
+@onready var instructions_label: Label = $VBoxContainer/InstructionsLabel
+@onready var story_label: Label = $VBoxContainer/StoryLabel
+@onready var settings_label: Label = $VBoxContainer/SettingsLabel
+@onready var quit_label: Label = $VBoxContainer/QuitLabel
 
 # ========================================
 # VARIABILI STATO
 # ========================================
 
 var selected_index: int = 0
-var menu_options = ["new_game", "load_game", "quit"]
+var menu_options = ["new_game", "resume_game", "load_game", "instructions", "story", "settings", "quit"]
+var menu_labels: Array[Label] = []
 
 # ========================================
 # INIZIALIZZAZIONE
@@ -26,19 +31,25 @@ var menu_options = ["new_game", "load_game", "quit"]
 
 func _ready():
 	print("🎮 MainMenu: Inizializzazione menu principale...")
-	setup_button_focus()
+	setup_menu_labels()
 	setup_input_handling()
-	update_button_selection()
+	update_label_selection()
 	print("✅ MainMenu: Menu principale pronto")
 
-## Configura il focus iniziale dei pulsanti
-func setup_button_focus():
-	new_game_button.grab_focus()
-	selected_index = 0
+## Configura l'array delle label del menu
+func setup_menu_labels():
+	menu_labels = [
+		new_game_label,
+		resume_game_label,
+		load_game_label,
+		instructions_label,
+		story_label,
+		settings_label,
+		quit_label
+	]
 
 ## Configura la gestione input per navigazione keyboard
 func setup_input_handling():
-	# Rimuovi input handling precedente se presente
 	set_process_input(true)
 
 # ========================================
@@ -50,8 +61,16 @@ func _input(event):
 		match event.keycode:
 			KEY_N:
 				_on_new_game_pressed()
+			KEY_R:
+				_on_resume_game_pressed()
 			KEY_C:
 				_on_load_game_pressed()
+			KEY_I:
+				_on_instructions_pressed()
+			KEY_S:
+				_on_story_pressed()
+			KEY_O:
+				_on_settings_pressed()
 			KEY_ESCAPE:
 				_on_quit_pressed()
 			KEY_UP:
@@ -64,7 +83,7 @@ func _input(event):
 ## Naviga il menu su/giù
 func navigate_menu(direction: int):
 	selected_index = clamp(selected_index + direction, 0, menu_options.size() - 1)
-	update_button_selection()
+	update_label_selection()
 
 ## Attiva l'opzione selezionata
 func activate_selected_option():
@@ -72,29 +91,32 @@ func activate_selected_option():
 		0:
 			_on_new_game_pressed()
 		1:
-			_on_load_game_pressed()
+			_on_resume_game_pressed()
 		2:
+			_on_load_game_pressed()
+		3:
+			_on_instructions_pressed()
+		4:
+			_on_story_pressed()
+		5:
+			_on_settings_pressed()
+		6:
 			_on_quit_pressed()
 
-## Aggiorna la selezione visuale dei pulsanti
-func update_button_selection():
-	# Rimuovi selezione precedente
-	new_game_button.remove_theme_color_override("font_color")
-	load_game_button.remove_theme_color_override("font_color")
-	quit_button.remove_theme_color_override("font_color")
+## Aggiorna la selezione visuale delle label
+func update_label_selection():
+	# Ripristina colori originali per tutte le label
+	for label in menu_labels:
+		if label == resume_game_label:
+			# Resume game rimane grigio (disabilitato)
+			label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5, 1))
+		else:
+			label.remove_theme_color_override("font_color")
 
-	# Applica selezione corrente
+	# Applica selezione corrente (giallo brillante)
 	var selected_color = Color(1, 1, 0)  # Giallo per selezione
-	match selected_index:
-		0:
-			new_game_button.add_theme_color_override("font_color", selected_color)
-			new_game_button.grab_focus()
-		1:
-			load_game_button.add_theme_color_override("font_color", selected_color)
-			load_game_button.grab_focus()
-		2:
-			quit_button.add_theme_color_override("font_color", selected_color)
-			quit_button.grab_focus()
+	if selected_index < menu_labels.size():
+		menu_labels[selected_index].add_theme_color_override("font_color", selected_color)
 
 # ========================================
 # AZIONI MENU
@@ -105,11 +127,35 @@ func _on_new_game_pressed():
 	print("🎮 MainMenu: Avvio nuovo gioco...")
 	get_tree().change_scene_to_file("res://scenes/MainGame.tscn")
 
+## Riprendi partita (da implementare)
+func _on_resume_game_pressed():
+	print("🎮 MainMenu: Riprendi partita...")
+	# TODO: Implementare resume game
+	print("⚠️ Resume game non ancora implementato")
+
 ## Carica un salvataggio esistente
 func _on_load_game_pressed():
 	print("🎮 MainMenu: Caricamento gioco...")
 	# Per ora, avvia semplicemente il gioco (implementazione futura del load)
 	get_tree().change_scene_to_file("res://scenes/MainGame.tscn")
+
+## Mostra istruzioni (da implementare)
+func _on_instructions_pressed():
+	print("🎮 MainMenu: Mostra istruzioni...")
+	# TODO: Implementare schermata istruzioni
+	print("⚠️ Istruzioni non ancora implementate")
+
+## Mostra storia (da implementare)
+func _on_story_pressed():
+	print("🎮 MainMenu: Mostra storia...")
+	# TODO: Implementare schermata storia
+	print("⚠️ Storia non ancora implementata")
+
+## Mostra impostazioni (da implementare)
+func _on_settings_pressed():
+	print("🎮 MainMenu: Mostra impostazioni...")
+	# TODO: Implementare schermata impostazioni
+	print("⚠️ Impostazioni non ancora implementate")
 
 ## Esce dal gioco
 func _on_quit_pressed():

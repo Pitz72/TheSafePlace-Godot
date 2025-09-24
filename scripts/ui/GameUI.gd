@@ -431,6 +431,7 @@ func _on_crafting_completed(item_id: String, quantity: int):
 func is_crafting_system_active() -> bool:
 	return is_crafting_popup_active
 
+
 # ═══ UTILITY ═══
 
 func connect_viewport_to_display():

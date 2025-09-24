@@ -1,4 +1,4 @@
-# 🏠 The Safe Place v0.9.6 "Taste my fists, you bumpkin!"
+# 🏠 The Safe Place v0.9.6.5 "Computer Boot System"
 
 *Un GDR testuale enterprise-level con narrativa profonda e sistema eventi rivoluzionario*
 
@@ -19,7 +19,7 @@
 
 ## 🚀 Stato del Progetto
 
-**Versione Attuale**: v0.9.6 "Taste my fists, you bumpkin!"
+**Versione Attuale**: v0.9.6.5 "Computer Boot System"
 
 ### ✅ Sistemi Implementati
 - ✅ **📖 Sistema Narrativo Completo**: 36 eventi unici con quest principale a 12 stadi
@@ -101,7 +101,8 @@ Progetto in sviluppo - Licenza da definire
 
 ## 🏷️ Tag e Versioni
 
-- `v0.9.6` - Taste my fists, you bumpkin! (Corrente)
+- `v0.9.6.5` - Computer Boot System (Corrente)
+- `v0.9.6` - Taste my fists, you bumpkin!
 - `v0.9.5` - All the Story you don't know
 - `v0.9.0` - Surpassing React
 - `v0.4.1` - Write Only When You're Not Drunk
@@ -121,7 +122,7 @@ Progetto in sviluppo - Licenza da definire
 *Sviluppato con ❤️ e l'assistenza di Claude AI*
 
 [![Godot Engine](https://img.shields.io/badge/Godot-4.4.1-blue.svg)](https://godotengine.org/)
-[![Version](https://img.shields.io/badge/Version-v0.9.6-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-v0.9.6.5-green.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Enterprise%20Ready-brightgreen.svg)](docs/INDEX.md)
 
@@ -425,10 +426,10 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file [`LICENSE`](LICENS
 
 ---
 
-**🏠 The Safe Place v0.9.6 "Taste my fists, you bumpkin!"**
-*Sistema di combattimento completamente stabile con interfaccia chiara e zero crash critici*
+**🏠 The Safe Place v0.9.6.5 "Computer Boot System"**
+*Sistema di boot computer completo con menu principale rivoluzionato e shader CRT ultra-realistici*
 
 ---
 
-*Ultimo aggiornamento: 23 Settembre 2025*
-*Versione README: v0.9.6*
+*Ultimo aggiornamento: 24 Settembre 2025*
+*Versione README: v0.9.6.5*

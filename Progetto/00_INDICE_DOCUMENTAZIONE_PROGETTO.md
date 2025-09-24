@@ -1,4 +1,4 @@
-# 📋 INDICE DOCUMENTAZIONE TECNICA PROGETTO - THE SAFE PLACE v0.9.6
+# 📋 INDICE DOCUMENTAZIONE TECNICA PROGETTO - THE SAFE PLACE v0.9.6.5
 
 ## 🎯 Scopo della Documentazione
 
@@ -38,7 +38,7 @@ Questa documentazione tecnica è specificatamente progettata per **Large Languag
 - `13_THEME_SYSTEM.md` - Temi grafici: CRT, font, colori
 - `14_INPUT_SYSTEM.md` - Gestione input: comandi, hotkey, stati
 
-#### **15 - SISTEMI AVANZATI (v0.9.6)**
+#### **15 - SISTEMI AVANZATI (v0.9.6.5)**
 - `27_COMBAT_SYSTEM.md` - Sistema combattimento turn-based
 - `28_CRAFTING_SYSTEM.md` - Sistema crafting e produzione
 - `29_NARRATIVE_SYSTEM.md` - Sistema narrativo e ricordi
@@ -90,7 +90,7 @@ Questa documentazione tecnica è specificatamente progettata per **Large Languag
 
 ## 📊 **METRICHE DEL PROGETTO**
 
-### **Statistiche Codebase (v0.9.6)**
+### **Statistiche Codebase (v0.9.6.5)**
 - **Linguaggio:** GDScript (Godot 4.x)
 - **Files totali:** ~200+ file
 - **Linee di codice:** ~20,000+ LOC
@@ -136,10 +136,10 @@ Questa documentazione tecnica è specificatamente progettata per **Large Languag
 
 ## 📝 **METADATI DOCUMENTAZIONE**
 
-- **Versione progetto:** v0.9.6 "Taste my fists, you bumpkin!"
-- **Versione documentazione:** 2.0
+- **Versione progetto:** v0.9.6.5 "Computer Boot System"
+- **Versione documentazione:** 2.1
 - **Data creazione:** 21 Agosto 2025
-- **Data aggiornamento:** 23 Settembre 2025 (v0.9.6)
+- **Data aggiornamento:** 24 Settembre 2025 (v0.9.6.5)
 - **Target:** LLM e sviluppatori AI
 - **Formato:** Markdown con sintassi GitHub
 - **Encoding:** UTF-8

@@ -71,9 +71,12 @@ signal crt_shader_toggled(enabled: bool)
 func _ready():
 	# Debug rimosso per ridurre log
 	pass
-	set_theme(ThemeType.DEFAULT)
+	# Avvia con tema CRT per mostrare l'effetto ultra-realistico
+	set_theme(ThemeType.CRT_GREEN)
 	# Configura sistema CRT dopo un frame per assicurarsi che la scena sia pronta
 	call_deferred("setup_crt_control")
+
+	# Il CRT verrà gestito dal GameUI quando necessario
 
 # 🎯 API PRINCIPALE TEMI
 func set_theme(theme_type: ThemeType) -> void:
@@ -184,40 +187,291 @@ func get_theme_name() -> String:
 		_:
 			return "Sconosciuto"
 
-# 🎥 SISTEMA CRT SEMPLIFICATO E FUNZIONALE
+# 🎥 SISTEMA CRT ULTRA-REALISTICO
 var crt_display: ColorRect
 var crt_material: ShaderMaterial
+var crt_ultra_material: ShaderMaterial
 var is_crt_active: bool = false
+var power_on_start_time: float = 0.0
 
 func setup_crt_control():
-	"""Trova e configura controllo CRT nella scena"""
+	"""Trova e configura controllo CRT nella scena con supporto ultra-realistico"""
+	# Aspetta che la scena sia completamente caricata
+	call_deferred("_deferred_setup_crt")
+
+func _deferred_setup_crt():
+	"""Setup CRT differito per assicurarsi che la scena sia pronta"""
 	var main_scene = get_tree().current_scene
-	if main_scene:
-		crt_display = main_scene.get_node_or_null("CRTDisplay")
-		if crt_display:
-			# Debug rimosso per ridurre log
-			pass
-			# Il material verrà caricato manualmente in Godot
-		else:
-			# Debug rimosso per ridurre log
-			pass
+	if not main_scene:
+		print("❌ ThemeManager: Nessuna scena corrente trovata")
+		return
+
+	# Cerca CRTDisplay nella scena corrente
+	crt_display = main_scene.get_node_or_null("CRTDisplay")
+	if crt_display:
+		# Carica shader ultra-realistico
+		setup_ultra_realistic_crt()
+		print("✅ ThemeManager: CRT Ultra-Realistico configurato in scena:", main_scene.name)
+	else:
+		print("⚠️ ThemeManager: Nodo CRTDisplay non trovato in scena:", main_scene.name)
+		# Crea automaticamente il nodo CRT se non esiste
+		create_crt_overlay()
+
+func setup_ultra_realistic_crt():
+	"""Configura il sistema CRT ultra-realistico con tutti gli effetti"""
+	if not crt_display:
+		return
+
+	# Carica shader ultra-realistico
+	var ultra_shader = load("res://themes/crt_ultra_realistic.gdshader")
+	if not ultra_shader:
+		print("❌ ThemeManager: Shader ultra-realistico non trovato")
+		return
+
+	# Crea material con parametri ottimizzati
+	crt_ultra_material = ShaderMaterial.new()
+	crt_ultra_material.shader = ultra_shader
+
+	# Configura parametri ultra-realistici
+	configure_ultra_crt_parameters()
+
+	# Applica material al display
+	crt_display.material = crt_ultra_material
+	crt_display.visible = false  # Inizia invisibile per effetto power-on
+
+	print("🎮 ThemeManager: CRT Ultra-Realistico inizializzato con successo")
+
+func configure_ultra_crt_parameters():
+	"""Configura tutti i parametri per effetto CRT ultra-realistico"""
+	if not crt_ultra_material:
+		return
+
+	# ===== MONITOR POWER-ON EFFECT =====
+	crt_ultra_material.set_shader_parameter("power_on_time", 0.0)
+	crt_ultra_material.set_shader_parameter("power_on_duration", 2.0)
+	crt_ultra_material.set_shader_parameter("enable_power_on_effect", true)
+
+	# ===== PHOSPHOR PERSISTENCE SYSTEM =====
+	crt_ultra_material.set_shader_parameter("phosphor_persistence", 0.85)
+	crt_ultra_material.set_shader_parameter("phosphor_decay", 0.3)
+	crt_ultra_material.set_shader_parameter("phosphor_color", Color(0.0, 0.95, 0.15, 1.0))
+	crt_ultra_material.set_shader_parameter("background_glow", Color(0.02, 0.08, 0.02, 1.0))
+
+	# ===== GEOMETRIC DISTORTION =====
+	crt_ultra_material.set_shader_parameter("barrel_distortion", 0.008)
+	crt_ultra_material.set_shader_parameter("pincushion_effect", 0.003)
+	crt_ultra_material.set_shader_parameter("corner_softness", 0.15)
+
+	# ===== SCANLINE SYSTEM =====
+	crt_ultra_material.set_shader_parameter("scanline_strength", 0.25)
+	crt_ultra_material.set_shader_parameter("scanline_frequency", 312.0)
+	crt_ultra_material.set_shader_parameter("scanline_speed", 0.0)
+	crt_ultra_material.set_shader_parameter("scanline_thickness", 1.2)
+
+	# ===== CHROMATIC ABERRATION =====
+	crt_ultra_material.set_shader_parameter("chromatic_aberration", 0.002)
+	crt_ultra_material.set_shader_parameter("chromatic_offset", Vector2(0.001, 0.0005))
+
+	# ===== NOISE AND INTERFERENCE =====
+	crt_ultra_material.set_shader_parameter("noise_strength", 0.08)
+	crt_ultra_material.set_shader_parameter("interference_strength", 0.05)
+	crt_ultra_material.set_shader_parameter("static_noise", 0.02)
+
+	# ===== BLOOM AND GLOW =====
+	crt_ultra_material.set_shader_parameter("bloom_strength", 0.4)
+	crt_ultra_material.set_shader_parameter("glow_radius", 2.5)
+	crt_ultra_material.set_shader_parameter("phosphor_glow", 0.3)
+
+	# ===== VIGNETTE AND BORDER =====
+	crt_ultra_material.set_shader_parameter("vignette_strength", 0.35)
+	crt_ultra_material.set_shader_parameter("border_fade", 0.08)
+	crt_ultra_material.set_shader_parameter("border_color", Color(0.0, 0.0, 0.0, 1.0))
+
+	# ===== COLOR CORRECTION =====
+	crt_ultra_material.set_shader_parameter("brightness", 1.15)
+	crt_ultra_material.set_shader_parameter("contrast", 1.25)
+	crt_ultra_material.set_shader_parameter("saturation", 1.1)
+	crt_ultra_material.set_shader_parameter("gamma", 1.1)
+
+	# ===== ADVANCED EFFECTS =====
+	crt_ultra_material.set_shader_parameter("mura_pattern", 0.1)
+	crt_ultra_material.set_shader_parameter("moire_strength", 0.05)
+	crt_ultra_material.set_shader_parameter("rolling_lines", 0.02)
+
+func create_crt_overlay():
+	"""Crea automaticamente il nodo CRT overlay se non esiste"""
+	var main_scene = get_tree().current_scene
+	if not main_scene:
+		return
+
+	# Cerca il CanvasLayer della UI (GameUI_Layer)
+	var ui_canvas_layer = main_scene.get_node_or_null("GameUI_Layer")
+	if not ui_canvas_layer:
+		# Fallback: cerca qualsiasi CanvasLayer
+		for child in main_scene.get_children():
+			if child is CanvasLayer:
+				ui_canvas_layer = child
+				break
+
+	# Se non trovato CanvasLayer, usa la scena principale
+	var parent_node = ui_canvas_layer if ui_canvas_layer else main_scene
+
+	# Crea ColorRect per CRT overlay
+	crt_display = ColorRect.new()
+	crt_display.name = "CRTDisplay"
+	crt_display.size = Vector2(1920, 1080)  # Full HD
+	crt_display.position = Vector2.ZERO
+	crt_display.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	# Imposta z_index appropriato
+	if ui_canvas_layer:
+		crt_display.z_index = 100  # Sopra la UI
+	else:
+		# Se aggiunto alla scena principale, usa layer più alto
+		crt_display.z_index = 1000
+
+	# Aggiungi al parent appropriato
+	parent_node.add_child(crt_display)
+
+	# Configura shader ultra-realistico
+	setup_ultra_realistic_crt()
+
+	print("🎮 ThemeManager: CRT Overlay creato automaticamente in %s" % parent_node.name)
 
 func toggle_crt_shader() -> void:
-	"""Attiva/disattiva effetto CRT"""
+	"""Attiva/disattiva effetto CRT con effetto power-on ultra-realistico"""
 	if crt_display:
 		is_crt_active = !is_crt_active
-		crt_display.visible = is_crt_active
-		# Debug rimosso per ridurre log
-		pass
+
+		if is_crt_active:
+			# Attivazione con effetto power-on
+			crt_display.visible = true
+			power_on_start_time = Time.get_time_dict_from_system()["hour"] * 3600 + \
+								Time.get_time_dict_from_system()["minute"] * 60 + \
+								Time.get_time_dict_from_system()["second"]
+
+			# Avvia timer per aggiornare l'effetto power-on
+			start_power_on_effect()
+			print("🎮 ThemeManager: CRT Ultra-Realistico ATTIVATO con effetto power-on")
+		else:
+			# Disattivazione immediata
+			crt_display.visible = false
+			if crt_ultra_material:
+				crt_ultra_material.set_shader_parameter("power_on_time", 0.0)
+			print("🎮 ThemeManager: CRT Ultra-Realistico DISATTIVATO")
+
 		crt_shader_toggled.emit(is_crt_active)
+
+func start_power_on_effect():
+	"""Avvia l'effetto power-on del monitor CRT"""
+	if not crt_ultra_material:
+		return
+
+	# Crea timer per aggiornare l'effetto power-on
+	var power_on_timer = Timer.new()
+	power_on_timer.name = "PowerOnTimer"
+	power_on_timer.wait_time = 0.016  # ~60 FPS
+	power_on_timer.one_shot = false
+	power_on_timer.timeout.connect(_update_power_on_effect)
+	add_child(power_on_timer)
+	power_on_timer.start()
+
+	# Timer di sicurezza per fermare l'effetto dopo 3 secondi
+	var safety_timer = Timer.new()
+	safety_timer.name = "PowerOnSafetyTimer"
+	safety_timer.wait_time = 3.0
+	safety_timer.one_shot = true
+	safety_timer.timeout.connect(_stop_power_on_effect)
+	add_child(safety_timer)
+	safety_timer.start()
+
+func _update_power_on_effect():
+	"""Aggiorna l'effetto power-on in tempo reale"""
+	if not crt_ultra_material or not is_crt_active:
+		_stop_power_on_effect()
+		return
+
+	var current_time = Time.get_time_dict_from_system()["hour"] * 3600 + \
+					  Time.get_time_dict_from_system()["minute"] * 60 + \
+					  Time.get_time_dict_from_system()["second"]
+
+	var elapsed = current_time - power_on_start_time
+	crt_ultra_material.set_shader_parameter("power_on_time", elapsed)
+
+func _stop_power_on_effect():
+	"""Ferma l'effetto power-on e pulisce i timer"""
+	# Rimuovi timer se esistono
+	var power_timer = get_node_or_null("PowerOnTimer")
+	if power_timer:
+		power_timer.stop()
+		power_timer.queue_free()
+
+	var safety_timer = get_node_or_null("PowerOnSafetyTimer")
+	if safety_timer:
+		safety_timer.stop()
+		safety_timer.queue_free()
+
+	# Imposta power_on_time al valore finale
+	if crt_ultra_material:
+		crt_ultra_material.set_shader_parameter("power_on_time", 10.0)  # Valore oltre la durata
 
 func is_crt_shader_active() -> bool:
 	"""Controlla se lo shader CRT è attualmente attivo"""
 	return is_crt_active
 
 func enable_crt_with_theme(theme_type: ThemeType):
-	"""Attiva CRT automaticamente con tema CRT_GREEN"""
+	"""Attiva CRT ultra-realistico automaticamente con tema CRT_GREEN"""
 	if crt_display:
 		var should_enable = (theme_type == ThemeType.CRT_GREEN)
 		if should_enable != is_crt_active:
 			toggle_crt_shader()
+
+func get_ultra_crt_material() -> ShaderMaterial:
+	"""Restituisce il material CRT ultra-realistico per uso esterno"""
+	return crt_ultra_material
+
+func update_crt_parameter(parameter_name: String, value):
+	"""Aggiorna dinamicamente un parametro del CRT shader"""
+	if crt_ultra_material:
+		crt_ultra_material.set_shader_parameter(parameter_name, value)
+		print("🎮 ThemeManager: Parametro CRT aggiornato: %s = %s" % [parameter_name, str(value)])
+
+func reset_crt_to_defaults():
+	"""Ripristina tutti i parametri CRT ai valori predefiniti"""
+	if crt_ultra_material:
+		configure_ultra_crt_parameters()
+		print("🎮 ThemeManager: Parametri CRT ripristinati ai valori predefiniti")
+
+# 🎯 API ESTESA PER CONTROLLO CRT ULTRA-REALISTICO
+func set_crt_power_on_duration(duration: float):
+	"""Imposta la durata dell'effetto power-on in secondi"""
+	update_crt_parameter("power_on_duration", duration)
+
+func set_crt_phosphor_color(color: Color):
+	"""Imposta il colore dei fosfori CRT"""
+	update_crt_parameter("phosphor_color", color)
+
+func set_crt_scanline_strength(strength: float):
+	"""Imposta la forza delle scanline (0.0-1.0)"""
+	update_crt_parameter("scanline_strength", clamp(strength, 0.0, 1.0))
+
+func set_crt_noise_strength(strength: float):
+	"""Imposta la forza del rumore (0.0-1.0)"""
+	update_crt_parameter("noise_strength", clamp(strength, 0.0, 1.0))
+
+func set_crt_barrel_distortion(amount: float):
+	"""Imposta la distorsione barrel (0.0-0.05)"""
+	update_crt_parameter("barrel_distortion", clamp(amount, 0.0, 0.05))
+
+func enable_crt_power_on_effect(enabled: bool):
+	"""Abilita/disabilita l'effetto power-on"""
+	update_crt_parameter("enable_power_on_effect", enabled)
+
+func trigger_crt_power_on():
+	"""Attiva manualmente l'effetto power-on"""
+	if is_crt_active and crt_ultra_material:
+		power_on_start_time = Time.get_time_dict_from_system()["hour"] * 3600 + \
+							Time.get_time_dict_from_system()["minute"] * 60 + \
+							Time.get_time_dict_from_system()["second"]
+		start_power_on_effect()
+		print("🎮 ThemeManager: Effetto power-on CRT attivato manualmente")

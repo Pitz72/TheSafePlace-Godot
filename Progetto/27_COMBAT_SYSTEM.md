@@ -379,6 +379,6 @@ Achievements:    Trofei combattimento
 
 ---
 
-**Versione:** v0.9.5 "All the Story you don't know"
-**Data:** 23 Settembre 2025
+**Versione:** v0.9.6.5 "Computer Boot System"
+**Data:** 24 Settembre 2025
 **Target:** LLM Technical Analysis - Combat System
