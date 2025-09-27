@@ -134,30 +134,36 @@ func attempt_crafting(recipe_id: String, quantity: int = 1) -> CraftingResult:
 ## Esegue il crafting effettivo
 func _execute_crafting(recipe_data: Dictionary, quantity: int) -> CraftingResult:
 	var recipe_id = recipe_data.get("id", "unknown")
-
-	# Rimuovi materiali richiesti
-	if not _consume_materials(recipe_data, quantity):
-		print("🔨 Crafting fallito: Errore consumo materiali - %s" % recipe_id)
-		crafting_failed.emit(recipe_id, CraftingResult.INSUFFICIENT_MATERIALS)
-		return CraftingResult.INSUFFICIENT_MATERIALS
-
-	# Aggiungi oggetto prodotto
+	
+	# Prepara i dati per la transazione
+	var materials_to_consume = recipe_data.get("materials", [])
 	var output_item = recipe_data.get("output", {})
 	var output_id = output_item.get("id", "")
 	var output_quantity = output_item.get("quantity", 1) * quantity
-
-	if PlayerManager.add_item(output_id, output_quantity):
+	
+	# Costruisci l'oggetto transazione per PlayerManager
+	var transaction = {
+		"items_lost": [],
+		"items_gained": [{"id": output_id, "quantity": output_quantity}]
+	}
+	
+	for material in materials_to_consume:
+		var material_id = material.get("id", "")
+		var consume_quantity = material.get("quantity", 1) * quantity
+		transaction.items_lost.append({"id": material_id, "quantity": consume_quantity})
+	
+	# Esegui la transazione atomica tramite PlayerManager
+	if PlayerManager.apply_item_transaction(transaction):
 		print("🔨 Crafting riuscito: %dx %s creato da %s" % [output_quantity, output_id, recipe_id])
 		crafting_completed.emit(output_id, output_quantity)
-
+		
 		# Aumenta skill crafting
 		_increase_crafting_skill(1)
-
+		
 		return CraftingResult.SUCCESS
 	else:
-		print("🔨 Crafting fallito: Impossibile aggiungere oggetto - %s" % output_id)
-		# Nota: materiali già consumati, potrebbe essere necessario refund
-		crafting_failed.emit(recipe_id, CraftingResult.INSUFFICIENT_MATERIALS)
+		print("🔨 Crafting fallito: La transazione non è riuscita (es. inventario pieno?) - %s" % recipe_id)
+		crafting_failed.emit(recipe_id, CraftingResult.INSUFFICIENT_MATERIALS) # Usa lo stesso codice di errore per ora
 		return CraftingResult.INSUFFICIENT_MATERIALS
 
 # ========================================
@@ -190,21 +196,6 @@ func _has_required_tools(recipe_data: Dictionary) -> bool:
 			return false
 
 	return true
-
-## Consuma i materiali richiesti
-func _consume_materials(recipe_data: Dictionary, quantity: int) -> bool:
-	var materials = recipe_data.get("materials", [])
-	var success = true
-
-	for material in materials:
-		var material_id = material.get("id", "")
-		var consume_quantity = material.get("quantity", 1) * quantity
-
-		if not PlayerManager.remove_item(material_id, consume_quantity):
-			success = false
-			break
-
-	return success
 
 # ========================================
 # GESTIONE RICETTE

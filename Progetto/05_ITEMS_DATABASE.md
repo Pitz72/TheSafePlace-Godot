@@ -118,11 +118,11 @@ Subcategories:
   "stackable": false,
   "max_stack": 1,
   "properties": {
-    "slot": "main_hand",
-    "durability": 70,
-    "maxDurability": 70,
-    "damage": {"min": 18, "max": 25, "bonus": 8},
-    "effects": [
+"slot": "main_hand",
+"durability": 70,
+"maxDurability": 70,
+"damage": {"min": 18, "max": 25, "bonus": 8},
+"effects": [
       {"effect_type": "bleeding_edge", "chance": 0.7},
       {"effect_type": "armor_piercing", "amount": 0.8}
     ]
@@ -145,12 +145,12 @@ Subcategories:
   "stackable": false,
   "max_stack": 1,
   "properties": {
-    "slot": "main_hand",
-    "durability": 50,
-    "maxDurability": 50,
-    "damage": {"min": 25, "max": 40, "bonus": 10},
-    "ammo_type": "ammo_rifle",
-    "effects": [
+"slot": "main_hand",
+"durability": 50,
+"maxDurability": 50,
+"damage": {"min": 25, "max": 40, "bonus": 10},
+"ammo_type": "ammo_rifle",
+"effects": [
       {"effect_type": "high_critical", "chance": 0.2, "multiplier": 3},
       {"effect_type": "armor_piercing", "amount": 0.3}
     ]
@@ -224,12 +224,12 @@ Survivor Set (Common Set):
   "stackable": false,
   "max_stack": 1,
   "properties": {
-    "slot": "body",
-    "armorValue": 6,
-    "durability": 80,
-    "maxDurability": 80,
-    "setId": "wastelander_set",
-    "effects": [
+"slot": "body",
+"armorValue": 6,
+"durability": 80,
+"maxDurability": 80,
+"setId": "wastelander_set",
+"effects": [
       {"effect_type": "elemental_resistance", "amount": 0.15},
       {"effect_type": "weather_protection", "allWeather": true}
     ]
@@ -476,10 +476,10 @@ Key Items:
   "stackable": false,
   "max_stack": 1,
   "properties": {
-    "quest_flags": ["family_memories", "emotional_support"],
-    "lore_unlock": ["lena_backstory", "pre_war_life"],
-    "unique": true,
-    "plot_critical": false
+"quest_flags": ["family_memories", "emotional_support"],
+"lore_unlock": ["lena_backstory", "pre_war_life"],
+"unique": true,
+"plot_critical": false
   }
 }
 ```

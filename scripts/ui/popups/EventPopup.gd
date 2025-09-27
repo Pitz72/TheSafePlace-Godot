@@ -17,11 +17,15 @@ signal popup_closed()
 @onready var skill_check_info: Label = $BackgroundPanel/VBoxContainer/SkillCheckInfo
 @onready var close_button: Button = $BackgroundPanel/VBoxContainer/CloseButton
 
+@onready var result_container: VBoxContainer = $BackgroundPanel/VBoxContainer/ResultContainer
+@onready var result_text_label: RichTextLabel = $BackgroundPanel/VBoxContainer/ResultContainer/ResultTextLabel
+
 # Stato popup
 var current_event_data: Dictionary = {}
 var is_popup_active: bool = false
 var choice_buttons: Array[Button] = []
 var selected_choice_index: int = 0
+var is_awaiting_final_input: bool = false
 
 func _ready():
 	# Debug rimosso per ridurre log
@@ -35,6 +39,11 @@ func _ready():
 	if close_button:
 		close_button.pressed.connect(_on_close_button_pressed)
 	
+	# Connetti al nuovo segnale di EventManager
+	if EventManager and not EventManager.skill_check_completed.is_connected(_on_skill_check_completed):
+		EventManager.skill_check_completed.connect(_on_skill_check_completed)
+		
+	result_container.visible = false
 	# Debug rimosso per ridurre log
 	pass
 
@@ -46,6 +55,7 @@ func show_event(event_data: Dictionary):
 	current_event_data = event_data
 	is_popup_active = true
 	selected_choice_index = 0
+	is_awaiting_final_input = false
 	
 	# Aggiorna contenuto popup
 	_update_popup_content()
@@ -79,6 +89,9 @@ func _update_popup_content():
 	var choices = current_event_data.get("choices", [])
 	for i in range(choices.size()):
 		_add_choice_button(choices[i], i)
+	
+	# Nascondi il contenitore dei risultati
+	result_container.visible = false
 	
 	# Mostra info skill check se presente
 	_update_skill_check_info()
@@ -142,12 +155,61 @@ func _update_skill_check_info():
 func _on_choice_selected(choice_index: int):
 	# Debug rimosso per ridurre log
 	pass
-	
-	# Emetti segnale
+
+	var choice = current_event_data.get("choices", [])[choice_index]
+
+	# Se la scelta non ha uno skill check, chiudi subito come prima
+	if not choice.has("skillCheck") and not choice.has("skill_check"):
+		choice_selected.emit(choice_index)
+		_close_popup()
+		return
+
+	# Se ha uno skill check, disabilita i bottoni e attendi il risultato
+	_disable_choices()
+	event_description.text = "Esecuzione test di abilità..."
 	choice_selected.emit(choice_index)
+
+# Chiamata quando EventManager emette il risultato dello skill check
+func _on_skill_check_completed(skill_check_details: Dictionary):
+	if not is_popup_active: return
+
+	var choice = current_event_data.get("choices", [])[selected_choice_index]
+	var result_text = ""
+	var narrative_text = ""
+
+	if skill_check_details.get("success", false):
+		narrative_text = choice.get("successText", "Successo!")
+	else:
+		narrative_text = choice.get("failureText", "Fallimento.")
+
+	# Costruisci il testo del risultato
+	var stat_name = skill_check_details.get("stat_used", "Sconosciuta").capitalize()
+	var roll = skill_check_details.get("roll", 0)
+	var total = skill_check_details.get("total", 0)
+	var difficulty = skill_check_details.get("difficulty", 0)
+	var success = skill_check_details.get("success", false)
 	
-	# Chiudi popup
-	_close_popup()
+	var result_color = "#00ff00" if success else "#ff4444"
+	var result_string = "SUCCESSO" if success else "FALLIMENTO"
+	
+	result_text += "[center]Test di %s: %d + mod = %d vs DC %d[/center]\n" % [stat_name, roll, total, difficulty]
+	result_text += "[center][color=%s]%s[/color][/center]\n\n" % [result_color, result_string]
+	result_text += narrative_text
+	
+	# Mostra il risultato
+	event_description.text = "" # Nascondi la descrizione originale
+	result_text_label.text = result_text
+	result_container.visible = true
+	
+	# Imposta lo stato per attendere l'input finale
+	is_awaiting_final_input = true
+
+func _disable_choices():
+	for button in choice_buttons:
+		button.disabled = true
+		button.modulate = Color(0.5, 0.5, 0.5)
+	choices_container.mouse_filter = MOUSE_FILTER_IGNORE
+
 
 # Gestisce pressione bottone chiusura
 func _on_close_button_pressed():
@@ -180,6 +242,11 @@ func is_active() -> bool:
 # Gestisce input da tastiera
 func _input(event):
 	if not is_popup_active or not event.is_pressed():
+		return
+		
+	if is_awaiting_final_input and (event.is_action_pressed("ui_accept") or event is InputEventMouseButton):
+		_close_popup()
+		get_viewport().set_input_as_handled()
 		return
 		
 	if event is InputEventKey:

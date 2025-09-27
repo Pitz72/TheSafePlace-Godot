@@ -251,12 +251,12 @@ func _on_player_moved(position: Vector2i, terrain_type: String):
 	
 	# Verifica se può triggerare un evento
 	if _can_trigger_event(new_biome):
-		_attempt_event_trigger(new_biome)
+		EventManager.trigger_random_event(new_biome)
 	
 	print("📊 Passi dall'ultimo evento: %d" % [steps_since_last_event])
 
 # Verifica se può triggerare un evento (cooldown + passi)
-func _can_trigger_event(_biome: String) -> bool:
+func _can_trigger_event(biome: String) -> bool:
 	# Regola attuale: solo numero di passi, niente cooldown temporale
 	return steps_since_last_event >= steps_threshold
 
@@ -268,12 +268,6 @@ func _attempt_event_trigger(biome: String):
 		return
 	
 	print("🎲 Tentativo evento per bioma: %s" % biome)
-	var result = EventManager.trigger_random_event(biome)
-	if result.get("triggered", false):
-		_reset_cooldowns()
-		print("✅ Evento triggerato con successo")
-	else:
-		print("❌ Evento non triggerato: %s" % result.get("reason", "unknown"))
 
 # Reset dei cooldown dopo un evento
 func _reset_cooldowns():
@@ -331,6 +325,171 @@ func get_time_until_next_event() -> float:
 
 func _on_world_narrative_message():
 	time_since_last_message = 0.0 # Resetta il timer atmosfera
+
+# ============================================================================
+# SISTEMA RIFUGI CONTESTUALI
+# ============================================================================
+
+# Gestisce le azioni richieste dal rifugio (callback da InputManager)
+func _on_shelter_action_requested(action_index: int):
+	print("🏠 Azione rifugio richiesta: %d" % action_index)
+	
+	match action_index:
+		1:  # Riposa
+			_shelter_action_rest()
+		2:  # Cerca Risorse
+			_shelter_action_search_resources()
+		3:  # Banco da Lavoro (Non disponibile)
+			_shelter_action_workbench()
+		4:  # Lascia il Rifugio
+			_shelter_action_leave()
+		_:
+			print("⚠️ Azione rifugio non valida: %d" % action_index)
+
+# Azione rifugio: Riposa (Recupera 10 HP, +2 ore)
+func _shelter_action_rest():
+	print("😴 Riposi nel rifugio...")
+	
+	# Applica benefici
+	PlayerManager.modify_hp(10)
+	TimeManager.advance_time_by_moves(4)  # 4 mosse = 2 ore
+	
+	# Messaggio narrativo
+	PlayerManager.narrative_log_generated.emit("[color=#ffdd00]Ti concedi un riposo rigenerante nel rifugio. Recuperi 10 HP.[/color]")
+	PlayerManager.narrative_log_generated.emit("[color=#888888]Tempo trascorso: 2 ore[/color]")
+
+# Azione rifugio: Cerca Risorse (+30 min, skill check)
+func _shelter_action_search_resources():
+	print("🔍 Cerchi risorse nel rifugio...")
+	
+	# Skill check Intelligenza DC 12
+	var skill_result = SkillCheckManager.perform_check("intelligenza", 12)
+	
+	# Fai passare 30 minuti in ogni caso
+	TimeManager.advance_time_by_moves(1)  # 1 mossa = 30 minuti
+	
+	if skill_result.success:
+		# Successo: dai 2 oggetti casuali
+		var items_found = _get_random_shelter_items(2)
+		for item in items_found:
+			PlayerManager.add_item(item.id, item.quantity)
+		
+		PlayerManager.narrative_log_generated.emit("[color=#00ff00]Frugando con attenzione, trovi alcuni oggetti utili nascosti nel rifugio![/color]")
+		PlayerManager.narrative_log_generated.emit("[color=#888888]Tempo trascorso: 30 minuti[/color]")
+	else:
+		# Fallimento: nessun oggetto
+		PlayerManager.narrative_log_generated.emit("[color=#ff6666]Cerchi accuratamente ma non trovi nulla di utile. Qualcuno è già passato di qui.[/color]")
+		PlayerManager.narrative_log_generated.emit("[color=#888888]Tempo trascorso: 30 minuti[/color]")
+
+# Azione rifugio: Banco da Lavoro
+func _shelter_action_workbench():
+	if CraftingManager and CraftingManager.has_workbench():
+		_show_crafting_interface()
+	else:
+		PlayerManager.narrative_log_generated.emit("[color=#888888]Il banco da lavoro è troppo danneggiato per essere utilizzato al momento.[/color]")
+
+# Azione rifugio: Lascia il Rifugio
+func _shelter_action_leave():
+	PlayerManager.narrative_log_generated.emit("[color=#ffdd00]Lasci il rifugio e ti prepari a continuare il viaggio.[/color]")
+
+# Mostra popup per il rifugio diurno con opzioni
+func _show_day_shelter_popup():
+	print("☀️ Mostrando popup rifugio diurno")
+
+	# Carica e istanzia la scena ShelterPopup
+	var popup_scene = load("res://scenes/ui/popups/ShelterPopup.tscn")
+	if popup_scene == null:
+		push_error("MainGame: Impossibile caricare ShelterPopup.tscn")
+		return
+
+	var popup_instance = popup_scene.instantiate()
+	print("🏠 Popup istanziato: %s" % popup_instance)
+
+	# Aggiungi popup al GameUI (CanvasLayer) invece che alla scena principale
+	var game_ui = get_node("/root/MainGame/GameUI/GameUI")
+	if game_ui:
+		game_ui.add_child(popup_instance)
+		print("🏠 Popup aggiunto al GameUI (CanvasLayer)")
+	else:
+		push_error("MainGame: GameUI non trovato per aggiungere popup")
+		return
+
+	# Connetti segnali
+	popup_instance.popup_closed.connect(_on_shelter_popup_closed.bind(popup_instance))
+	popup_instance.shelter_action_requested.connect(_on_shelter_action_requested)
+	print("🏠 Segnali popup connessi")
+
+	# Mostra il popup con opzioni diurne
+	popup_instance.show_day_shelter()
+	print("🏠 show_day_shelter() chiamato")
+
+# Riposo notturno completo fino alle 6:00 del mattino
+func _shelter_night_rest():
+	print("🌙 Iniziando riposo notturno completo nel rifugio")
+
+	# Calcola ore fino alle 6:00 del mattino
+	var current_hour = TimeManager.current_hour
+	var hours_until_morning = (24 - current_hour) + 6  # Da ora fino a mezzanotte + fino alle 6
+
+	# Converti in mosse (ogni mossa = 30 minuti)
+	var moves = hours_until_morning * 2
+
+	# Applica riposo completo
+	TimeManager.advance_time_by_moves(moves)
+	TimeManager.current_hour = 6  # Forza alle 6:00
+	TimeManager.current_minute = 0
+
+	# Recupero completo (più del riposo normale)
+	PlayerManager.modify_hp(50)  # Recupero maggiore per riposo notturno
+	PlayerManager.modify_food(-20)  # Consumo notturno fame
+	PlayerManager.modify_water(-30)  # Consumo notturno sete
+
+	# Messaggio narrativo
+	PlayerManager.narrative_log_generated.emit("[color=#4169E1]Passi la notte al sicuro nel rifugio. Ti svegli riposato alle 6:00 del mattino.[/color]")
+	PlayerManager.narrative_log_generated.emit("[color=#888888]Notte trascorsa: Recuperi 50 HP ma consumi risorse per il riposo.[/color]")
+
+	print("🌅 Riposo notturno completato - ora: 06:00")
+
+func _on_shelter_popup_closed(popup_instance):
+	print("🏠 Popup rifugio chiuso")
+	# Rimuovi popup dalla scena
+	if popup_instance and is_instance_valid(popup_instance):
+		popup_instance.queue_free()
+
+# Aggiorna l'accesso al crafting nei rifugi
+func _update_crafting_access(has_access: bool):
+	if CraftingManager:
+		CraftingManager.set_workbench_access(has_access)
+		print("🔨 Accesso crafting aggiornato: %s" % ("ABILITATO" if has_access else "DISABILITATO"))
+
+# Mostra l'interfaccia di crafting
+func _show_crafting_interface():
+	print("🔨 Apertura interfaccia crafting...")
+	# Per ora, mostra semplicemente le ricette disponibili
+	var recipes = CraftingManager.get_craftable_recipes()
+	var message = "[color=#00ff00]Ricette disponibili al banco da lavoro:[/color]\n"
+	for recipe_id in recipes:
+		var recipe = CraftingManager.get_recipe_data(recipe_id)
+		if recipe:
+			message += "• %s\n" % recipe.get("name", recipe_id)
+	PlayerManager.narrative_log_generated.emit(message)
+
+# Ottieni oggetti casuali trovabili nel rifugio
+func _get_random_shelter_items(count: int) -> Array[Dictionary]:
+	var possible_items = [
+		{"id": "battery", "quantity": 1},
+		{"id": "flashlight", "quantity": 1},
+		{"id": "ration_pack", "quantity": 1},
+		{"id": "bandage", "quantity": 2},
+		{"id": "water_bottle", "quantity": 1}
+	]
+	
+	var items_found: Array[Dictionary] = []
+	for i in range(count):
+		if possible_items.size() > 0:
+			items_found.append(possible_items.pick_random())
+	
+	return items_found
 
 # ============================================================================
 # SISTEMA RIFUGI CONTESTUALI

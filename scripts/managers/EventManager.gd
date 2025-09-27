@@ -36,7 +36,17 @@ extends Node
 
 # Segnali per comunicazione con altri sistemi
 signal event_triggered(event_data: Dictionary)
-signal event_choice_resolved(result_text: String, narrative_log: String, skill_check_details: Dictionary)
+# signal event_choice_resolved(result_text: String, narrative_log: String, skill_check_details: Dictionary) # OBSOLETO
+
+signal skill_check_completed(skill_check_details: Dictionary)
+signal event_consequences_applied(narrative_log: String)
+
+# Segnali per disaccoppiamento da PlayerManager (M-CLEANUP-2.1)
+signal item_transaction_requested(transaction_data: Dictionary)
+signal status_change_requested(status_to_add: PlayerManager.Status)
+signal resource_change_requested(resource_type: String, amount: int)
+signal experience_gain_requested(amount: int, reason: String)
+signal combat_trigger_requested(enemy_id: String)
 
 # Riferimenti ai manager
 @onready var player_manager: PlayerManager
@@ -94,45 +104,40 @@ func initialize_events():
 	
 	# Carica e organizza eventi
 	_load_and_cache_events()
+	_normalize_all_cached_events()
 	
 	print("[EventManager] EventManager inizializzato con successo")
 
 # Carica tutti gli eventi e li organizza per bioma
 func _load_and_cache_events():
 	print("[EventManager] Caricamento eventi...")
-	
-	# Svuota cache per ricarichi futuri
 	cached_events.clear()
 	biome_event_pools.clear()
+	var seen_ids = {}
+
+	# Carica tutti gli eventi dalla cartella dei biomi
+	_load_events_from_dir("res://data/events/biomes", seen_ids)
 	
-	# Lista dei file eventi da caricare (inclusi i file completi)
-	var event_files = [
-		"res://data/events/biomes/city_events.json",
-		"res://data/events/biomes/forest_events.json",
-		"res://data/events/biomes/plains_events.json",
-		"res://data/events/biomes/rest_stop_events.json",
-		"res://data/events/biomes/river_events.json",
-		"res://data/events/biomes/unique_events.json",
-		"res://data/events/biomes/village_events.json",
-		"res://data/events/biomes/city_events_complete.json",
-		"res://data/events/biomes/village_events_complete.json",
-		"res://data/events/biomes/river_events_complete.json",
-		"res://data/events/biomes/rest_stop_events_complete.json"
-	]
-	
-	# Carica ogni file
-	for file_path in event_files:
-		_load_single_event_file(file_path)
-	
-	print("[EventManager] Caricati ", cached_events.size(), " eventi totali")
+	# Carica gli eventi unici separatamente
+	_load_events_from_file("res://data/events/unique_events.json", seen_ids)
+
+	print("[EventManager] Caricati %d eventi totali." % cached_events.size())
 	for biome in biome_event_pools.keys():
-		print("[EventManager] Bioma '", biome, "': ", biome_event_pools[biome].size(), " eventi")
+		print("   - Bioma '%s': %d eventi" % [biome, biome_event_pools[biome].size()])
+
+# Normalizza tutti gli eventi in cache dopo il caricamento
+func _normalize_all_cached_events():
+	print("[EventManager] Normalizzazione schemi eventi...")
+	for event_id in cached_events:
+		var event = cached_events[event_id]
+		cached_events[event_id] = _normalize_event_schema(event)
+	print("[EventManager] Normalizzazione completata.")
 
 # Carica un singolo file di eventi
-func _load_single_event_file(file_path: String) -> void:
+func _load_events_from_file(file_path: String, seen_ids: Dictionary) -> void:
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	if file == null:
-		print("[EventManager] ERRORE: File non trovato: ", file_path)
+		print("[EventManager] ERRORE: Impossibile aprire il file: ", file_path)
 		return
 	
 	var file_content = file.get_as_text()
@@ -141,7 +146,7 @@ func _load_single_event_file(file_path: String) -> void:
 	var json = JSON.new()
 	var parse_result = json.parse(file_content)
 	
-	if parse_result != OK:
+	if parse_result != OK or not json.data is Dictionary:
 		print("[EventManager] ERRORE: JSON non valido in ", file_path)
 		return
 	
@@ -151,21 +156,16 @@ func _load_single_event_file(file_path: String) -> void:
 		return
 	
 	print("   ✅ Caricato: ", file_path.get_file())
-	
-	# Processa i dati del file
 	for biome_key in data.keys():
 		var biome_events = data[biome_key]
 		if biome_events is Array:
 			var normalized_biome = _normalize_biome_name(biome_key)
 			for event_data in biome_events:
 				if event_data is Dictionary and event_data.has("id"):
-					# Aggiungi bioma al dict evento se mancante
-					if not event_data.has("biome"):
-						event_data["biome"] = normalized_biome
-					
-					# Aggiorna cache eventi
-					cached_events[event_data.id] = event_data
-					
+					var event_id = event_data.id
+					if seen_ids.has(event_id): continue
+					event_data["biome"] = normalized_biome
+					cached_events[event_id] = event_data
 					# Aggiungi al pool bioma
 					_add_event_to_biome_pool(event_data)
 
@@ -198,9 +198,7 @@ func _add_event_to_biome_pool(event: Dictionary):
 	if not biome_event_pools.has(biome):
 		biome_event_pools[biome] = []
 	
-	# Normalizza l'evento prima di aggiungerlo al pool
-	var normalized_event = _normalize_event_schema(event)
-	biome_event_pools[biome].append(normalized_event)
+	biome_event_pools[biome].append(event)
 
 # Normalizza lo schema degli eventi da formato legacy a formato moderno
 func _normalize_event_schema(event: Dictionary) -> Dictionary:
@@ -350,76 +348,6 @@ func trigger_random_event(biome: String) -> Dictionary:
 		"biome": biome
 	}
 
-# Sostituisci l'intera funzione 'process_event_choice' con questa: 
-func process_event_choice(event_id: String, choice_index: int) -> void:
-	print("[EventManager] Processing scelta evento: ", event_id, " - scelta index: ", choice_index)
-
-	# Controlli di sicurezza iniziali
-	if not cached_events.has(event_id):
-		print("[EventManager] ERRORE: Evento non trovato in cache: ", event_id)
-		return
-
-	var event = cached_events[event_id]
-	var choices = event.get("choices", [])
-
-	if choice_index < 0 or choice_index >= choices.size():
-		print("[EventManager] ERRORE: Indice scelta non valido: ", choice_index)
-		return
-
-	var choice = choices[choice_index]
-	var result_text = ""
-	var narrative_log = ""
-	var skill_check_details = {}
-
-	# --- INIZIO LOGICA DI RISOLUZIONE ---
-	if choice.has("combat_trigger"):
-		# TRIGGER COMBATTIMENTO
-		var enemy_id = choice.get("combat_trigger")
-		result_text = choice.get("resultText", "Ti prepari al combattimento!")
-		narrative_log = result_text
-
-		# Avvia combattimento dopo un breve delay per mostrare il messaggio
-		call_deferred("_start_combat_after_delay", enemy_id)
-		return  # Importante: return dopo aver avviato il combattimento
-
-	elif choice.has("skillCheck"):
-		var check_data = choice.skillCheck
-		skill_check_details = SkillCheckManager.perform_check(check_data.stat, check_data.difficulty)
-
-		if skill_check_details.success:
-			result_text = choice.get("successText", "Successo!")
-			if choice.has("reward"):
-				PlayerManager.apply_item_transaction(choice.reward)
-		else:
-			result_text = choice.get("failureText", "Fallimento.")
-			if choice.has("penalty"):
-				_apply_penalty(choice.penalty)
-	else:
-		# Scelta senza skill check o combattimento
-		result_text = choice.get("resultText", "Azione completata.")
-		if choice.has("reward"):
-			PlayerManager.apply_item_transaction(choice.reward)
-		if choice.has("penalty"):
-			_apply_penalty(choice.penalty)
-	# --- FINE LOGICA DI RISOLUZIONE ---
-
-	narrative_log = result_text
-	event_choice_resolved.emit(result_text, narrative_log, skill_check_details)
-
-## Avvia combattimento dopo un breve delay per permettere all'evento di chiudersi
-func _start_combat_after_delay(enemy_id: String) -> void:
-	await get_tree().create_timer(1.5).timeout  # Breve pausa drammatica
-
-	if combat_manager:
-		var success = combat_manager.start_combat(enemy_id)
-		if success:
-			print("[EventManager] Combattimento avviato con successo contro: ", enemy_id)
-		else:
-			print("[EventManager] ERRORE: Impossibile avviare combattimento contro: ", enemy_id)
-	else:
-		print("[EventManager] ERRORE: CombatManager non disponibile")
-
-
 
 # Applica le conseguenze di un evento
 func _apply_event_consequences(consequences: Dictionary):
@@ -428,30 +356,46 @@ func _apply_event_consequences(consequences: Dictionary):
 	# Usa la funzione del PlayerManager per applicare le conseguenze
 	player_manager.apply_skill_check_result({}, consequences)
 
+## Gestisce l'applicazione di una ricompensa da un evento.
+func _apply_reward(reward_data: Dictionary):
+	# Emette segnali basati sui dati della ricompensa
+	if reward_data.has("items_gained"):
+		item_transaction_requested.emit({"items_gained": reward_data.items_gained})
+	
+	if reward_data.has("experience"):
+		experience_gain_requested.emit(reward_data.experience, "Evento")
+		
+	if reward_data.has("hp_change") and reward_data.hp_change > 0:
+		resource_change_requested.emit("hp", reward_data.hp_change)
+
+
 ## Gestisce l'applicazione di una penalità da un evento.
 ## Creato per M3.T4.3 per centralizzare la logica delle penalità.
+## MODIFICATO per M-CLEANUP-2.1 per usare segnali
 func _apply_penalty(penalty_data: Dictionary):
 	if penalty_data.has("type"):
 		match penalty_data.type:
 			"damage":
 				if penalty_data.has("amount"):
-					PlayerManager.modify_hp(-penalty_data.amount)
+					resource_change_requested.emit("hp", -penalty_data.amount)
 			"status":
 				if penalty_data.has("status"):
 					# Converti la stringa dello stato (es. "WOUNDED") nell'enum del PlayerManager
 					var status_enum = PlayerManager.Status.get(penalty_data.status.to_upper())
 					if status_enum != null:
-						PlayerManager.add_status(status_enum)
+						status_change_requested.emit(status_enum)
 			"time":
 				if penalty_data.has("minutes"):
 					var minutes_to_advance = penalty_data.get("minutes", 0)
 					if minutes_to_advance > 0:
 						# Ogni mossa equivale a 30 minuti. Calcoliamo il numero di mosse.
 						var moves = int(ceil(float(minutes_to_advance) / 30.0))
+						# NOTA: TimeManager non è PlayerManager, la chiamata diretta è accettabile qui
 						TimeManager.advance_time_by_moves(moves)
 			"remove_item":
-				if penalty_data.has("item_id") and penalty_data.has("quantity"):
-					PlayerManager.remove_item(penalty_data.item_id, penalty_data.quantity)
+				if penalty_data.has("id") and penalty_data.has("quantity"):
+					var transaction = {"items_lost": [{"id": penalty_data.id, "quantity": penalty_data.quantity}]}
+					item_transaction_requested.emit(transaction)
 
 # Ottieni eventi disponibili per un bioma
 func get_events_for_biome(biome: String) -> Array:
@@ -479,34 +423,70 @@ func _get_events_per_biome_count() -> Dictionary:
 # GESTIONE SCELTE EVENTI UI (FASE 4)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-func _load_events_from_biomes_dir(seen_ids: Dictionary) -> void:
-	var dir := DirAccess.open("res://data/events/biomes")
+func _load_events_from_dir(dir_path: String, seen_ids: Dictionary) -> void:
+	var dir := DirAccess.open(dir_path)
 	if dir == null:
-		print("[EventManager] ⚠️ Cartella eventi per bioma non trovata, fallback al file legacy se disponibile")
+		print("[EventManager] ⚠️ Cartella eventi non trovata: ", dir_path)
 		return
 	
 	dir.list_dir_begin()
 	var file_name := dir.get_next()
 	while file_name != "":
 		if not dir.current_is_dir() and file_name.ends_with(".json"):
-			var rel_path := "data/events/biomes/" + file_name
-			var json_obj: Dictionary = data_manager.load_json_file(rel_path)
-			if json_obj:
-				print("   ✅ Caricato: ", file_name)
-				for biome_key in json_obj.keys():
-					var events_array = json_obj[biome_key]
-					if events_array is Array:
-						for event in events_array:
-							if event.has("id"):
-								var ev_id: String = event["id"]
-								if seen_ids.has(ev_id):
-									continue
-								event["biome"] = _normalize_biome_name(biome_key)
-								cached_events[ev_id] = event
-								_add_event_to_biome_pool(event)
-								seen_ids[ev_id] = true
+			var full_path = dir_path.path_join(file_name)
+			_load_events_from_file(full_path, seen_ids)
 		file_name = dir.get_next()
 	dir.list_dir_end()
+
+# Sostituisci l'intera funzione 'process_event_choice' con questa: 
+# Processa la scelta del giocatore per un evento (Logica riscritta per M3.T4.FIX)
+func process_event_choice(event_id: String, choice_index: int) -> void:
+	print("[EventManager] Processing scelta evento: ", event_id, " - scelta index: ", choice_index)
+
+	if not cached_events.has(event_id):
+		print("[EventManager] ERRORE: Evento non trovato: ", event_id)
+		return
+
+	var event = cached_events[event_id]
+	var choices = event.get("choices", [])
+	
+	if choice_index < 0 or choice_index >= choices.size():
+		print("[EventManager] ERRORE: Indice scelta non valido: ", choice_index)
+		return
+
+	var choice = choices[choice_index]
+
+	var result_text = ""
+	var narrative_log = ""
+	var skill_check_details = {}
+	var consequences = {}
+
+	if choice.has("skill_check"):
+		var check_data = choice.get("skill_check", {})
+		var stat = check_data.get("stat", "forza")
+		var difficulty = check_data.get("difficulty", 15)
+		
+		skill_check_details = SkillCheckManager.perform_check(stat, difficulty)
+
+		# Emetti subito il risultato dello skill check per l'UI
+		skill_check_completed.emit(skill_check_details)
+
+		if skill_check_details.get("success", false):
+			consequences = choice.get("consequences_success", {})
+			result_text = consequences.get("narrative_text", "Successo!")
+		else:
+			consequences = choice.get("consequences_failure", {})
+			result_text = consequences.get("narrative_text", "Fallimento.")
+	else:
+		consequences = choice.get("consequences", {})
+		result_text = consequences.get("narrative_text", "Azione completata.")
+
+	if not consequences.is_empty():
+		_apply_event_consequences(consequences)
+
+	narrative_log = result_text
+	
+	event_consequences_applied.emit(narrative_log)
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # INTEGRAZIONE COMBAT SYSTEM

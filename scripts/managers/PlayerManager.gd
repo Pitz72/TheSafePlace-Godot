@@ -175,6 +175,7 @@ var _pending_character_data: Dictionary = {}
 func _ready() -> void:
 	# L'inizializzazione del personaggio è stata spostata in MainGame.gd
 	_connect_time_manager_signals()
+	_connect_event_manager_signals()
 	print("PlayerManager pronto, in attesa di ordini.")
 
 ## Prepara i dati di un nuovo personaggio senza applicarli allo stato attivo
@@ -555,6 +556,12 @@ func _apply_consumable_effects(item_data: Dictionary, quantity: int) -> void:
 				# Placeholder per effetti negativi probabilistici
 				var chance = effect.get("chance", 0.0)
 				effects_applied.append("Rischio %s: %.1f%%" % [effect_type.replace("_chance", ""), chance * 100])
+			"cure_status":
+				var status_to_cure_str = effect.get("status", "").to_upper()
+				var status_enum = Status.get(status_to_cure_str)
+				if status_enum != null:
+					remove_status(status_enum)
+					effects_applied.append("Cura: %s" % status_to_cure_str.capitalize())
 			_:
 				print("⚠️ Effetto non gestito: %s" % effect_type)
 	
@@ -1056,11 +1063,69 @@ func _connect_time_manager_signals() -> void:
 	if not TimeManager.survival_penalty_tick.is_connected(_on_survival_penalty_tick):
 		TimeManager.survival_penalty_tick.connect(_on_survival_penalty_tick)
 		print("✅ PlayerManager: Connesso a TimeManager.survival_penalty_tick")
+	
+	# Connetti segnale per effetti di stato passivi (ogni 30 min)
+	if not TimeManager.time_advanced.is_connected(_on_time_advanced_for_statuses):
+		TimeManager.time_advanced.connect(_on_time_advanced_for_statuses)
+		print("✅ PlayerManager: Connesso a TimeManager.time_advanced per effetti di stato")
 
 ## Callback per segnale penalità sopravvivenza da TimeManager
 func _on_survival_penalty_tick() -> void:
 	print("⏰ PlayerManager: Ricevuto segnale penalità sopravvivenza")
 	apply_survival_penalties()
+
+## Connette i segnali da EventManager per disaccoppiare la logica (M-CLEANUP-2.1)
+func _connect_event_manager_signals() -> void:
+	if not EventManager:
+		print("⚠️ PlayerManager: EventManager non disponibile per connessione segnali")
+		return
+	
+	# Connetti segnali per transazioni oggetti, risorse, status ed esperienza
+	if not EventManager.item_transaction_requested.is_connected(apply_item_transaction):
+		EventManager.item_transaction_requested.connect(apply_item_transaction)
+	
+	if not EventManager.status_change_requested.is_connected(add_status):
+		EventManager.status_change_requested.connect(add_status)
+		
+	if not EventManager.resource_change_requested.is_connected(_on_resource_change_requested):
+		EventManager.resource_change_requested.connect(_on_resource_change_requested)
+		
+	if not EventManager.experience_gain_requested.is_connected(add_experience):
+		EventManager.experience_gain_requested.connect(add_experience)
+	
+	print("✅ PlayerManager: Connesso ai segnali di EventManager")
+
+## Funzione wrapper per gestire il segnale di cambio risorsa
+func _on_resource_change_requested(resource_type: String, amount: int):
+	match resource_type:
+		"hp":
+			modify_hp(amount)
+		"food":
+			modify_food(amount)
+		"water":
+			modify_water(amount)
+		_:
+			print("⚠️ PlayerManager: Richiesta modifica risorsa sconosciuta: ", resource_type)
+
+## Callback per applicare effetti passivi degli stati (ogni 30 min)
+func _on_time_advanced_for_statuses(_hour: int, _minute: int) -> void:
+	if active_statuses.is_empty():
+		return
+
+	for status in active_statuses:
+		match status:
+			Status.POISONED:
+				modify_hp(-1)
+				narrative_log_generated.emit("[color=purple]Il veleno ti consuma le forze (-1 HP).[/color]")
+			Status.SICK:
+				modify_food(-2)
+				modify_water(-3)
+				narrative_log_generated.emit("[color=orange]La malattia ti debilita, consumando le tue riserve.[/color]")
+			Status.WOUNDED:
+				# In futuro, lo stato WOUNDED applicherà un malus ai test di Forza e Agilità.
+				pass
+			_:
+				pass
 
 # ========================================
 # API GESTIONE STATI PERSONAGGIO (M3.T3)
@@ -1263,29 +1328,33 @@ func apply_skill_check_result(check_result: Dictionary, consequences: Dictionary
 
 ## Applica una transazione di oggetti (aggiunta/rimozione multipla)
 ## @param transaction: Dictionary con formato {"add": [{"id": String, "quantity": int}], "remove": [{"id": String, "quantity": int}]}
+## MODIFICATO per M-CLEANUP-2.1 per supportare i nuovi formati `items_gained` e `items_lost`
 ## @return: bool - true se tutte le operazioni sono riuscite
 func apply_item_transaction(transaction: Dictionary) -> bool:
 	var success = true
 	
-	# Prima rimuovi gli oggetti (per verificare disponibilità)
-	if transaction.has("remove"):
-		for item_entry in transaction.remove:
+	# Gestisce il formato legacy "remove" e il nuovo "items_lost"
+	var items_to_remove = transaction.get("remove", transaction.get("items_lost", []))
+	if not items_to_remove.is_empty():
+		for item_entry in items_to_remove:
 			var item_id = item_entry.get("id", "")
 			var quantity = item_entry.get("quantity", 1)
 			if not remove_item(item_id, quantity):
 				print("❌ PlayerManager: Transazione fallita - impossibile rimuovere %s (x%d)" % [item_id, quantity])
 				success = false
 				break
-	
-	# Poi aggiungi gli oggetti
-	if success and transaction.has("add"):
-		for item_entry in transaction.add:
-			var item_id = item_entry.get("id", "")
-			var quantity = item_entry.get("quantity", 1)
-			if not add_item(item_id, quantity):
-				print("❌ PlayerManager: Transazione fallita - impossibile aggiungere %s (x%d)" % [item_id, quantity])
-				success = false
-				break
+
+	# Gestisce il formato legacy "add" e il nuovo "items_gained"
+	if success:
+		var items_to_add = transaction.get("add", transaction.get("items_gained", []))
+		if not items_to_add.is_empty():
+			for item_entry in items_to_add:
+				var item_id = item_entry.get("id", "")
+				var quantity = item_entry.get("quantity", 1)
+				if not add_item(item_id, quantity):
+					print("❌ PlayerManager: Transazione fallita - impossibile aggiungere %s (x%d)" % [item_id, quantity])
+					success = false
+					break
 	
 	if success:
 		print("✅ PlayerManager: Transazione oggetti completata con successo")

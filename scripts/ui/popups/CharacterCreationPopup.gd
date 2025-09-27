@@ -105,19 +105,22 @@ func _start_generation_sequence(char_data: Dictionary) -> void:
     await _reveal_buttons(0.2)
     subtitle_label.text = "Premi INVIO per iniziare o R rigenera"
 
+func _animate_reveal(control: Control, delay: float) -> void:
+    if delay > 0.0:
+        await get_tree().create_timer(delay).timeout
+    var tween = create_tween()
+    tween.tween_property(control, "modulate:a", 1.0, 0.3).from(0.0)
+
 func _reveal_stat(container: Control, value_label: Label, value: int, delay: float) -> void:
-    await get_tree().create_timer(1.0).timeout
-    container.modulate = Color(1,1,1,1)
+    await _animate_reveal(container, delay)
     value_label.text = str(value)
 
 func _reveal_hp(hp: int, delay: float) -> void:
-    await get_tree().create_timer(1.0).timeout
-    hp_container.modulate = Color(1,1,1,1)
+    await _animate_reveal(hp_container, delay)
     hp_value.text = str(hp)
 
 func _reveal_buttons(delay: float) -> void:
-    await get_tree().create_timer(1.0).timeout
-    button_container.modulate = Color(1,1,1,1)
+    await _animate_reveal(button_container, delay)
     accept_button.text = "[center][color=#00FF40]Accetta Personaggio[/color][/center]"
     reroll_button.text = "[center][color=#FFFF00]Rigenera Stats[/color][/center]"
 

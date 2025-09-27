@@ -32,8 +32,12 @@ I contenuti degli eventi sono archiviati in modo modulare per facilitare la gest
       "skillCheck": { "stat": "forza", "difficulty": 13 },
       "successText": "Testo narrativo in caso di successo.",
       "failureText": "Testo narrativo in caso di fallimento.",
-      "reward": { "items_gained": [{ "id": "item_id", "quantity": 1 }] },
-      "penalty": { "type": "damage", "amount": 10 }
+      "reward": {
+        "items_gained": [{ "id": "item_id", "quantity": 1 }]
+      },
+      "penalty": {
+        "items_lost": [{ "id": "tool_pickaxe", "quantity": 1 }]
+      }
     },
     {
       "text": "Testo della scelta 2 (senza skill check)",

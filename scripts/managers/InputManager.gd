@@ -337,13 +337,23 @@ func _handle_combat_input(event: InputEvent) -> void:
 ## Gestisce input specifici per il debug, come i tasti funzione.
 ## Viene chiamato da _handle_global_input per assicurare che sia sempre attivo.
 func _handle_debug_input(event: InputEvent) -> void:
-	if event.is_action_pressed("debug_f9"):
-		# Esegui un test di skill check e stampa il risultato in console
-		var result = SkillCheckManager.perform_check("forza", 12)
-		print("--- SKILL CHECK TEST (Forza vs 12) ---")
-		for key in result:
-			print(key, ": ", result[key])
-		print("------------------------------------")
+	if not event is InputEventKey or not event.is_pressed():
+		return
+
+	match event.keycode:
+		KEY_F9:
+			# Esegui un test di skill check e stampa il risultato in console
+			var result = SkillCheckManager.perform_check("forza", 12)
+			print("--- SKILL CHECK TEST (Forza vs 12) ---")
+			for key in result:
+				print(key, ": ", result[key])
+			print("------------------------------------")
+		KEY_F10:
+			# Avvia un combattimento di prova
+			CombatManager.start_combat("rat_giant")
+		KEY_F11:
+			# Esegui azione di attacco del giocatore
+			CombatManager.process_player_action(CombatManager.CombatAction.ATTACK)
 
 # ========================================
 # UTILITIES E DEBUG
