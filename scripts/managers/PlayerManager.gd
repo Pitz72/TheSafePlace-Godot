@@ -487,6 +487,13 @@ func use_item(item_id: String, quantity: int = 1) -> bool:
 			print("⚠️ Armature non possono essere 'usate' direttamente. Usa equip_armor()")
 			return false
 		_:
+			# GESTIONE OGGETTI SPECIALI NARRATIVI
+			if item_id == "carillon_of_lena":
+				if EventManager.trigger_specific_event("lore_ash_lullaby"):
+					print("🎵 Il carillon viene aperto... si attiva l'evento 'Ninnananna delle Ceneri'.")
+				else:
+					narrative_log_generated.emit("Apri il carillon, ma il meccanismo è bloccato. Non accade nulla.")
+				return true # L'azione è stata gestita
 			print("⚠️ Categoria oggetto non gestita per uso: %s" % category)
 			# Per oggetti senza effetti, li gestiamo comunque
 	

@@ -84,39 +84,50 @@ func start_quest(quest_id: String) -> bool:
 	return true
 
 # Controlla se una condizione di trigger è soddisfatta
-func check_trigger_condition(condition: String) -> bool:
-	match condition:
-		"exploration_time > 30":
-			return get_exploration_time() > 30
-		"thirst_level > 70":
-			return player_manager.water < player_manager.max_water * 0.3
-		"hp < max_hp * 0.8":
-			return player_manager.hp < player_manager.max_hp * 0.8
-		"time_of_day == night":
-			return TimeManager.is_night()
-		"resting == true":
-			return is_player_resting()
-		"near_radiation_zone":
-			return is_near_radiation()
-		"inventory_weight > 80%":
-			return get_inventory_weight_percentage() > 80
-		"found_old_map":
-			return has_item("old_map")
-		"deep_reflection":
-			return randf() < 0.1  # 10% probabilità casuale
-		"crossroads_decision":
-			return randf() < 0.05  # 5% probabilità casuale
-		"near_safe_place":
-			return is_near_safe_place()
-		"reached_safe_place":
-			return has_reached_safe_place()
+func check_trigger_condition(condition_str: String) -> bool:
+	var parts = condition_str.split(" ")
+	if parts.size() != 3:
+		# Gestisce condizioni semplici come "time_of_day == night"
+		parts = condition_str.split("==")
+		if parts.size() == 2:
+			var variable = parts[0].strip_edges()
+			var value = parts[1].strip_edges()
+			match variable:
+				"time_of_day":
+					return (value == "night" and TimeManager.is_night()) or (value == "day" and not TimeManager.is_night())
+		return false
+
+	var variable = parts[0]
+	var op = parts[1]
+	var value = parts[2].to_float()
+
+	var current_value: float
+	match variable:
+		"exploration_time":
+			current_value = TimeManager.get_total_minutes_survived()
+		"thirst_level":
+			current_value = 100.0 - (float(player_manager.water) / player_manager.max_water * 100.0)
+		"hp_percentage":
+			current_value = float(player_manager.hp) / player_manager.max_hp * 100.0
 		_:
+			# Gestisce condizioni speciali non numeriche
+			if condition_str == "found_old_map": return has_item("old_map")
+			if condition_str == "deep_reflection": return randf() < 0.1
+			if condition_str == "crossroads_decision": return randf() < 0.05
 			return false
+
+	match op:
+		">": return current_value > value
+		"<": return current_value < value
+		">=": return current_value >= value
+		"<=": return current_value <= value
+		"==": return is_equal_approx(current_value, value)
+	
+	return false
 
 # Calcola il tempo di esplorazione (in minuti)
 func get_exploration_time() -> int:
-	# Questa sarebbe implementata con il TimeManager
-	return 45  # Placeholder
+	return TimeManager.get_total_minutes_survived()
 
 # Verifica se il giocatore sta riposando
 func is_player_resting() -> bool:
@@ -130,8 +141,7 @@ func is_near_radiation() -> bool:
 
 # Calcola la percentuale di peso dell'inventario
 func get_inventory_weight_percentage() -> float:
-	# Questa sarebbe calcolata dall'inventario
-	return 85.0  # Placeholder
+	return player_manager.get_inventory_weight() / 25.0 * 100.0 # Assumendo 25kg come max
 
 # Verifica se il giocatore ha un item specifico
 func has_item(item_id: String) -> bool:
@@ -175,8 +185,12 @@ func try_trigger_quest_event(stage_id: String) -> bool:
 func trigger_quest_stage(stage_id: String, stage_data: Dictionary):
 	print("[QuestManager] Attivazione stage quest: ", stage_id)
 
-	# Segnala che lo stage è stato sbloccato
-	quest_stage_unlocked.emit(stage_id)
+	# Se lo stage ha un evento associato, triggeralo
+	if stage_data.has("event_id"):
+		EventManager.trigger_specific_event(stage_data.event_id)
+	else:
+		# Se non c'è un evento, emetti solo il log narrativo
+		player_manager.narrative_log_generated.emit(stage_data.get("narrative_text", "Qualcosa è cambiato..."))
 
 	# Qui verrebbe mostrato l'evento narrativo al giocatore
 	# Per ora, applichiamo automaticamente il progresso

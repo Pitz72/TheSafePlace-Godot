@@ -253,6 +253,9 @@ func _on_player_moved(position: Vector2i, terrain_type: String):
 	if _can_trigger_event(new_biome):
 		EventManager.trigger_random_event(new_biome)
 	
+	# Controlla sempre i trigger della quest dopo ogni mossa
+	QuestManager.check_all_triggers()
+	
 	print("📊 Passi dall'ultimo evento: %d" % [steps_since_last_event])
 
 # Verifica se può triggerare un evento (cooldown + passi)

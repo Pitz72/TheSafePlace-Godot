@@ -1,4 +1,4 @@
-# ANTI-REGRESSION TESTS - v0.9.6 "Climbing the China Mountains"
+# ANTI-REGRESSION TESTS - v0.9.7 "Climbing the China Mountains"
 
 ## Test ID: CORE-001 - Avvio e Creazione Personaggio
 1. Avviare il gioco.

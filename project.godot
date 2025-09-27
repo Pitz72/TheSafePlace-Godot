@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="THE SAFE PLACE CHRONICLES: The Echo of the Journey v0.9.6.5"
+config/name="THE SAFE PLACE CHRONICLES: The Echo of the Journey v0.9.7 Climbing the China Mountains"
 config/description="Computer Boot System - Sistema di boot computer completo con menu principale rivoluzionato e shader CRT ultra-realistici"
 run/main_scene="res://scenes/BootBlack.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")

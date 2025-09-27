@@ -115,11 +115,14 @@ func _load_and_cache_events():
 	biome_event_pools.clear()
 	var seen_ids = {}
 
-	# Carica tutti gli eventi dalla cartella dei biomi
+	# Carica eventi specifici per bioma
 	_load_events_from_dir("res://data/events/biomes", seen_ids)
 	
-	# Carica gli eventi unici separatamente
-	_load_events_from_file("res://data/events/unique_events.json", seen_ids)
+	# Carica esplicitamente le categorie di eventi globali
+	_load_events_from_file("res://data/events/random_events_godot.json", seen_ids)
+	_load_events_from_file("res://data/events/easter_eggs_godot.json", seen_ids)
+	_load_events_from_file("res://data/events/lore_events_complete.json", seen_ids)
+	_load_events_from_file("res://data/events/unique_events_godot.json", seen_ids)
 
 	print("[EventManager] Caricati %d eventi totali." % cached_events.size())
 	for biome in biome_event_pools.keys():
@@ -348,6 +351,27 @@ func trigger_random_event(biome: String) -> Dictionary:
 		"biome": biome
 	}
 
+## Triggera un evento specifico tramite il suo ID
+func trigger_specific_event(event_id: String) -> bool:
+	if not cached_events.has(event_id):
+		print("[EventManager] ERRORE: Tentativo di triggerare evento specifico non esistente: ", event_id)
+		return false
+	
+	var selected_event = cached_events[event_id]
+	
+	print("[EventManager] Evento specifico triggerato: ", selected_event["id"])
+	
+	# Imposta evento corrente per UI
+	current_event = selected_event
+	current_event_id = selected_event["id"]
+	
+	# Emetti segnale
+	event_triggered.emit(selected_event)
+	
+	# Resetta cooldown eventi normali
+	get_node("/root/MainGame")._reset_cooldowns()
+	
+	return true
 
 # Applica le conseguenze di un evento
 func _apply_event_consequences(consequences: Dictionary):

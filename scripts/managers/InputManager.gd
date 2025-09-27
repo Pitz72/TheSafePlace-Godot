@@ -52,6 +52,10 @@ signal action_cancel()
 ## @param action: String tipo azione ("attack", "defend", "flee")
 signal combat_action(action: String)
 
+## Emesso per selezione azione combattimento (1-4)
+## @param action_index: int numero azione (1-4)
+signal combat_action_selected(action_index: int)
+
 ## Emesso per cambio stato input
 ## @param old_state: InputState stato precedente
 ## @param new_state: InputState nuovo stato
@@ -87,18 +91,10 @@ var debug_input: bool = false
 # ========================================
 
 func _ready() -> void:
-	# Debug rimosso per ridurre log
-	# Debug rimosso per ridurre log
-	# Debug rimosso per ridurre log
-	pass
-	
 	# Debug disattivato - sistema funzionante
 	debug_input = false
-	# Debug rimosso per ridurre log
-	pass
-	
-	# Debug rimosso per ridurre log
-	pass
+	# Connetti i segnali per la gestione dello stato di combattimento
+	_connect_combat_signals()
 
 # ========================================
 # API PUBBLICA - GESTIONE STATI
@@ -306,25 +302,16 @@ func _handle_dialogue_input(event: InputEvent) -> void:
 ## @param event: InputEvent evento da processare
 func _handle_combat_input(event: InputEvent) -> void:
 	# Azioni combattimento base
-	# TODO: Espandere quando sistema combattimento sarà implementato
-	
-	# A = Attack, D = Defend, F = Flee
-	if Input.is_key_pressed(KEY_A):
-		if debug_input:
-			# Debug rimosso per ridurre log
-			pass
-		combat_action.emit("attack")
-	elif Input.is_key_pressed(KEY_D):
-		if debug_input:
-			# Debug rimosso per ridurre log
-			pass
-		combat_action.emit("defend")
-	elif Input.is_key_pressed(KEY_F):
-		if debug_input:
-			# Debug rimosso per ridurre log
-			pass
-		combat_action.emit("flee")
-	elif event.is_action_pressed("ui_accept") or Input.is_key_pressed(KEY_SPACE):
+	# Gestisce i tasti numerici 1-4 per le azioni
+	for i in range(1, 5):
+		var key_code = KEY_1 + (i - 1)
+		if Input.is_key_pressed(key_code):
+			if debug_input:
+				print("⌨️ InputManager: Azione combattimento %d richiesta" % i)
+			combat_action_selected.emit(i)
+			return
+			
+	if event.is_action_pressed("ui_accept") or Input.is_key_pressed(KEY_SPACE):
 		if debug_input:
 			# Debug rimosso per ridurre log
 			pass
@@ -355,6 +342,21 @@ func _handle_debug_input(event: InputEvent) -> void:
 			# Esegui azione di attacco del giocatore
 			CombatManager.process_player_action(CombatManager.CombatAction.ATTACK)
 
+func _connect_combat_signals():
+	if not CombatManager:
+		push_error("InputManager: CombatManager non trovato per connessione segnali.")
+		return
+		
+	if not CombatManager.combat_started.is_connected(_on_combat_started):
+		CombatManager.combat_started.connect(_on_combat_started)
+	if not CombatManager.combat_ended.is_connected(_on_combat_ended):
+		CombatManager.combat_ended.connect(_on_combat_ended)
+
+func _on_combat_started(_enemy_data):
+	set_state(InputState.COMBAT)
+
+func _on_combat_ended(_result, _rewards):
+	set_state(InputState.MAP)
 # ========================================
 # UTILITIES E DEBUG
 # ========================================

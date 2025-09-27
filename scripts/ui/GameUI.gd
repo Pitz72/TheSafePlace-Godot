@@ -321,6 +321,10 @@ func _initialize_combat_system():
 	if CombatManager:
 		CombatManager.combat_started.connect(_on_combat_started)
 		CombatManager.combat_ended.connect(_on_combat_ended)
+		# Connessione aggiuntiva per garantire che il popup si chiuda
+		if not CombatManager.combat_ended.is_connected(_on_combat_ended):
+			CombatManager.combat_ended.connect(_on_combat_ended)
+			
 		print("✅ GameUI: Sistema combattimento inizializzato")
 
 func _on_combat_started(enemy_data: Dictionary):
@@ -337,27 +341,32 @@ func _on_combat_started(enemy_data: Dictionary):
 
 func _on_combat_ended(result: CombatManager.CombatResult, rewards: Dictionary):
 	# Mostra risultati combattimento nel log
-	var result_message = ""
-	match result:
-		CombatManager.CombatResult.PLAYER_VICTORY:
-			result_message = "[color=green]🎉 Vittoria! Hai sconfitto il nemico![/color]"
-		CombatManager.CombatResult.ENEMY_VICTORY:
-			result_message = "[color=red]💀 Sconfitta! Il nemico ti ha sopraffatto![/color]"
-		CombatManager.CombatResult.PLAYER_FLED:
-			result_message = "[color=yellow]🏃 Sei riuscito a fuggire![/color]"
-		CombatManager.CombatResult.TIMEOUT:
-			result_message = "[color=gray]⏰ Il combattimento è terminato per timeout[/color]"
-
-	add_log_message(result_message)
+	# La logica del messaggio è ora gestita dal CombatManager, qui chiudiamo solo la UI
+	if is_combat_popup_active:
+		if combat_popup_instance and is_instance_valid(combat_popup_instance):
+			combat_popup_instance._close_popup()
+		is_combat_popup_active = false
 
 	# Mostra ricompense se presenti
-	if not rewards.is_empty():
+	if result == CombatManager.CombatResult.PLAYER_VICTORY and not rewards.is_empty():
 		var reward_message = "[color=#00ff00]Ricompense ottenute:[/color]\n"
-		for item_id in rewards.keys():
-			var quantity = rewards[item_id]
-			var item_data = DataManager.get_item_data(item_id)
-			var item_name = item_data.get("name", item_id) if not item_data.is_empty() else item_id
-			reward_message += "• %dx %s\n" % [quantity, item_name]
+		
+		# Gestione XP
+		if rewards.has("xp") and rewards.xp > 0:
+			PlayerManager.add_experience(rewards.xp, "Combattimento")
+			reward_message += "• %d Punti Esperienza\n" % rewards.xp
+		
+		# Gestione Oggetti
+		if rewards.has("items") and not rewards.items.is_empty():
+			for item_reward in rewards.items:
+				var item_id = item_reward.id
+				var quantity = item_reward.quantity
+				PlayerManager.add_item(item_id, quantity)
+				
+				var item_data = DataManager.get_item_data(item_id)
+				var item_name = item_data.get("name", item_id) if not item_data.is_empty() else item_id
+				reward_message += "• %dx %s\n" % [quantity, item_name]
+				
 		add_log_message(reward_message)
 
 	# Chiudi popup combattimento

@@ -1,10 +1,10 @@
-# 🏠 The Safe Place v0.9.6.5 "Computer Boot System"
+# 🏠 The Safe Place v0.9.7 "Climbing the China Mountains"
 
 *Un GDR testuale enterprise-level con narrativa profonda e sistema eventi rivoluzionario*
 
 ## 📖 Descrizione del Progetto
 
-**The Safe Place** è un gioco di ruolo testuale che ricrea l'atmosfera dei classici computer degli anni '80 e '90. Il giocatore esplora un mondo post-apocalittico attraverso un'interfaccia a terminale, prendendo decisioni che influenzano la narrativa e la sopravvivenza del personaggio.
+**The Safe Place** è un gioco di ruolo testuale che ricrea l'atmosfera dei classici computer degli anni '80. Il giocatore esplora un mondo post-apocalittico attraverso un'interfaccia a terminale, prendendo decisioni che influenzano la narrativa e la sopravvivenza del personaggio.
 
 ### 🎯 Caratteristiche Principali
 
@@ -12,21 +12,22 @@
 - **🏆 Quest System Completo**: "L'Ultimo Sopravvissuto" con progressione narrativa profonda
 - **🥚 Easter Eggs Segreti**: 3 eventi ultra-rari con ricompense esclusive
 - **👻 Lore Horror**: Eventi sovrannaturali con "Angeli delle Ceneri"
-- **🏗️ Architettura Enterprise**: 8 Singleton Managers con pattern design industriali
+- ✅ **⚔️ Sistema di Combattimento**: Motore a turni con UI, abilità, stati e ricompense.
+- ✅ **🏕️ Sistema Rifugi**: Aree sicure con azioni contestuali diurne e notturne.
+- ✅ **🏗️ Architettura Enterprise**: 12 Singleton Managers con pattern design industriali
 - **📊 Database Espanso**: 89 item unici con proprietà avanzate
 - **🧪 Testing Industriale**: Framework automatizzato con anti-regressione completa
 - **⚡ Performance Ottimale**: 60+ FPS, <100MB RAM, zero memory leaks
 
 ## 🚀 Stato del Progetto
 
-**Versione Attuale**: v0.9.6.5 "Computer Boot System"
+**Versione Attuale**: v0.9.7 "Climbing the China Mountains"
 
 ### ✅ Sistemi Implementati
 - ✅ **📖 Sistema Narrativo Completo**: 36 eventi unici con quest principale a 12 stadi
 - ✅ **🏆 Quest System Avanzato**: "L'Ultimo Sopravvissuto" con progressione automatica
-- ✅ **🥚 Easter Eggs**: 3 eventi segreti ultra-rari con ricompense esclusive
-- ✅ **👻 Eventi Lore**: "Ninnananna delle Ceneri" con incontro sovrannaturale
-- ✅ **🏗️ Architettura Enterprise**: 8 Singleton Managers con pattern industriali
+- ✅ **⚔️ Sistema di Combattimento**: Turn-based, UI, abilità, stati, XP e loot.
+- ✅ **🏕️ Sistema Rifugi**: Aree sicure con azioni diurne e riposo notturno.
 - ✅ **📊 Database Espanso**: 89 item unici con 37 nuove aggiunte
 - ✅ **🧪 Testing Industriale**: Framework automatizzato con anti-regressione v0.9.5
 - ✅ **⚡ Performance Ottimale**: 60+ FPS, <100MB RAM, zero memory leaks
@@ -34,7 +35,6 @@
 
 ### 🔄 In Sviluppo
 - 🔄 Sistema di Combattimento Avanzato
-- 🔄 Sistema di Salvataggio/Caricamento
 - 🔄 Multiple Endings basati su scelte
 - 🔄 Espansione Contenuti Secondari
 
@@ -97,11 +97,12 @@ Il progetto è sviluppato con l'assistenza di AI (Claude) seguendo metodologie s
 
 ## 📄 Licenza
 
-Progetto in sviluppo - Licenza da definire
+Questo progetto è rilasciato sotto licenza MIT. Vedi il file `LICENSE` per i dettagli.
 
 ## 🏷️ Tag e Versioni
 
-- `v0.9.6.5` - Computer Boot System (Corrente)
+- `v0.9.7` - Climbing the China Mountains (Corrente)
+- `v0.9.6.5` - Computer Boot System
 - `v0.9.6` - Taste my fists, you bumpkin!
 - `v0.9.5` - All the Story you don't know
 - `v0.9.0` - Surpassing React
@@ -130,7 +131,7 @@ Progetto in sviluppo - Licenza da definire
 
 ## 📖 **DESCRIZIONE**
 
-**The Safe Place** è un GDR testuale ambientato negli anni '80 che combina l'estetica retrò dei monitor CRT con meccaniche di gioco moderne. Il giocatore esplora un mondo post-apocalittico alla ricerca di un rifugio sicuro, affrontando eventi dinamici, gestendo risorse vitali e prendendo decisioni che influenzano la sopravvivenza.
+**The Safe Place** è un GDR testuale che combina l'estetica retrò dei monitor CRT con meccaniche di gioco moderne. Il giocatore esplora un mondo post-apocalittico alla ricerca di un rifugio sicuro, affrontando eventi dinamici, gestendo risorse vitali e prendendo decisioni che influenzano la sopravvivenza.
 
 ### **🎯 Caratteristiche Principali v0.9.0 "Surpassing React"**
 
@@ -426,10 +427,10 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file [`LICENSE`](LICENS
 
 ---
 
-**🏠 The Safe Place v0.9.6.5 "Computer Boot System"**
+**🏠 The Safe Place v0.9.7 "Climbing the China Mountains"**
 *Sistema di boot computer completo con menu principale rivoluzionato e shader CRT ultra-realistici*
 
 ---
 
-*Ultimo aggiornamento: 24 Settembre 2025*
-*Versione README: v0.9.6.5*
+*Ultimo aggiornamento: 25 Settembre 2025*
+*Versione README: v0.9.7*

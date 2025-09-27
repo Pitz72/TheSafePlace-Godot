@@ -41,6 +41,9 @@ const RARITY_MULTIPLIERS: Dictionary = {
 
 ## Sistema rarità condiviso da tutti i database
 var rarity_system: Dictionary = {}
+## Database effetti di stato per combattimento
+var status_effects: Dictionary = {}
+var special_abilities: Dictionary = {}
 
 ## Database oggetti separati per categoria
 var unique_items: Dictionary = {}
@@ -93,6 +96,8 @@ func _load_all_data() -> void:
 	
 	# 1. SISTEMA CONDIVISO
 	rarity_system = _load_json_file("res://data/system/rarity_system.json")
+	status_effects = _load_json_file("res://data/system/status_effects.json")
+	special_abilities = _load_json_file("res://data/system/special_abilities.json")
 	if rarity_system.has("rarity_system"):
 		print("   ✅ Sistema rarità: %d livelli" % rarity_system.rarity_system.size())
 	
@@ -337,6 +342,20 @@ func get_rarity_data(rarity_name: String) -> Dictionary:
 		return rarity_system.rarity_system[rarity_name]
 	
 	print("⚠️ DataManager: Rarità non trovata: %s" % rarity_name)
+	return {}
+
+## Restituisce i dati di un effetto di stato
+func get_status_effect_data(effect_id: String) -> Dictionary:
+	if status_effects.has(effect_id):
+		return status_effects[effect_id]
+	print("⚠️ DataManager: Effetto di stato non trovato: %s" % effect_id)
+	return {}
+
+## Restituisce i dati di un'abilità speciale
+func get_special_ability_data(enemy_category: String, ability_tier: String) -> Dictionary:
+	if special_abilities.has(enemy_category) and special_abilities[enemy_category].has(ability_tier):
+		return special_abilities[enemy_category][ability_tier]
+	# Non stampare un errore qui, è normale che un nemico non abbia abilità
 	return {}
 
 ## Restituisce tutti gli oggetti di una categoria specifica (con cache)
