@@ -82,18 +82,46 @@ func _on_damage_dealt(target: String, amount: int):
 
 	if target == "enemy":
 		current_enemy_data.hp -= amount
-		combat_log_label.append_text("   > Colpisci per %d danni con %s.\n" % [amount, source])
+		combat_log_label.append_text("   > Colpisci per %d danni.\n" % amount)
 	elif target == "player":
-		combat_log_label.append_text("   < Subisci %d danni da %s.\n" % [amount, source])
+		combat_log_label.append_text("   < Subisci %d danni.\n" % amount)
 	
 	_update_enemy_info()
 	_update_player_info()
 
-func _on_status_effect_applied(target: String, effect_id: String):
+func _on_status_effect_applied(target: String, _effect_id: String):
 	if target == "player":
 		_update_player_info()
 	else:
 		_update_enemy_info()
+
+func _on_combat_ended(result: CombatManager.CombatResult, rewards: Dictionary):
+	if not is_active: return
+	
+	# Mostra risultato del combattimento
+	match result:
+		CombatManager.CombatResult.PLAYER_VICTORY:
+			combat_log_label.append_text("\n[color=#00ff00]=== VITTORIA! ===[/color]\n")
+			if rewards.has("xp") and rewards.xp > 0:
+				combat_log_label.append_text("Esperienza guadagnata: %d XP\n" % rewards.xp)
+			if rewards.has("items") and rewards.items.size() > 0:
+				combat_log_label.append_text("Oggetti trovati: %s\n" % str(rewards.items))
+		CombatManager.CombatResult.ENEMY_VICTORY:
+			combat_log_label.append_text("\n[color=#ff0000]=== SCONFITTA ===[/color]\n")
+		CombatManager.CombatResult.PLAYER_FLED:
+			combat_log_label.append_text("\n[color=#ffff00]=== FUGA RIUSCITA ===[/color]\n")
+		_:
+			combat_log_label.append_text("\n[color=#888888]=== COMBATTIMENTO TERMINATO ===[/color]\n")
+	
+	# Disabilita azioni e mostra messaggio di chiusura
+	_update_actions_display(false)
+	is_awaiting_final_input = true
+	
+	var close_label = RichTextLabel.new()
+	close_label.bbcode_enabled = true
+	close_label.text = "\n[Premi ESC per chiudere]"
+	close_label.modulate = Color(0.7, 0.7, 0.7)
+	actions_container.add_child(close_label)
 
 func _on_player_action_selected(action_index: int):
 	if not is_active or CombatManager.current_combat_state != CombatManager.CombatState.PLAYER_TURN:

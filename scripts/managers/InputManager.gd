@@ -48,10 +48,6 @@ signal action_confirm()
 ## Emesso per cancellazione/indietro (ESC)
 signal action_cancel()
 
-## Emesso per azioni combat specifiche
-## @param action: String tipo azione ("attack", "defend", "flee")
-signal combat_action(action: String)
-
 ## Emesso per selezione azione combattimento (1-4)
 ## @param action_index: int numero azione (1-4)
 signal combat_action_selected(action_index: int)

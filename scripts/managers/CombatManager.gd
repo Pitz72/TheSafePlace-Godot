@@ -1,6 +1,6 @@
 extends Node
 
-## CombatManager Singleton - The Safe Place v0.4.1
+## CombatManager Singleton - The Safe Place v0.9.7.1
 ##
 ## Gestisce il sistema di combattimento turn-based con armi, armature e skill check
 ## Implementa il sistema combattimento del GDD React adattato per Godot

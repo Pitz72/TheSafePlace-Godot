@@ -1,4 +1,4 @@
-# 🎛️ SINGLETON MANAGERS SYSTEM - THE SAFE PLACE v0.9.6.5
+# 🎛️ SINGLETON MANAGERS SYSTEM - THE SAFE PLACE v0.9.7.1
 
 ## 🎯 **OVERVIEW SISTEMA MANAGERS**
 
@@ -1056,6 +1056,6 @@ Logger.error("EventManager", "Evento malformato: %s" % event_id)
 
 ---
 
-**Versione:** v0.9.6.5 "Computer Boot System"
+**Versione:** v0.9.7.1 "Is it a Game or a Library?"
 **Data:** 24 Settembre 2025
 **Target:** LLM Technical Analysis - Singleton Architecture

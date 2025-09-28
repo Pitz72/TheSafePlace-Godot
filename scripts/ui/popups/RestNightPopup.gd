@@ -1,7 +1,6 @@
 extends Control
 
 signal popup_closed
-signal rest_action_selected(action: String)
 
 @onready var choice1_button: Button = $BackgroundPanel/VBoxContainer/ChoicesContainer/Choice1
 @onready var choice2_button: Button = $BackgroundPanel/VBoxContainer/ChoicesContainer/Choice2

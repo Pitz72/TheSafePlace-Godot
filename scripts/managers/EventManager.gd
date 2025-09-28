@@ -46,7 +46,6 @@ signal item_transaction_requested(transaction_data: Dictionary)
 signal status_change_requested(status_to_add: PlayerManager.Status)
 signal resource_change_requested(resource_type: String, amount: int)
 signal experience_gain_requested(amount: int, reason: String)
-signal combat_trigger_requested(enemy_id: String)
 
 # Riferimenti ai manager
 @onready var player_manager: PlayerManager

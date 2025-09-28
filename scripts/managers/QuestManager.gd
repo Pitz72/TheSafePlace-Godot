@@ -8,7 +8,6 @@ extends Node
 signal quest_started(quest_id: String)
 signal quest_progressed(quest_id: String, stage_id: String)
 signal quest_completed(quest_id: String)
-signal quest_stage_unlocked(stage_id: String)
 
 # Riferimenti ai manager
 @onready var player_manager: PlayerManager
@@ -90,19 +89,19 @@ func check_trigger_condition(condition_str: String) -> bool:
 		# Gestisce condizioni semplici come "time_of_day == night"
 		parts = condition_str.split("==")
 		if parts.size() == 2:
-			var variable = parts[0].strip_edges()
-			var value = parts[1].strip_edges()
-			match variable:
+			var condition_variable = parts[0].strip_edges()
+			var condition_value = parts[1].strip_edges()
+			match condition_variable:
 				"time_of_day":
-					return (value == "night" and TimeManager.is_night()) or (value == "day" and not TimeManager.is_night())
+					return (condition_value == "night" and TimeManager.is_night()) or (condition_value == "day" and not TimeManager.is_night())
 		return false
 
-	var variable = parts[0]
+	var check_variable = parts[0]
 	var op = parts[1]
-	var value = parts[2].to_float()
+	var check_value = parts[2].to_float()
 
 	var current_value: float
-	match variable:
+	match check_variable:
 		"exploration_time":
 			current_value = TimeManager.get_total_minutes_survived()
 		"thirst_level":
@@ -117,11 +116,11 @@ func check_trigger_condition(condition_str: String) -> bool:
 			return false
 
 	match op:
-		">": return current_value > value
-		"<": return current_value < value
-		">=": return current_value >= value
-		"<=": return current_value <= value
-		"==": return is_equal_approx(current_value, value)
+		">": return current_value > check_value
+		"<": return current_value < check_value
+		">=": return current_value >= check_value
+		"<=": return current_value <= check_value
+		"==": return is_equal_approx(current_value, check_value)
 	
 	return false
 

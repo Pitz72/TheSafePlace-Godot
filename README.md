@@ -1,4 +1,4 @@
-# 🏠 The Safe Place v0.9.7 "Climbing the China Mountains"
+# 🏠 The Safe Place v0.9.7.1 "Is it a Game or a Library?"
 
 *Un GDR testuale enterprise-level con narrativa profonda e sistema eventi rivoluzionario*
 
@@ -21,7 +21,7 @@
 
 ## 🚀 Stato del Progetto
 
-**Versione Attuale**: v0.9.7 "Climbing the China Mountains"
+**Versione Attuale**: v0.9.7.1 "Is it a Game or a Library?"
 
 ### ✅ Sistemi Implementati
 - ✅ **📖 Sistema Narrativo Completo**: 36 eventi unici con quest principale a 12 stadi
@@ -49,28 +49,34 @@
 
 ```
 TheSafePlace-Godot/
-├── docs/                    # 📚 Documentazione completa del progetto
-├── scenes/                  # 🎬 Scene Godot (.tscn)
-├── scripts/                 # 📜 Script GDScript (.gd)
-│   ├── managers/           # 🎛️ Manager di sistema
-│   ├── ui/                 # 🖥️ Interfaccia utente
-│   └── tools/              # 🔧 Strumenti di sviluppo
-├── data/                   # 📊 Dati di gioco (JSON)
-│   ├── events/             # 🎭 Eventi di gioco
-│   ├── items/              # 🎒 Database oggetti
-│   └── system/             # ⚙️ Configurazioni sistema
-├── textures/               # 🎨 Texture e sprite
-└── themes/                 # 🎨 Temi UI
+├── Progetto/               # 📚 Documentazione tecnica principale (LLM-oriented)
+├── development_history/    # 📜 Cronologia sviluppo e documentazione storica
+├── scenes/                 # 🎬 Scene Godot (.tscn)
+├── scripts/                # 📜 Script GDScript (.gd)
+│   ├── managers/          # 🎛️ Manager di sistema
+│   ├── ui/                # 🖥️ Interfaccia utente
+│   └── tools/             # 🔧 Strumenti di sviluppo
+├── data/                  # 📊 Dati di gioco (JSON)
+│   ├── events/            # 🎭 Eventi di gioco
+│   ├── items/             # 🎒 Database oggetti
+│   └── system/            # ⚙️ Configurazioni sistema
+├── textures/              # 🎨 Texture e sprite
+└── themes/                # 🎨 Temi UI
 ```
 
 ## 📚 Documentazione
 
-La documentazione completa del progetto si trova nella cartella `docs/`:
+Il progetto utilizza un sistema documentale consolidato e strutturato:
 
-- **[Indice Documentazione](docs/INDEX.md)** - Guida alla navigazione
-- **[Game Design](docs/01_PRE_PRODUZIONE/design/GAME_DESIGN.md)** - Documento di design
-- **[Roadmap](docs/01_PRE_PRODUZIONE/pianificazione/ROADMAP.md)** - Piano di sviluppo
-- **[Log di Sviluppo](docs/02_PRODUZIONE/logs_sviluppo/)** - Cronologia sviluppo
+### 📖 Documentazione Principale
+- **[Indice Globale](DOCUMENTATION_INDEX.md)** - Navigazione completa della documentazione
+- **[Documentazione Tecnica](Progetto/00_INDICE_DOCUMENTAZIONE_PROGETTO.md)** - Sistemi e architettura (LLM-oriented)
+- **[Cronologia Sviluppo](development_history/INDEX.md)** - Storia e evoluzione del progetto
+
+### 🎯 Guide Rapide per Ruolo
+- **Sviluppatori**: [Architettura](Progetto/01_ARCHITETTURA_GENERALE.md) → [Managers](Progetto/02_SINGLETON_MANAGERS.md) → [Testing](Progetto/30_TESTING_FRAMEWORK.md)
+- **Game Designer**: [Narrative](Progetto/18_NARRATIVE_CONTENT.md) → [Eventi](Progetto/19_EVENT_SYSTEM.md) → [Quest](Progetto/20_QUEST_SYSTEM.md)
+- **DevOps**: [Deployment](Progetto/33_DEPLOYMENT_GUIDE.md) → [Maintenance](Progetto/34_MAINTENANCE_GUIDE.md) → [Performance](Progetto/17_PERFORMANCE_CONSIDERATIONS.md)
 
 ## 🎮 Come Giocare
 
@@ -101,7 +107,8 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file `LICENSE` per i de
 
 ## 🏷️ Tag e Versioni
 
-- `v0.9.7` - Climbing the China Mountains (Corrente)
+- `v0.9.7.1` - Is it a Game or a Library? (Corrente)
+- `v0.9.7` - Climbing the China Mountains
 - `v0.9.6.5` - Computer Boot System
 - `v0.9.6` - Taste my fists, you bumpkin!
 - `v0.9.5` - All the Story you don't know

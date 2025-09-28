@@ -1,5 +1,75 @@
 # 📋 CHANGELOG - The Safe Place
 
+## v0.9.7.1 "Is it a Game or a Library?" - 2025-01-27
+
+### 🎯 **Tema di Rilascio**
+**"Is it a Game or a Library?"** - Consolidamento della documentazione utente finale e trasformazione del progetto in un prodotto accessibile a tutti. Focus sulla creazione di guide complete per utenti non tecnici e organizzazione professionale della documentazione.
+
+---
+
+### 🚀 **Caratteristiche Principali v0.9.7.1**
+
+#### **📚 Documentazione Utente Finale Completa**
+- **5 Guide Dedicate**: Manuale utente, installazione, troubleshooting, changelog user-friendly
+- **Linguaggio Accessibile**: Trasformazione della documentazione tecnica in guide comprensibili
+- **Organizzazione Professionale**: Nuova cartella `/user_docs/` con struttura navigabile
+- **Copertura Totale**: 100% delle funzionalità principali documentate per utenti finali
+
+#### **🛡️ Sistema Anti-Regressione**
+- **Checkpoint Documentazione**: Protezione completa dello stato attuale
+- **Baseline Metriche**: 55 documenti totali con tracking qualità
+- **Procedure Ripristino**: Guide dettagliate per recovery in caso di problemi
+- **Monitoraggio Integrità**: Sistema di verifica automatica
+
+#### **🎨 Miglioramenti Organizzativi**
+- **Struttura Unificata**: Template standardizzato per tutti i documenti
+- **Cross-Reference**: Collegamenti intelligenti tra documentazione tecnica e utente
+- **Navigazione Ottimizzata**: Indici dettagliati e guide rapide
+- **Standard Industriale**: Qualità professionale per la documentazione
+
+---
+
+### 📊 **Statistiche del Rilascio**
+
+#### **Metriche Documentazione**
+- **File Totali**: 55 documenti (+6 dalla v0.9.7)
+- **Documentazione Utente**: 5 guide complete (NUOVO)
+- **Linee Aggiunte**: ~1,200 linee di documentazione
+- **Copertura**: 100% funzionalità principali per utenti finali
+- **Accessibilità**: Linguaggio comprensibile a tutti i livelli
+
+#### **Impatto Qualità**
+- **User Experience**: Drastico miglioramento per utenti non tecnici
+- **Onboarding**: Processo di apprendimento semplificato
+- **Professionalità**: Standard industriale raggiunto
+- **Manutenibilità**: Struttura organizzata e scalabile
+
+---
+
+### 🔧 **Nuovi Documenti Creati**
+
+#### **📖 Guide Utente Finale**
+- **`user_docs/USER_MANUAL.md`**: Manuale completo del gioco (12 sezioni)
+- **`user_docs/INSTALLATION_GUIDE.md`**: Guida installazione multi-piattaforma
+- **`user_docs/TROUBLESHOOTING.md`**: Risoluzione problemi comuni
+- **`user_docs/CHANGELOG_USER.md`**: Storia versioni user-friendly
+- **`user_docs/README.md`**: Indice e navigazione documentazione utente
+
+#### **🛡️ Documenti di Protezione**
+- **`CHANGELOG_v0.9.7.1.md`**: Changelog dettagliato della versione
+- **`ANTI_REGRESSION_v0.9.7.1.md`**: Documento di protezione stato progetto
+
+---
+
+### 🎯 **Impatto Strategico**
+Questa release trasforma "The Safe Place" da progetto principalmente tecnico a prodotto accessibile e user-friendly, aprendo la strada a maggiore adozione e contribuzione dalla community.
+
+**Compatibilità**: The Safe Place v0.9.7.1+  
+**Requisiti**: Godot Engine 4.4.1+  
+**Piattaforme**: Windows, Linux, macOS
+
+---
+
 ## v0.9.0 "Surpassing React" - 2025-09-23
 
 ### 🎯 **Tema di Rilascio**

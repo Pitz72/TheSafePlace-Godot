@@ -1,4 +1,4 @@
-# 🏗️ ARCHITETTURA GENERALE - THE SAFE PLACE v0.9.6.5
+# 🏗️ ARCHITETTURA GENERALE - THE SAFE PLACE v0.9.7.1
 
 ## 🎯 **OVERVIEW DEL SISTEMA**
 
@@ -487,7 +487,7 @@ Resolution: Target retro 640x480 scaled
 
 ## 🚧 **STATO ATTUALE SVILUPPO**
 
-### **✅ SISTEMI COMPLETI (v0.9.5)**
+### **✅ SISTEMI COMPLETI (v0.9.7.1)**
 - Core engine e manager system (12 manager)
 - Player progression e character creation
 - Event system con skill check avanzato
@@ -543,6 +543,6 @@ Resolution: Target retro 640x480 scaled
 
 ---
 
-**Versione:** v0.9.6.5 "Computer Boot System"
+**Versione:** v0.9.7.1 "Is it a Game or a Library?"
 **Data:** 24 Settembre 2025
 **Target:** LLM Technical Analysis
