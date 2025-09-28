@@ -557,3 +557,21 @@ func _select_random_enemy_for_biome(biome: String) -> String:
 
 # Funzione rimossa: _load_rest_stop_events
 # Gli eventi REST_STOP sono ora caricati tramite rest_stop_events.json nella directory biomes
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SISTEMA SAVE/LOAD
+# ═══════════════════════════════════════════════════════════════════════════════
+
+## Ottieni i dati da salvare per EventManager
+func get_save_data() -> Dictionary:
+	return {
+		# Per ora EventManager non ha stato persistente da salvare
+		# ma il metodo è necessario per compatibilità con SaveLoadManager
+		"version": "1.0"
+	}
+
+## Carica i dati salvati per EventManager
+func load_save_data(save_data: Dictionary) -> void:
+	# Per ora EventManager non ha stato persistente da caricare
+	# ma il metodo è necessario per evitare crash durante il caricamento
+	print("[EventManager] Dati caricati: ", save_data)

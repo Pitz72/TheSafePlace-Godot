@@ -18,6 +18,11 @@ v[major].[minor].[patch] - [codename]
 
 ## 📊 **VERSIONI RILASCIATE**
 
+### **v0.9.7.2 - "What a Beautiful Entrance Door!"**
+- **Data**: 2025-01-XX
+- **Tema**: Accessibilità e Navigazione Keyboard-Only
+- **Features**: Sistema navigazione completo menu opzioni, focus visivo, controlli intelligenti
+
 ### **v0.9.0 - "Surpassing React"**
 - **Data**: 2025-09-23
 - **Tema**: Enterprise Architecture Overhaul

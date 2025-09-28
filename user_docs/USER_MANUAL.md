@@ -1,8 +1,8 @@
 # 🎮 MANUALE UTENTE - THE SAFE PLACE
 
-**Versione:** v0.9.7  
-**Data:** Settembre 2025  
-**Genere:** Survival RPG Testuale  
+**Versione:** v0.9.7.2 "What a Beautiful Entrance Door!"  
+**Data:** Gennaio 2025  
+**Genere:** Survival RPG Testuale con Accessibilità Completa  
 
 ---
 
@@ -35,6 +35,21 @@ All'avvio del gioco, dovrai creare il tuo personaggio:
 ---
 
 ## 🎮 **CONTROLLI DI GIOCO**
+
+### **⚙️ Menu Opzioni - Navigazione Keyboard-Only**
+Il menu delle opzioni supporta completamente la navigazione da tastiera per massima accessibilità:
+
+- **↑/↓**: Naviga tra gli elementi del menu
+- **←/→**: Modifica valori (slider volume, selezione tema)
+- **ENTER/SPACE**: Attiva pulsanti e toggle checkbox
+- **S**: Salva impostazioni rapidamente
+- **ESC**: Torna al menu principale
+
+**Elementi Navigabili:**
+- **Tema**: Cambia l'aspetto del gioco (Standard, Verde, High Contrast)
+- **CRT Effect**: Attiva/disattiva effetti retro (non disponibile con High Contrast)
+- **Audio**: Abilita/disabilita suoni di gioco
+- **Volume**: Regola il volume generale (solo se audio attivo)
 
 ### **🗺️ Movimento e Navigazione**
 - **WASD** o **Frecce Direzionali**: Muoviti sulla mappa

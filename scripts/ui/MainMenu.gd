@@ -139,23 +139,20 @@ func _on_load_game_pressed():
 	# Per ora, avvia semplicemente il gioco (implementazione futura del load)
 	get_tree().change_scene_to_file("res://scenes/MainGame.tscn")
 
-## Mostra istruzioni (da implementare)
+## Mostra istruzioni
 func _on_instructions_pressed():
 	print("🎮 MainMenu: Mostra istruzioni...")
-	# TODO: Implementare schermata istruzioni
-	print("⚠️ Istruzioni non ancora implementate")
+	get_tree().change_scene_to_file("res://scenes/Instructions.tscn")
 
-## Mostra storia (da implementare)
+## Mostra storia
 func _on_story_pressed():
 	print("🎮 MainMenu: Mostra storia...")
-	# TODO: Implementare schermata storia
-	print("⚠️ Storia non ancora implementata")
+	get_tree().change_scene_to_file("res://scenes/ui/Storia.tscn")
 
-## Mostra impostazioni (da implementare)
+## Mostra impostazioni
 func _on_settings_pressed():
 	print("🎮 MainMenu: Mostra impostazioni...")
-	# TODO: Implementare schermata impostazioni
-	print("⚠️ Impostazioni non ancora implementate")
+	get_tree().change_scene_to_file("res://scenes/Options.tscn")
 
 ## Esce dal gioco
 func _on_quit_pressed():

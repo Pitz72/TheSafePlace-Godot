@@ -7,7 +7,7 @@ Questo documento funge da indice e riepilogo di tutti i contenuti principali pre
 Il gioco ha un cast di personaggi molto ristretto, il che pone grande enfasi su ogni interazione.
 
 -   **Ultimo**: Il personaggio giocante. Un giovane il cui obiettivo è sopravvivere e raggiungere il padre.
--   **Marcus**: Il padre di Ultimo. È uno scienziato che ha lavorato al "Progetto Chimera". La sua lettera dà il via alla missione del giocatore. Si riunisce con lui alla fine del gioco.
+-   **Elian**: Il padre di Ultimo. È il mentore e addestratore che ha insegnato a Ultimo come sopravvivere nel mondo dopo la Guerra Inespressa. La sua lettera dà il via alla missione del giocatore. Si riunisce con lui alla fine del gioco.
 -   **Lena**: La madre di Ultimo, menzionata attraverso un oggetto (il carillon). Sembra fosse una figura conosciuta e amata prima dell'apocalisse.
 -   **Capo dei Corvi**: Un antagonista che si rivela avere un lato umano, mostrando un collegamento con Lena, la madre del protagonista.
 -   **Famiglia di Viandanti**: Un incontro casuale che serve a porre il giocatore di fronte a un dilemma morale.
@@ -17,8 +17,8 @@ Il gioco ha un cast di personaggi molto ristretto, il che pone grande enfasi su 
 
 La storia è un arco narrativo lineare e ben definito, presentato tramite un sistema di eventi dinamici.
 
--   **Incipit**: Ultimo, spinto da una lettera del padre Marcus, parte per un viaggio verso est per raggiungere il Safe Place.
--   **Sviluppo**: Durante il viaggio, Ultimo affronta le difficoltà del mondo, scopre il passato della sua famiglia e svela il mistero dietro la fine del mondo: un esperimento scientifico chiamato "Progetto Chimera".
+-   **Incipit**: Ultimo, spinto da una lettera del padre Elian, parte per un viaggio verso est per raggiungere il Safe Place.
+-   **Sviluppo**: Durante il viaggio, Ultimo affronta le difficoltà del mondo, scopre il passato della sua famiglia e gli insegnamenti del padre su come sopravvivere dopo la Guerra Inespressa.
 -   **Conclusione**: Ultimo raggiunge il Safe Place, incontra il Guardiano e si riunisce finalmente con suo padre.
 
 ## 3. Database degli Oggetti
@@ -60,4 +60,4 @@ Il gioco utilizza due sistemi di eventi paralleli.
 2.  **Eventi Narrativi (Lore)**:
     -   **Fonte**: `js/events/lore_events_linear.js`.
     -   **Natura**: Eventi più lunghi e dettagliati che compongono la trama principale.
-    -   **Scopo**: Raccontare la storia di Ultimo e dare un obiettivo e un significato al viaggio del giocatore. 
+    -   **Scopo**: Raccontare la storia di Ultimo e dare un obiettivo e un significato al viaggio del giocatore.

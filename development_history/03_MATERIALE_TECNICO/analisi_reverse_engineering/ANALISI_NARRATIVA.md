@@ -34,13 +34,13 @@ Ogni evento è un oggetto con una struttura ricca e dettagliata:
 
 ### 2.2. Arco Narrativo: "Ultimo's Journey"
 
-La storia segue il viaggio di Ultimo per ricongiungersi con suo padre, Marcus.
+La storia segue il viaggio di Ultimo per ricongiungersi con suo padre, Elian.
 
-1.  **La Lettera**: Ultimo trova un messaggio del padre, uno scienziato, che lo esorta a raggiungerlo al "Safe Place".
+1.  **La Lettera**: Ultimo trova un messaggio del padre, il suo mentore e addestratore, che lo esorta a raggiungerlo al "Safe Place".
 2.  **Il Viaggio**: Ultimo affronta le difficoltà del mondo post-apocalittico.
 3.  **Il Passato**: Trova oggetti legati alla sua famiglia (un carillon della madre, Lena) che sbloccano interazioni uniche con altri sopravvissuti.
 4.  **Il Dilemma**: Affronta una difficile scelta morale riguardo alla condivisione delle sue scarse risorse.
-5.  **La Verità**: Scopre che la fine del mondo è stata causata da un esperimento scientifico fallito ("Progetto Chimera") a cui suo padre ha lavorato. Il Safe Place era il bunker di emergenza.
+5.  **La Verità**: Scopre la realtà della Guerra Inespressa e come suo padre lo ha preparato per sopravvivere in questo mondo. Il Safe Place era il rifugio che Elian aveva pianificato per loro.
 6.  **L'Arrivo**: Guidato da un sogno profetico e da una trasmissione radio, raggiunge la destinazione.
 7.  **Il Guardiano**: Incontra il Guardiano del Safe Place, che lo riconosce tramite un test genetico.
 8.  **La Riunione**: Entra nel Safe Place e si ricongiunge finalmente con suo padre.
@@ -56,4 +56,4 @@ La funzione `getNextLoreEvent`, chiamata dal manager, è il cuore della logica:
 
 ## 4. Conclusione
 
-Il sistema narrativo è un esempio di design robusto, capace di raccontare una storia lineare e predefinita all'interno di un ambiente di gioco dinamico e non lineare. La combinazione di un pacing manager intelligente e di un database di eventi contestuali crea un'esperienza narrativa coerente e coinvolgente. 
+Il sistema narrativo è un esempio di design robusto, capace di raccontare una storia lineare e predefinita all'interno di un ambiente di gioco dinamico e non lineare. La combinazione di un pacing manager intelligente e di un database di eventi contestuali crea un'esperienza narrativa coerente e coinvolgente.

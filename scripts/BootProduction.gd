@@ -9,7 +9,7 @@ extends Node
 # Qualsiasi modifica richiede approvazione manuale.
 
 var production_timer: float = 0.0
-const PRODUCTION_DURATION = 2.0  # 2 secondi di schermata produzione
+const PRODUCTION_DURATION = 4.0  # 4 secondi di schermata produzione
 
 func _ready():
 	print("🎮 BootProduction: Schermata produzione attiva")
@@ -17,7 +17,7 @@ func _ready():
 func _process(delta: float):
 	production_timer += delta
 
-	# Dopo 2 secondi, passa alla scena di nero intermedia
+	# Dopo 4 secondi, passa alla scena di nero intermedia
 	if production_timer >= PRODUCTION_DURATION:
 		print("🎮 BootProduction: Fine produzione - Schermo nero intermedio")
 		get_tree().change_scene_to_file("res://scenes/BootBlack2.tscn")

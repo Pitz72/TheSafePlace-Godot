@@ -1,6 +1,6 @@
-# 🏠 The Safe Place v0.9.7.1 "Is it a Game or a Library?"
+# 🏠 The Safe Place v0.9.7.2 "What a Beautiful Entrance Door!"
 
-*Un GDR testuale enterprise-level con narrativa profonda e sistema eventi rivoluzionario*
+*Un GDR testuale enterprise-level con narrativa profonda, sistema eventi rivoluzionario e accessibilità keyboard-only completa*
 
 ## 📖 Descrizione del Progetto
 
@@ -21,9 +21,10 @@
 
 ## 🚀 Stato del Progetto
 
-**Versione Attuale**: v0.9.7.1 "Is it a Game or a Library?"
+**Versione Attuale**: v0.9.7.2 "What a Beautiful Entrance Door!"
 
 ### ✅ Sistemi Implementati
+- ✅ **🎮 Navigazione Keyboard-Only**: Sistema completo per menu opzioni con accessibilità totale
 - ✅ **📖 Sistema Narrativo Completo**: 36 eventi unici con quest principale a 12 stadi
 - ✅ **🏆 Quest System Avanzato**: "L'Ultimo Sopravvissuto" con progressione automatica
 - ✅ **⚔️ Sistema di Combattimento**: Turn-based, UI, abilità, stati, XP e loot.

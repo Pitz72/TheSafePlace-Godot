@@ -32,7 +32,7 @@
       "id": "classified_documents",
       "name": "Documenti Classificati",
       "nameShort": "Doc. Classificati",
-      "description": "Fascicoli con il sigillo 'Top Secret'. Parlano di un 'Progetto Chimera' e delle sue catastrofiche conseguenze.",
+      "description": "Fascicoli con il sigillo 'Top Secret'. Contengono informazioni sulla Guerra Inespressa e sui piani di evacuazione militari.",
       "category": "QUEST",
       "subcategory": "document",
       "rarity": "EPIC",
