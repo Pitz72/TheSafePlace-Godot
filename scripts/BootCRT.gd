@@ -20,7 +20,7 @@ func _ready():
 			crt_material.set_shader_parameter("enable_power_on_effect", true)
 
 	# Testo iniziale
-	boot_text.text = "THE SAFE PLACE v0.9.7.1\nIs it a Game or a Library?\n\nInitializing CRT Display..."
+	boot_text.text = "THE SAFE PLACE v0.9.7.5\nIs it a Game or a Library?\n\nInitializing CRT Display..."
 
 	print("🎮 BootCRT: Avvio sequenza CRT - Power-on effect attivo")
 

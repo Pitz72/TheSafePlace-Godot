@@ -17,7 +17,7 @@ const SAVE_PREFIX = "savegame_"
 const BACKUP_PREFIX = "backup_"
 const MAX_SAVES = 10
 const MAX_BACKUPS = 5
-const SAVE_VERSION = "0.9.7"
+const SAVE_VERSION = "0.9.7.5"
 const COMPRESSION_ENABLED = true
 const AUTO_BACKUP_INTERVAL = 300.0  # 5 minuti
 

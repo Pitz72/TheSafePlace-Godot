@@ -262,6 +262,44 @@
         "maxDurability": 45,
         "damage": { "min": 4, "max": 8, "bonus": 1 }
       }
+    },
+    "hunting_knife_sharp": {
+      "id": "hunting_knife_sharp",
+      "name": "Coltello da Caccia Affilato",
+      "nameShort": "Coltello Caccia",
+      "description": "Un coltello robusto da caccia con lama affilata. Perfetto per scuoiare animali e combattimenti ravvicinati.",
+      "category": "WEAPON",
+      "subcategory": "melee",
+      "rarity": "UNCOMMON",
+      "weight": 0.6,
+      "value": 30,
+      "stackable": false,
+      "max_stack": 1,
+      "properties": {
+        "slot": "main_hand",
+        "durability": 45,
+        "maxDurability": 45,
+        "damage": { "min": 4, "max": 8, "bonus": 1 }
+      }
+    },
+    "weapon_knife_sharp": {
+      "id": "weapon_knife_sharp",
+      "name": "Coltello Affilato",
+      "nameShort": "Coltello Affilato",
+      "description": "Un coltello da cucina affilato e ben mantenuto. Molto più efficace del suo equivalente arrugginito.",
+      "category": "WEAPON",
+      "subcategory": "melee",
+      "rarity": "COMMON",
+      "weight": 0.4,
+      "value": 15,
+      "stackable": false,
+      "max_stack": 1,
+      "properties": {
+        "slot": "main_hand",
+        "durability": 50,
+        "maxDurability": 50,
+        "damage": { "min": 3, "max": 7, "bonus": 1 }
+      }
     }
   }
 }

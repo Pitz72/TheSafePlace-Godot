@@ -1,6 +1,6 @@
-# 🏠 The Safe Place v0.9.7.4 "Event System Optimization"
+# 🏠 The Safe Place v0.9.7.5 "Core Systems Integration"
 
-*Un GDR testuale enterprise-level con narrativa profonda, sistema eventi rivoluzionario e architettura consolidata*
+*Un GDR testuale enterprise-level con narrativa profonda, sistemi core integrati e architettura consolidata*
 
 ## 📖 Descrizione del Progetto
 
@@ -10,9 +10,10 @@
 
 - **📖 Narrativa Rivoluzionaria**: Sistema eventi con 36 storie uniche e quest principale a 12 stadi
 - **🏆 Quest System Completo**: "L'Ultimo Sopravvissuto" con progressione narrativa profonda
+- **⚔️ Combat System Integrato**: Sistema combattimento completo con nemici, abilità e ricompense
+- **🏗️ Crafting System Avanzato**: Sistema creazione oggetti con ricette e materiali
 - **🥚 Easter Eggs Segreti**: 3 eventi ultra-rari con ricompense esclusive
 - **👻 Lore Horror**: Eventi sovrannaturali con "Angeli delle Ceneri"
-- ✅ **⚔️ Sistema di Combattimento**: Motore a turni con UI, abilità, stati e ricompense.
 - ✅ **🏕️ Sistema Rifugi**: Aree sicure con azioni contestuali diurne e notturne.
 - ✅ **🏗️ Architettura Consolidata**: 7 Manager Consolidati (da 12) con pattern design ottimizzati
 - **📊 Database Espanso**: 89 item unici con proprietà avanzate
@@ -21,22 +22,24 @@
 
 ## 🚀 Stato del Progetto
 
-**Versione Attuale**: v0.9.7.4 "Event System Optimization"
+**Versione Attuale**: v0.9.7.5 "Core Systems Integration"
 
 ### ✅ Sistemi Implementati
 - ✅ **🎮 Navigazione Keyboard-Only**: Sistema completo per menu opzioni con accessibilità totale
 - ✅ **📖 Sistema Narrativo Completo**: 36 eventi unici con quest principale a 12 stadi
 - ✅ **🏆 Quest System Avanzato**: "L'Ultimo Sopravvissuto" con progressione automatica
-- ✅ **⚔️ Sistema di Combattimento**: Turn-based, UI, abilità, stati, XP e loot.
-- ✅ **🏕️ Sistema Rifugi**: Aree sicure con azioni diurne e riposo notturno.
+- ✅ **⚔️ Sistema di Combattimento**: Turn-based completo con nemici, abilità, stati, XP e loot
+- ✅ **🏗️ Sistema Crafting**: Creazione oggetti con ricette, materiali e validazione
+- ✅ **🏕️ Sistema Rifugi**: Aree sicure con azioni diurne e riposo notturno
 - ✅ **📊 Database Espanso**: 89 item unici con 37 nuove aggiunte
-- ✅ **🧪 Testing Industriale**: Framework automatizzato con anti-regressione v0.9.7.4
+- ✅ **🧪 Testing Industriale**: Framework automatizzato con anti-regressione v0.9.7.5
 - ✅ **⚡ Performance Ottimale**: 60+ FPS, <100MB RAM, zero memory leaks
 - ✅ **🔧 Quality Assurance**: Error handling robusto, sincronizzazione 100%
 - ✅ **🏗️ Manager Consolidation**: Architettura semplificata da 12 a 7 manager
+- ✅ **🔗 Systems Integration**: Integrazione completa tra Quest, Combat e Crafting
 
 ### 🔄 In Sviluppo
-- 🔄 Sistema di Combattimento Avanzato
+- 🔄 UI/UX Enhancement e Polish
 - 🔄 Multiple Endings basati su scelte
 - 🔄 Espansione Contenuti Secondari
 
@@ -109,7 +112,8 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file `LICENSE` per i de
 
 ## 🏷️ Tag e Versioni
 
-- `v0.9.7.4` - Event System Optimization (Corrente)
+- `v0.9.7.5` - Core Systems Integration (Corrente)
+- `v0.9.7.4` - Event System Optimization
 - `v0.9.7.2` - What a Beautiful Entrance Door!
 - `v0.9.7.1` - Is it a Game or a Library?
 - `v0.9.7` - Climbing the China Mountains
@@ -134,7 +138,7 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file `LICENSE` per i de
 *Sviluppato con ❤️ e l'assistenza di Claude AI*
 
 [![Godot Engine](https://img.shields.io/badge/Godot-4.4.1-blue.svg)](https://godotengine.org/)
-[![Version](https://img.shields.io/badge/Version-v0.9.7.4-green.svg)](CHANGELOG_v0.9.7.4.md)
+[![Version](https://img.shields.io/badge/Version-v0.9.7.5-green.svg)](CHANGELOG_v0.9.7.5.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Enterprise%20Ready-brightgreen.svg)](DOCUMENTATION_INDEX.md)
 
@@ -144,11 +148,12 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file `LICENSE` per i de
 
 **The Safe Place** è un GDR testuale che combina l'estetica retrò dei monitor CRT con meccaniche di gioco moderne. Il giocatore esplora un mondo post-apocalittico alla ricerca di un rifugio sicuro, affrontando eventi dinamici, gestendo risorse vitali e prendendo decisioni che influenzano la sopravvivenza.
 
-### **🎯 Caratteristiche Principali v0.9.7.4 "Event System Optimization"**
+### **🎯 Caratteristiche Principali v0.9.7.5 "Core Systems Integration"**
 
 - **🏗️ Architettura Consolidata:** 7 Manager Consolidati (da 12) con pattern design ottimizzati
-- **📊 Sincronizzazione Perfetta:** 57+ documenti tecnici, codice e documentazione 100% allineati
-- **🧪 Testing Anti-Regressione:** Framework completo con checkpoint v0.9.7.4
+- **🔗 Integrazione Sistemi Core:** Quest, Combat e Crafting completamente integrati
+- **📊 Sincronizzazione Perfetta:** 59+ documenti tecnici, codice e documentazione 100% allineati
+- **🧪 Testing Anti-Regressione:** Framework completo con checkpoint v0.9.7.5
 - **⚡ Performance Eccellente:** 60+ FPS stabili, <100MB RAM, zero memory leaks
 - **🎮 Sistemi Avanzati:** Quest narrativo, crafting dinamico, combattimento bilanciato
 - **🖥️ UI Enterprise-Level:** Popup interattivi, menu principale, gestione stati complessa
@@ -285,10 +290,16 @@ MainGame.gd (Scene Root)
 - Performance e manutenibilità migliorate
 - Documentazione completa aggiornata
 
-### **🔄 Milestone 5: Combat System** (In Sviluppo)
-- Sistema combattimento turn-based
-- Nemici e incontri casuali
-- Equipaggiamento e armi
+### **✅ Milestone 5: Core Systems Integration** ⭐ v0.9.7.5
+- Integrazione completa Quest, Combat e Crafting
+- Sistema nemici e combattimento bilanciato
+- Database ricette e crafting avanzato
+- Testing framework e anti-regressione completi
+
+### **🔄 Milestone 6: UI/UX Enhancement** (In Sviluppo)
+- Miglioramenti interfaccia utente
+- Polish e ottimizzazioni finali
+- Preparazione release candidate
 
 ---
 
@@ -430,11 +441,11 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file [`LICENSE`](LICENS
 
 ## 🎯 **ROADMAP FUTURO**
 
-### **v0.9.8.0 "Combat Enhancement"** (Q1 2025)
-- Sistema combattimento avanzato con manager consolidati
-- Ottimizzazioni performance ulteriori
+### **v0.9.8.0 "UI/UX Enhancement"** (Q1 2025)
+- Miglioramenti interfaccia utente e user experience
+- Polish finale e ottimizzazioni
 - Nuovi contenuti narrativi
-- Miglioramenti UI/UX
+- Preparazione release candidate
 
 ### **v1.0.0 "The Safe Place"** (Q2 2025)
 - Campagna completa
@@ -444,10 +455,10 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file [`LICENSE`](LICENS
 
 ---
 
-**🏠 The Safe Place v0.9.7.4 "Event System Optimization"**
-*Architettura consolidata con 7 manager ottimizzati per performance e manutenibilità*
+**🏠 The Safe Place v0.9.7.5 "Core Systems Integration"**
+*Sistemi core completamente integrati con Quest, Combat e Crafting unificati*
 
 ---
 
 *Ultimo aggiornamento: Gennaio 2025*
-*Versione README: v0.9.7.4*
+*Versione README: v0.9.7.5*

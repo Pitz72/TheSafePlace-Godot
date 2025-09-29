@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="THE SAFE PLACE CHRONICLES: The Echo of the Journey v0.9.7.4 Event System Optimization"
-config/description="Computer Boot System - Sistema di boot computer completo con menu principale rivoluzionato, shader CRT ultra-realistici e navigazione keyboard-only per accessibilità totale"
+config/name="THE SAFE PLACE CHRONICLES: The Echo of the Journey v0.9.7.5 Core Systems Integration"
+config/description="Core Systems Integration - Integrazione completa di tutti i sistemi core del gioco con architettura modulare unificata, quest system implementato, combat system bilanciato e crafting system espanso"
 run/main_scene="res://scenes/BootBlack.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
 
