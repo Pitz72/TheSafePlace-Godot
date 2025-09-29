@@ -10,22 +10,33 @@ signal popup_closed
 var is_active: bool = false
 
 func _ready():
-	hide()
-	choice1_button.pressed.connect(_on_choice_pressed.bind("eat_drink"))
-	choice2_button.pressed.connect(_on_choice_pressed.bind("eat"))
-	choice3_button.pressed.connect(_on_choice_pressed.bind("drink"))
-	choice4_button.pressed.connect(_on_choice_pressed.bind("rest_only"))
+	# Connetti ai segnali
+	if rest_button:
+		rest_button.pressed.connect(_on_rest_pressed)
+	if cancel_button:
+		cancel_button.pressed.connect(_on_cancel_pressed)
+	
+	# Inizializza lo stato
+	_is_active = false
+	visible = false
 
 func show_popup():
-	is_active = true
-	show()
-	InputManager.set_state(InputManager.InputState.POPUP)
-	_update_button_status()
+	"""Mostra il popup per il riposo notturno"""
+	# Ottieni le statistiche attuali del giocatore
+	var player_stats = PlayerSystemManager.get_stats()
+	var player_inventory = PlayerSystemManager.get_inventory()
+	
+	# Aggiorna le informazioni mostrate
+	_update_display(player_stats, player_inventory)
+	
+	visible = true
+	_is_active = true
+	InterfaceSystemManager.set_state(InterfaceSystemManager.InputState.POPUP)
 
 func _close_popup():
 	is_active = false
 	hide()
-	InputManager.set_state(InputManager.InputState.MAP)
+	InterfaceSystemManager.set_state(InterfaceSystemManager.InputState.MAP)
 	popup_closed.emit()
 
 func _on_choice_pressed(action: String):
@@ -54,7 +65,7 @@ func _consume_resource(type: String):
 	var item_id_to_use = ""
 	# Trova il primo oggetto consumabile del tipo giusto nell'inventario
 	for item_slot in PlayerManager.inventory:
-		var item_data = DataManager.get_item_data(item_slot.id)
+		var item_data = WorldSystemManager.get_item_data(item_slot.id)
 		if item_data.get("category") == "CONSUMABLE":
 			if type == "food" and item_data.get("subcategory") == "food":
 				item_id_to_use = item_slot.id
@@ -76,7 +87,7 @@ func _update_button_status():
 
 func _has_resource(type: String) -> bool:
 	for item_slot in PlayerManager.inventory:
-		var item_data = DataManager.get_item_data(item_slot.id)
+		var item_data = WorldSystemManager.get_item_data(item_slot.id)
 		if item_data.get("category") == "CONSUMABLE":
 			if type == "food" and item_data.get("subcategory") == "food":
 				return true

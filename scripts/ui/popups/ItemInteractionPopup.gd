@@ -68,7 +68,7 @@ var _available_actions: Array[String] = []
 # ========================================
 
 ## Mostra i dettagli di un oggetto nell'inventario e attiva il popup
-## @param item: Dictionary completo dall'inventario PlayerManager (id, quantity, instance_data)
+## @param item: Dictionary completo dall'inventario PlayerSystemManager (id, quantity, instance_data)
 func show_item_details(item: Dictionary) -> void:
 	# Debug rimosso per ridurre log
 	
@@ -76,11 +76,11 @@ func show_item_details(item: Dictionary) -> void:
 	_current_item = item
 	
 	# Ottieni dati statici dall'oggetto
-	if not DataManager:
+	if not WorldSystemManager:
 		# Debug rimosso per ridurre log
 		return
 	
-	_current_item_data = DataManager.get_item_data(item.id)
+	_current_item_data = WorldSystemManager.get_item_data(item.id)
 	if _current_item_data.is_empty():
 		# Debug rimosso per ridurre log
 		return
@@ -127,8 +127,8 @@ func _build_stats_text() -> String:
 	# Localizzazione categoria oggetto  
 	var localized_category = CATEGORY_LOC.get(category, category.capitalize())
 	
-	# Localizzazione rarità tramite DataManager
-	var rarity_data = DataManager.get_rarity_data(rarity)
+	# Localizzazione rarità tramite WorldSystemManager
+	var rarity_data = WorldSystemManager.get_rarity_data(rarity)
 	var localized_rarity = rarity_data.get("name", rarity.capitalize()) if rarity_data else rarity.capitalize()
 	
 	stats_parts.append("Categoria: %s" % localized_category)
@@ -243,8 +243,8 @@ func _build_stats_pairs() -> Array[Dictionary]:
 	# Localizzazione categoria oggetto
 	var localized_category = CATEGORY_LOC.get(category, category.capitalize())
 	
-	# Localizzazione rarità tramite DataManager
-	var rarity_data = DataManager.get_rarity_data(rarity)
+	# Localizzazione rarità tramite WorldSystemManager
+	var rarity_data = WorldSystemManager.get_rarity_data(rarity)
 	var localized_rarity = rarity_data.get("name", rarity.capitalize()) if rarity_data else rarity.capitalize()
 	
 	pairs.append({"key": "Categoria:", "value": localized_category})
@@ -381,8 +381,8 @@ func _update_action_selection() -> void:
 func _on_use_pressed() -> void:
 	# Debug rimosso per ridurre log
 	
-	if PlayerManager:
-		var success = PlayerManager.use_item(_current_item.id, 1)
+	if PlayerSystemManager:
+		var success = PlayerSystemManager.use_item(_current_item.id, 1)
 		if success:
 			# Debug rimosso per ridurre log
 			pass
@@ -400,8 +400,8 @@ func _on_use_pressed() -> void:
 func _on_equip_pressed() -> void:
 	# Debug rimosso per ridurre log
 	
-	if PlayerManager:
-		var success = PlayerManager.equip_item(_current_item.id)
+	if PlayerSystemManager:
+		var success = PlayerSystemManager.equip_item(_current_item.id)
 		if success:
 			# Debug rimosso per ridurre log
 			pass
@@ -429,8 +429,8 @@ func _on_repair_pressed() -> void:
 func _on_discard_pressed() -> void:
 	# Debug rimosso per ridurre log
 	
-	if PlayerManager:
-		var success = PlayerManager.remove_item(_current_item.id, 1)
+	if PlayerSystemManager:
+		var success = PlayerSystemManager.remove_item(_current_item.id, 1)
 		if success:
 			# Debug rimosso per ridurre log
 			pass

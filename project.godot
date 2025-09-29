@@ -10,25 +10,46 @@ config_version=5
 
 [application]
 
-config/name="THE SAFE PLACE CHRONICLES: The Echo of the Journey v0.9.7.2 What a Beautiful Entrance Door!"
+config/name="THE SAFE PLACE CHRONICLES: The Echo of the Journey v0.9.7.3 Manager Consolidation"
 config/description="Computer Boot System - Sistema di boot computer completo con menu principale rivoluzionato, shader CRT ultra-realistici e navigazione keyboard-only per accessibilità totale"
 run/main_scene="res://scenes/BootBlack.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
 
 [autoload]
 
-ThemeManager="*res://scripts/ThemeManager.gd"
-DataManager="*res://scripts/managers/DataManager.gd"
-PlayerManager="*res://scripts/managers/PlayerManager.gd"
-InputManager="*res://scripts/managers/InputManager.gd"
-TimeManager="*res://scripts/managers/TimeManager.gd"
-EventManager="*res://scripts/managers/EventManager.gd"
-SkillCheckManager="*res://scripts/managers/SkillCheckManager.gd"
-QuestManager="*res://scripts/managers/QuestManager.gd"
-NarrativeManager="*res://scripts/managers/NarrativeManager.gd"
-CraftingManager="*res://scripts/managers/CraftingManager.gd"
-CombatManager="*res://scripts/managers/CombatManager.gd"
-SaveLoadManager="*res://scripts/managers/SaveLoadManager.gd"
+# ========================================
+# MANAGER CONSOLIDATI - Sistema Modulare
+# ========================================
+CoreDataManager="*res://scripts/managers/CoreDataManager.gd"
+PlayerSystemManager="*res://scripts/managers/PlayerSystemManager.gd"
+WorldSystemManager="*res://scripts/managers/WorldSystemManager.gd"
+NarrativeSystemManager="*res://scripts/managers/NarrativeSystemManager.gd"
+CombatSystemManager="*res://scripts/managers/CombatSystemManager.gd"
+InterfaceSystemManager="*res://scripts/managers/InterfaceSystemManager.gd"
+PersistenceSystemManager="*res://scripts/managers/PersistenceSystemManager.gd"
+
+# ========================================
+# COMPATIBILITÀ LEGACY - Alias per transizione
+# ========================================
+# Questi alias mantengono la compatibilità con il codice esistente
+# durante la fase di transizione. Saranno rimossi in futuro.
+PlayerManager="*res://scripts/managers/PlayerSystemManager.gd"
+DataManager="*res://scripts/managers/CoreDataManager.gd"
+TimeManager="*res://scripts/managers/WorldSystemManager.gd"
+EventManager="*res://scripts/managers/NarrativeSystemManager.gd"
+SkillCheckManager="*res://scripts/managers/NarrativeSystemManager.gd"
+QuestManager="*res://scripts/managers/NarrativeSystemManager.gd"
+NarrativeManager="*res://scripts/managers/NarrativeSystemManager.gd"
+CraftingManager="*res://scripts/managers/WorldSystemManager.gd"
+CombatManager="*res://scripts/managers/CombatSystemManager.gd"
+InputManager="*res://scripts/managers/InterfaceSystemManager.gd"
+ThemeManager="*res://scripts/managers/InterfaceSystemManager.gd"
+SaveLoadManager="*res://scripts/managers/PersistenceSystemManager.gd"
+
+# ========================================
+# STRUMENTI DI SVILUPPO
+# ========================================
+CrashLogger="*res://scripts/tools/CrashLogger.gd"
 
 [gui]
 

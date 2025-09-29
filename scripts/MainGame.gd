@@ -31,8 +31,6 @@ extends Node
 # =============================================================================
 
 # Riferimenti ai manager
-@onready var event_manager: EventManager
-@onready var player_manager: PlayerManager
 @onready var world: World
 @onready var game_ui: Control
 
@@ -87,70 +85,68 @@ var atmosphere_messages = [
 
 
 func _ready():
-	print("🎮 MainGame: Inizio sequenza di avvio UNIFICATA.")
+	TSPLogger.info("MainGame", "Inizio sequenza di avvio UNIFICATA.")
 	
 	# 1. Inizializza i manager che contengono dati
-	EventManager.initialize_events()
-	QuestManager.initialize_quests()
+	NarrativeSystemManager.initialize_events()
+	NarrativeSystemManager.initialize_quests()
 	
 	# 2. Prepara dati personaggio (senza applicarli)
-	var char_data = PlayerManager.prepare_new_character_data()
+	var char_data = PlayerSystemManager.prepare_new_character_data()
 	
 	# 2.5. Ordina alla GameUI di mostrare il popup di creazione personaggio
 	game_ui = get_node("/root/MainGame/GameUI/GameUI")
 	if game_ui and game_ui.has_method("show_character_creation_popup"):
 		game_ui.show_character_creation_popup(char_data)
 	else:
-		print("⚠️ MainGame: GameUI o show_character_creation_popup() non trovata!")
+		TSPLogger.warn("MainGame", "GameUI o show_character_creation_popup() non trovata!")
 	
 	# 3. Connetti i segnali globali (se necessario)
 	_connect_signals() # Assicurati che questa funzione esista e sia corretta
 	
-	print("✅ MainGame: Flusso di avvio completato.")
+	TSPLogger.success("MainGame", "Flusso di avvio completato.")
 
 func _connect_signals() -> void:
-	print("🔌 MainGame: Connessione segnali...")
+	TSPLogger.info("MainGame", "Connessione segnali...")
 
-	# Connetti a EventManager
-	if EventManager:
-		if not EventManager.event_triggered.is_connected(_on_event_triggered):
-			EventManager.event_triggered.connect(_on_event_triggered)
-			print("✅ Connesso a EventManager.event_triggered")
-
-	# Connetti a InputManager per azioni rifugio
-	if InputManager:
-		if not InputManager.shelter_action_requested.is_connected(_on_shelter_action_requested):
-			InputManager.shelter_action_requested.connect(_on_shelter_action_requested)
-			print("✅ Connesso a InputManager.shelter_action_requested")
+	# Connetti segnali EventManager
+	if not NarrativeSystemManager.event_triggered.is_connected(_on_event_triggered):
+		NarrativeSystemManager.event_triggered.connect(_on_event_triggered)
+		TSPLogger.success("MainGame", "Connesso a NarrativeSystemManager.event_triggered")
+	
+	# Connetti segnali InputManager per azioni rifugio
+	if not InterfaceSystemManager.shelter_action_requested.is_connected(_on_shelter_action_requested):
+		InterfaceSystemManager.shelter_action_requested.connect(_on_shelter_action_requested)
+		TSPLogger.success("MainGame", "Connesso a InterfaceSystemManager.shelter_action_requested")
 
 	# Connetti a World (tramite GameUI)
 	if game_ui and game_ui.has_method("get_world_scene"):
 		world = game_ui.get_world_scene()
 		if world and world.has_signal("player_moved"):
-			# Connetti InputManager.map_move a World._on_map_move (CATENA MOVIMENTO)
-			if InputManager and not InputManager.map_move.is_connected(world._on_map_move):
-				InputManager.map_move.connect(world._on_map_move)
-				print("✅ Connesso InputManager.map_move a World._on_map_move")
+			// ... existing code ...
+	if InterfaceSystemManager and not InterfaceSystemManager.map_move.is_connected(world._on_map_move):
+		InterfaceSystemManager.map_move.connect(world._on_map_move)
+		TSPLogger.success("MainGame", "Connesso InterfaceSystemManager.map_move a World._on_map_move (deferred)")
 			
 			# Connetti World.player_moved a MainGame._on_player_moved
 			if not world.player_moved.is_connected(_on_player_moved):
 				world.player_moved.connect(_on_player_moved)
-				print("✅ Connesso a World.player_moved")
+				TSPLogger.success("MainGame", "Connesso a World.player_moved")
 				
 			if not world.narrative_message_sent.is_connected(_on_world_narrative_message):
 				world.narrative_message_sent.connect(_on_world_narrative_message)
-				print("✅ Connesso a World.narrative_message_sent")
+				TSPLogger.success("MainGame", "Connesso a World.narrative_message_sent")
 		else:
-			print("⏳ World non ancora disponibile dal GameUI, tento connessione differita...")
+			TSPLogger.warn("MainGame", "World non ancora disponibile dal GameUI, tento connessione differita...")
 			call_deferred("_try_connect_world_signals")
 	else:
-		print("⚠️ GameUI o metodo get_world_scene non disponibile per la connessione dei segnali.")
+		TSPLogger.warn("MainGame", "GameUI o metodo get_world_scene non disponibile per la connessione dei segnali.")
 
 	# Emetti messaggi di benvenuto iniziali
-	PlayerManager.narrative_log_generated.emit("[color=yellow]La sopravvivenza dipende dalle tue scelte.[/color]")
-	PlayerManager.narrative_log_generated.emit("[color=yellow]Ogni passo è una decisione. Muoviti con [WASD] o le frecce.[/color]")
-	PlayerManager.narrative_log_generated.emit("[color=yellow]Ogni passo sarà un'esperienza che ti renderà più forte.[/color]")
-	PlayerManager.narrative_log_generated.emit("[color=yellow]Il viaggio inizia ora. Che la fortuna ti accompagni.[/color]")
+	PlayerSystemManager.narrative_log_generated.emit("[color=yellow]La sopravvivenza dipende dalle tue scelte.[/color]")
+	PlayerSystemManager.narrative_log_generated.emit("[color=yellow]Ogni passo è una decisione. Muoviti con [WASD] o le frecce.[/color]")
+	PlayerSystemManager.narrative_log_generated.emit("[color=yellow]Ogni passo sarà un'esperienza che ti renderà più forte.[/color]")
+	PlayerSystemManager.narrative_log_generated.emit("[color=yellow]Il viaggio inizia ora. Che la fortuna ti accompagni.[/color]")
 
 # Tenta di connettere i segnali del World istanziato da GameUI in modo differito
 func _try_connect_world_signals():
@@ -160,34 +156,34 @@ func _try_connect_world_signals():
 	# Controlla se abbiamo superato il limite di tentativi
 	if connection_attempts > MAX_CONNECTION_ATTEMPTS:
 		push_error("MainGame: Impossibile connettere World signals dopo %d tentativi" % MAX_CONNECTION_ATTEMPTS)
-		print("❌ MainGame: Timeout connessione World signals")
+		TSPLogger.error("MainGame", "Timeout connessione World signals")
 		return
 	
 	if not game_ui or not game_ui.has_method("get_world_scene"):
-		print("⏳ MainGame: GameUI non ancora pronto, tentativo %d/%d" % [connection_attempts, MAX_CONNECTION_ATTEMPTS])
+		TSPLogger.debug("MainGame", "GameUI non ancora pronto, tentativo %d/%d" % [connection_attempts, MAX_CONNECTION_ATTEMPTS])
 		call_deferred("_try_connect_world_signals")
 		return
 		
 	var w = game_ui.get_world_scene()
 	if w and w.has_signal("player_moved"):
 		world = w
-		# Connetti InputManager.map_move a World._on_map_move (CATENA MOVIMENTO)
-		if InputManager and not InputManager.map_move.is_connected(world._on_map_move):
-			InputManager.map_move.connect(world._on_map_move)
-			print("✅ Connesso InputManager.map_move a World._on_map_move (deferred)")
+		# Connetti InterfaceSystemManager.map_move a World._on_map_move (CATENA MOVIMENTO)
+		if InterfaceSystemManager and not InterfaceSystemManager.map_move.is_connected(world._on_map_move):
+			InterfaceSystemManager.map_move.connect(world._on_map_move)
+			TSPLogger.success("MainGame", "Connesso InterfaceSystemManager.map_move a World._on_map_move (deferred)")
 		
 		if not world.player_moved.is_connected(_on_player_moved):
 			world.player_moved.connect(_on_player_moved)
-			print("✅ Connesso a World.player_moved (deferred)")
+			TSPLogger.success("MainGame", "Connesso a World.player_moved (deferred)")
 		if not world.narrative_message_sent.is_connected(_on_world_narrative_message):
 			world.narrative_message_sent.connect(_on_world_narrative_message)
-			print("✅ Connesso a World.narrative_message_sent (deferred)")
+			TSPLogger.success("MainGame", "Connesso a World.narrative_message_sent (deferred)")
 			
 		# Reset contatore su successo
 		connection_attempts = 0
-		print("✅ MainGame: Tutti i segnali World connessi con successo")
+		TSPLogger.success("MainGame", "Tutti i segnali World connessi con successo")
 	else:
-		print("⏳ MainGame: World non ancora disponibile, tentativo %d/%d" % [connection_attempts, MAX_CONNECTION_ATTEMPTS])
+		TSPLogger.debug("MainGame", "World non ancora disponibile, tentativo %d/%d" % [connection_attempts, MAX_CONNECTION_ATTEMPTS])
 		call_deferred("_try_connect_world_signals")
 
 # Aggiorna il timer del cooldown eventi
@@ -198,25 +194,26 @@ func _process(delta):
 	# Controlla se è il momento di un messaggio di atmosfera
 	if time_since_last_message >= atmosphere_message_cooldown:
 		var random_message = atmosphere_messages[randi() % atmosphere_messages.size()]
-		PlayerManager.narrative_log_generated.emit(random_message)
+		PlayerSystemManager.narrative_log_generated.emit(random_message)
 		time_since_last_message = 0.0 # Resetta il timer
 
 # Gestisce il movimento del giocatore e triggera eventi
 func _on_player_moved(position: Vector2i, terrain_type: String):
-	print("🚶 Giocatore mosso in posizione: %s, terreno: %s" % [str(position), terrain_type])
+	CrashLogger.log("MainGame", "Player moved", "Position: %s, Terrain: %s" % [str(position), terrain_type])
+	TSPLogger.debug("MainGame", "Giocatore mosso in posizione: %s, terreno: %s" % [str(position), terrain_type])
 	
 	# Incrementa contatore passi
 	steps_since_last_event += 1
 	
 	# Guadagna esperienza per il movimento (5-10 di giorno, 5-15 di notte)
 	var exp_gained: int
-	if TimeManager.is_night():
+	if TimeSystemManager.is_night():
 		exp_gained = randi_range(5, 15)  # Più esperienza di notte per la difficoltà
 	else:
 		exp_gained = randi_range(5, 10)  # Esperienza normale di giorno
 	
-	# Aggiungi esperienza (i messaggi sono gestiti internamente da PlayerManager)
-	PlayerManager.add_experience(exp_gained, "esplorazione")
+	# Aggiungi esperienza (i messaggi sono gestiti internamente da PlayerSystemManager)
+	PlayerSystemManager.add_experience(exp_gained, "esplorazione")
 	
 	# Mappa terreno a bioma per EventManager
 	var new_biome = _map_terrain_to_biome(terrain_type)
@@ -229,15 +226,15 @@ func _on_player_moved(position: Vector2i, terrain_type: String):
 	if was_in_shelter != is_in_shelter:
 		shelter_status_changed.emit(is_in_shelter)
 		_update_crafting_access(is_in_shelter)
-		print("🏠 Stato rifugio cambiato: %s" % ["ENTRATO" if is_in_shelter else "USCITO"])
+		TSPLogger.info("MainGame", "Stato rifugio cambiato: %s" % ["ENTRATO" if is_in_shelter else "USCITO"])
 
 		# Se entriamo in un rifugio di giorno, mostra popup opzioni
-		if is_in_shelter and not TimeManager.is_night():
+		if is_in_shelter and not TimeSystemManager.is_night():
 			_show_day_shelter_popup()
 	
 	# GESTIONE RIFUGIO NOTTURNO
-	if is_in_shelter and TimeManager.is_night():
-		print("🌙 Rifugio notturno - unica opzione: riposo completo fino al mattino")
+	if is_in_shelter and TimeSystemManager.is_night():
+		TSPLogger.info("MainGame", "Rifugio notturno - unica opzione: riposo completo fino al mattino")
 		_shelter_night_rest()
 		return  # Non continuare con eventi normali
 
@@ -245,49 +242,89 @@ func _on_player_moved(position: Vector2i, terrain_type: String):
 	if new_biome != current_biome:
 		if biome_entry_messages.has(new_biome):
 			var msg_data = biome_entry_messages[new_biome]
-			PlayerManager.narrative_log_generated.emit("[color=%s]%s[/color]" % [msg_data.color, msg_data.text])
+			PlayerSystemManager.narrative_log_generated.emit("[color=%s]%s[/color]" % [msg_data.color, msg_data.text])
 			time_since_last_message = 0.0 # Resetta il timer atmosfera
 		current_biome = new_biome
 	
 	# Verifica se può triggerare un evento
 	if _can_trigger_event(new_biome):
-		EventManager.trigger_random_event(new_biome)
+		CrashLogger.log_critical("MainGame", "Attempting to trigger event", "Position: %s" % str(position))
+		
+		# Controllo di sicurezza per EventManager prima del trigger
+		if not EventManager:
+			CrashLogger.log_crash("MainGame._on_player_moved", "EventManager non disponibile")
+			TSPLogger.error("MainGame", "ERRORE CRITICO: EventManager non disponibile per trigger evento")
+			return
+		
+		# Verifica che EventManager abbia il metodo necessario
+		if not EventManager.has_method("trigger_random_event"):
+			CrashLogger.log_crash("MainGame._on_player_moved", "EventManager.trigger_random_event non disponibile")
+			TSPLogger.error("MainGame", "ERRORE: EventManager non ha il metodo trigger_random_event")
+			return
+		
+		CrashLogger.log_critical("MainGame", "Calling EventManager.trigger_random_event")
+		TSPLogger.debug("MainGame", "Triggering evento per bioma: %s" % new_biome)
+		call_deferred("_trigger_event_safely", new_biome)
 	
 	# Controlla sempre i trigger della quest dopo ogni mossa
 	QuestManager.check_all_triggers()
 	
-	print("📊 Passi dall'ultimo evento: %d" % [steps_since_last_event])
+	TSPLogger.debug("MainGame", "Passi dall'ultimo evento: %d" % [steps_since_last_event])
+
+func _trigger_event_safely(biome: String):
+	CrashLogger.log_critical("MainGame", "Executing deferred event trigger")
+	EventManager.trigger_random_event(biome)
 
 # Verifica se può triggerare un evento (cooldown + passi)
 func _can_trigger_event(_biome: String) -> bool:
-	# Regola attuale: solo numero di passi, niente cooldown temporale
-	return steps_since_last_event >= steps_threshold
+	# Controlla se sono passati abbastanza passi e tempo
+	var time_passed = time_since_last_event >= event_cooldown_time
+	var steps_passed = steps_since_last_event >= steps_threshold
+	
+	return time_passed and steps_passed
 
 # Tenta di triggerare un evento basato su probabilità bioma
 func _attempt_event_trigger(biome: String):
 	# NUOVA LOGICA: I rifugi NON hanno eventi casuali, ma azioni contestuali
 	if biome == "ristoro":
-		print("🏠 Rifugio rilevato - eventi casuali disattivati, azioni contestuali attive")
+		TSPLogger.info("MainGame", "Rifugio rilevato - eventi casuali disattivati, azioni contestuali attive")
 		return
 	
-	print("🎲 Tentativo evento per bioma: %s" % biome)
+	TSPLogger.debug("MainGame", "Tentativo evento per bioma: %s" % biome)
 
 # Reset dei cooldown dopo un evento
 func _reset_cooldowns():
 	steps_since_last_event = 0
 	time_since_last_event = 0.0
-	print("⏰ Cooldown eventi resettato")
+	TSPLogger.debug("MainGame", "Cooldown eventi resettato")
 
 # Gestisce l'evento triggerato dall'EventManager
 func _on_event_triggered(event_data: Dictionary):
-	print("🎯 Evento ricevuto: %s" % event_data.get("title", "Sconosciuto"))
+	CrashLogger.log_critical("MainGame", "Event triggered received", "Event: %s" % str(event_data))
+	TSPLogger.info("MainGame", "Evento ricevuto: %s" % event_data.get("title", "Sconosciuto"))
 	time_since_last_message = 0.0 # Resetta il timer atmosfera
 	
+	# Controlli di sicurezza per GameUI
+	if not game_ui:
+		CrashLogger.log_crash("MainGame._on_event_triggered", "GameUI non disponibile")
+		TSPLogger.warn("MainGame", "GameUI non disponibile, tentativo di riconnessione...")
+		game_ui = get_node("/root/MainGame/GameUI/GameUI")
+		if not game_ui:
+			CrashLogger.log_crash("MainGame._on_event_triggered", "Riconnessione GameUI fallita")
+			TSPLogger.error("MainGame", "ERRORE: Impossibile trovare GameUI per mostrare evento")
+			return
+	
+	# Verifica che GameUI abbia il metodo necessario
+	if not game_ui.has_method("show_event_popup"):
+		CrashLogger.log_crash("MainGame._on_event_triggered", "GameUI.show_event_popup non disponibile")
+		TSPLogger.error("MainGame", "ERRORE: GameUI non ha il metodo show_event_popup")
+		return
+	
 	# Passa l'evento al GameUI per la visualizzazione
-	if game_ui and game_ui.has_method("show_event_popup"):
-		game_ui.show_event_popup(event_data)
-	else:
-		print("⚠️ GameUI non disponibile per mostrare evento")
+	CrashLogger.log_critical("MainGame", "Calling GameUI.show_event_popup")
+	TSPLogger.debug("MainGame", "Passando evento a GameUI...")
+	game_ui.show_event_popup(event_data)
+	TSPLogger.success("MainGame", "Evento passato con successo a GameUI")
 
 # Funzione debug per forzare eventi
 func force_trigger_event(target_biome: String = ""):
@@ -295,7 +332,7 @@ func force_trigger_event(target_biome: String = ""):
 	if biome == "":
 		biome = ["forest", "plains", "mountains", "urban"][randi() % 4]
 	
-	print("🔧 DEBUG: Forzando evento per bioma: %s" % biome)
+	TSPLogger.debug("MainGame", "DEBUG: Forzando evento per bioma: %s" % biome)
 	EventManager.trigger_random_event(biome)
 	_reset_cooldowns()
 
@@ -335,7 +372,7 @@ func _on_world_narrative_message():
 
 # Gestisce le azioni richieste dal rifugio (callback da InputManager)
 func _on_shelter_action_requested(action_index: int):
-	print("🏠 Azione rifugio richiesta: %d" % action_index)
+	TSPLogger.info("MainGame", "Azione rifugio richiesta: %d" % action_index)
 	
 	match action_index:
 		1:  # Riposa
@@ -347,11 +384,11 @@ func _on_shelter_action_requested(action_index: int):
 		4:  # Lascia il Rifugio
 			_shelter_action_leave()
 		_:
-			print("⚠️ Azione rifugio non valida: %d" % action_index)
+			TSPLogger.warn("MainGame", "Azione rifugio non valida: %d" % action_index)
 
 # Azione rifugio: Riposa (Recupera 10 HP, +2 ore)
 func _shelter_action_rest():
-	print("😴 Riposi nel rifugio...")
+	TSPLogger.info("MainGame", "Riposi nel rifugio...")
 	
 	# Applica benefici
 	PlayerManager.modify_hp(10)
@@ -363,7 +400,7 @@ func _shelter_action_rest():
 
 # Azione rifugio: Cerca Risorse (+30 min, skill check)
 func _shelter_action_search_resources():
-	print("🔍 Cerchi risorse nel rifugio...")
+	TSPLogger.info("MainGame", "Cerchi risorse nel rifugio...")
 	
 	# Skill check Intelligenza DC 12
 	var skill_result = SkillCheckManager.perform_check("intelligenza", 12)
@@ -397,7 +434,7 @@ func _shelter_action_leave():
 
 # Mostra popup per il rifugio diurno con opzioni
 func _show_day_shelter_popup():
-	print("☀️ Mostrando popup rifugio diurno")
+	TSPLogger.info("MainGame", "Mostrando popup rifugio diurno")
 
 	# Carica e istanzia la scena ShelterPopup
 	var popup_scene = load("res://scenes/ui/popups/ShelterPopup.tscn")
@@ -406,13 +443,13 @@ func _show_day_shelter_popup():
 		return
 
 	var popup_instance = popup_scene.instantiate()
-	print("🏠 Popup istanziato: %s" % popup_instance)
+	TSPLogger.debug("MainGame", "Popup istanziato: %s" % popup_instance)
 
 	# Aggiungi popup al GameUI (CanvasLayer) invece che alla scena principale
 	var ui_node = get_node("/root/MainGame/GameUI/GameUI")
 	if ui_node:
 		ui_node.add_child(popup_instance)
-		print("🏠 Popup aggiunto al GameUI (CanvasLayer)")
+		TSPLogger.debug("MainGame", "Popup aggiunto al GameUI (CanvasLayer)")
 	else:
 		push_error("MainGame: GameUI non trovato per aggiungere popup")
 		return
@@ -420,15 +457,15 @@ func _show_day_shelter_popup():
 	# Connetti segnali
 	popup_instance.popup_closed.connect(_on_shelter_popup_closed.bind(popup_instance))
 	popup_instance.shelter_action_requested.connect(_on_shelter_action_requested)
-	print("🏠 Segnali popup connessi")
+	TSPLogger.debug("MainGame", "Segnali popup connessi")
 
 	# Mostra il popup con opzioni diurne
 	popup_instance.show_day_shelter()
-	print("🏠 show_day_shelter() chiamato")
+	TSPLogger.debug("MainGame", "show_day_shelter() chiamato")
 
 # Riposo notturno completo fino alle 6:00 del mattino
 func _shelter_night_rest():
-	print("🌙 Iniziando riposo notturno completo nel rifugio")
+	TSPLogger.info("MainGame", "Iniziando riposo notturno completo nel rifugio")
 
 	# Calcola ore fino alle 6:00 del mattino
 	var current_hour = TimeManager.current_hour
@@ -451,10 +488,10 @@ func _shelter_night_rest():
 	PlayerManager.narrative_log_generated.emit("[color=#4169E1]Passi la notte al sicuro nel rifugio. Ti svegli riposato alle 6:00 del mattino.[/color]")
 	PlayerManager.narrative_log_generated.emit("[color=#888888]Notte trascorsa: Recuperi 50 HP ma consumi risorse per il riposo.[/color]")
 
-	print("🌅 Riposo notturno completato - ora: 06:00")
+	TSPLogger.success("MainGame", "Riposo notturno completato - ora: 06:00")
 
 func _on_shelter_popup_closed(popup_instance):
-	print("🏠 Popup rifugio chiuso")
+	TSPLogger.debug("MainGame", "Popup rifugio chiuso")
 	# Rimuovi popup dalla scena
 	if popup_instance and is_instance_valid(popup_instance):
 		popup_instance.queue_free()
@@ -463,11 +500,11 @@ func _on_shelter_popup_closed(popup_instance):
 func _update_crafting_access(has_access: bool):
 	if CraftingManager:
 		CraftingManager.set_workbench_access(has_access)
-		print("🔨 Accesso crafting aggiornato: %s" % ("ABILITATO" if has_access else "DISABILITATO"))
+		TSPLogger.info("MainGame", "Accesso crafting aggiornato: %s" % ("ABILITATO" if has_access else "DISABILITATO"))
 
 # Mostra l'interfaccia di crafting
 func _show_crafting_interface():
-	print("🔨 Apertura interfaccia crafting...")
+	TSPLogger.info("MainGame", "Apertura interfaccia crafting...")
 	# Per ora, mostra semplicemente le ricette disponibili
 	var recipes = CraftingManager.get_craftable_recipes()
 	var message = "[color=#00ff00]Ricette disponibili al banco da lavoro:[/color]\n"
@@ -500,7 +537,7 @@ func _get_random_shelter_items(count: int) -> Array[Dictionary]:
 
 # DEBUG: Forza l'ora notturna per testare il popup
 func _debug_force_night():
-	print("🔧 DEBUG: Forzando ora notturna (20:00)")
+	TSPLogger.debug("MainGame", "DEBUG: Forzando ora notturna (20:00)")
 	TimeManager.current_hour = 20
 	TimeManager.current_minute = 0
 	PlayerManager.narrative_log_generated.emit("[color=#ffaa00]DEBUG: Ora forzata a 20:00 per test popup notturno[/color]")

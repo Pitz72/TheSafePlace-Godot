@@ -165,8 +165,8 @@ func _on_quit_pressed():
 
 ## Ottiene informazioni sui salvataggi disponibili
 func get_available_saves() -> Array:
-	if SaveLoadManager:
-		return SaveLoadManager.available_saves
+	if PersistenceSystemManager:
+		return PersistenceSystemManager.get_save_list()
 	return []
 
 ## Verifica se ci sono salvataggi disponibili

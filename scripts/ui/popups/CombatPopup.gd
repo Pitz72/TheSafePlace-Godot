@@ -22,24 +22,24 @@ func _ready():
 	hide()
 	_connect_manager_signals()
 
-func _connect_manager_signals():
-	if not CombatManager:
-		push_error("CombatPopup: CombatManager non trovato!")
+func _ready():
+	if not CombatSystemManager:
+		push_error("CombatPopup: CombatSystemManager non trovato!")
 		return
 	
-	# Connetti ai segnali del CombatManager
-	if not CombatManager.turn_changed.is_connected(_on_turn_changed):
-		CombatManager.turn_changed.connect(_on_turn_changed)
-	if not CombatManager.damage_dealt.is_connected(_on_damage_dealt):
-		CombatManager.damage_dealt.connect(_on_damage_dealt)
-	if not CombatManager.status_effect_applied.is_connected(_on_status_effect_applied):
-		CombatManager.status_effect_applied.connect(_on_status_effect_applied)
-	if not CombatManager.combat_ended.is_connected(_on_combat_ended):
-		CombatManager.combat_ended.connect(_on_combat_ended)
+	# Connetti ai segnali del CombatSystemManager
+	if not CombatSystemManager.turn_changed.is_connected(_on_turn_changed):
+		CombatSystemManager.turn_changed.connect(_on_turn_changed)
+	if not CombatSystemManager.damage_dealt.is_connected(_on_damage_dealt):
+		CombatSystemManager.damage_dealt.connect(_on_damage_dealt)
+	if not CombatSystemManager.status_effect_applied.is_connected(_on_status_effect_applied):
+		CombatSystemManager.status_effect_applied.connect(_on_status_effect_applied)
+	if not CombatSystemManager.combat_ended.is_connected(_on_combat_ended):
+		CombatSystemManager.combat_ended.connect(_on_combat_ended)
 	
-	# Connetti ai segnali di InputManager per le azioni
-	if not InputManager.combat_action_selected.is_connected(_on_player_action_selected):
-		InputManager.combat_action_selected.connect(_on_player_action_selected)
+	# Connetti ai segnali di InterfaceSystemManager per le azioni
+	if not InterfaceSystemManager.combat_action_selected.is_connected(_on_player_action_selected):
+		InterfaceSystemManager.combat_action_selected.connect(_on_player_action_selected)
 
 func show_combat_popup(enemy_data: Dictionary):
 	is_active = true
@@ -63,15 +63,15 @@ func _close_popup():
 # CALLBACKS SEGNALI
 # ========================================
 
-func _on_turn_changed(new_state: CombatManager.CombatState):
+func _on_turn_changed(new_state: CombatSystemManager.CombatState):
 	if not is_active: return
 
-	if new_state == CombatManager.CombatState.PLAYER_TURN:
+	if new_state == CombatSystemManager.CombatState.PLAYER_TURN:
 		turn_indicator_label.text = "🟢 IL TUO TURNO"
 		turn_indicator_label.modulate = Color.GREEN
 		combat_log_label.append_text("\n--- È il tuo turno! ---\n")
 		_update_actions_display(true)
-	elif new_state == CombatManager.CombatState.ENEMY_TURN:
+	elif new_state == CombatSystemManager.CombatState.ENEMY_TURN:
 		turn_indicator_label.text = "🔴 TURNO NEMICO"
 		turn_indicator_label.modulate = Color.RED
 		combat_log_label.append_text("\n--- Turno di %s ---\n" % current_enemy_data.name)
@@ -95,23 +95,23 @@ func _on_status_effect_applied(target: String, _effect_id: String):
 	else:
 		_update_enemy_info()
 
-func _on_combat_ended(result: CombatManager.CombatResult, rewards: Dictionary):
+func _on_combat_ended(result: CombatSystemManager.CombatResult, rewards: Dictionary):
+	"""Gestisce la fine del combattimento"""
 	if not is_active: return
 	
-	# Mostra risultato del combattimento
 	match result:
-		CombatManager.CombatResult.PLAYER_VICTORY:
-			combat_log_label.append_text("\n[color=#00ff00]=== VITTORIA! ===[/color]\n")
-			if rewards.has("xp") and rewards.xp > 0:
-				combat_log_label.append_text("Esperienza guadagnata: %d XP\n" % rewards.xp)
-			if rewards.has("items") and rewards.items.size() > 0:
-				combat_log_label.append_text("Oggetti trovati: %s\n" % str(rewards.items))
-		CombatManager.CombatResult.ENEMY_VICTORY:
-			combat_log_label.append_text("\n[color=#ff0000]=== SCONFITTA ===[/color]\n")
-		CombatManager.CombatResult.PLAYER_FLED:
-			combat_log_label.append_text("\n[color=#ffff00]=== FUGA RIUSCITA ===[/color]\n")
-		_:
-			combat_log_label.append_text("\n[color=#888888]=== COMBATTIMENTO TERMINATO ===[/color]\n")
+		CombatSystemManager.CombatResult.PLAYER_VICTORY:
+			turn_indicator_label.text = "🏆 VITTORIA!"
+			turn_indicator_label.modulate = Color.GOLD
+			combat_log_label.append_text("\n🏆 HAI VINTO IL COMBATTIMENTO! 🏆\n")
+			_show_rewards(rewards)
+			
+		CombatSystemManager.CombatResult.ENEMY_VICTORY:
+			turn_indicator_label.text = "💀 SCONFITTA"
+			turn_indicator_label.modulate = Color.RED
+		CombatSystemManager.CombatResult.PLAYER_FLED:
+			turn_indicator_label.text = "🏃 FUGA"
+			turn_indicator_label.modulate = Color.YELLOW
 	
 	# Disabilita azioni e mostra messaggio di chiusura
 	_update_actions_display(false)
@@ -124,20 +124,23 @@ func _on_combat_ended(result: CombatManager.CombatResult, rewards: Dictionary):
 	actions_container.add_child(close_label)
 
 func _on_player_action_selected(action_index: int):
-	if not is_active or CombatManager.current_combat_state != CombatManager.CombatState.PLAYER_TURN:
+	"""Gestisce l'azione selezionata dal giocatore"""
+	if not is_active or CombatSystemManager.current_combat_state != CombatSystemManager.CombatState.PLAYER_TURN:
 		return
-
-	# Mappa l'indice all'azione del CombatManager
-	var action_to_perform: CombatManager.CombatAction
+	
+	# Mappa l'indice all'azione del CombatSystemManager
+	var action_to_perform: CombatSystemManager.CombatAction
+	
 	match action_index:
-		1:
-			action_to_perform = CombatManager.CombatAction.ATTACK
-		# Aggiungere altri casi per Difesa, Oggetti, Fuga
+		0:  # Attacco
+			action_to_perform = CombatSystemManager.CombatAction.ATTACK
+		1:  # Difesa
+			# Implementa logica difesa
+			pass
 		_:
-			print("Azione non valida: ", action_index)
 			return
-			
-	CombatManager.process_player_action(action_to_perform)
+	
+	CombatSystemManager.process_player_action(action_to_perform)
 
 # ========================================
 # AGGIORNAMENTO UI
@@ -152,16 +155,16 @@ func _update_enemy_info():
 	
 	# Mostra effetti di stato
 	var status_text = ""
-	for effect in CombatManager.enemy_active_effects:
+	for effect in CombatSystemManager.enemy_active_effects:
 		status_text += " [%s]" % effect.id.to_upper()
 	
 	enemy_hp_label.text = hp_text + status_text
 
 func _update_player_info():
-	player_hp_label.text = "HP: %d/%d" % [PlayerManager.hp, PlayerManager.max_hp]
+	player_hp_label.text = "HP: %d/%d" % [PlayerSystemManager.hp, PlayerSystemManager.max_hp]
 	
 	var status_text = ""
-	for effect in CombatManager.player_active_effects:
+	for effect in CombatSystemManager.player_active_effects:
 		status_text += " [%s]" % effect.id.to_upper()
 	
 	player_status_label.text = status_text

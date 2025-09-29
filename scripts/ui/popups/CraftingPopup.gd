@@ -28,13 +28,14 @@ func _ready():
 	visible = false
 	is_popup_active = false
 
-	# Connetti segnali CraftingManager
-	CraftingManager.crafting_completed.connect(_on_crafting_completed)
-	CraftingManager.crafting_failed.connect(_on_crafting_failed)
-	CraftingManager.workbench_access_changed.connect(_on_workbench_access_changed)
+	# Connetti segnali WorldSystemManager
+	WorldSystemManager.crafting_completed.connect(_on_crafting_completed)
+	WorldSystemManager.crafting_failed.connect(_on_crafting_failed)
+	WorldSystemManager.workbench_access_changed.connect(_on_workbench_access_changed)
 
 # Mostra popup crafting
 func show_crafting_popup():
+	"""Mostra il popup di crafting"""
 	is_popup_active = true
 	selected_recipe_index = 0
 	selected_recipe_id = ""
@@ -75,9 +76,9 @@ func _update_available_recipes():
 	# Pulisci lista precedente
 	_clear_recipe_list()
 
-	# Ottieni ricette disponibili e craftabili
-	available_recipes = CraftingManager.get_available_recipes()
-	craftable_recipes = CraftingManager.get_craftable_recipes()
+	# Ottieni ricette disponibili e craftabili da WorldSystemManager
+	available_recipes = WorldSystemManager.get_available_recipes()
+	craftable_recipes = WorldSystemManager.get_craftable_recipes()
 
 	# Crea bottoni per ogni ricetta
 	for i in range(available_recipes.size()):
@@ -100,7 +101,7 @@ func _add_recipe_button(recipe_id: String, recipe_index: int):
 	if not recipe_list_container:
 		return
 
-	var recipe_data = CraftingManager.get_recipe_data(recipe_id)
+	var recipe_data = WorldSystemManager.get_recipe_data(recipe_id)
 	if recipe_data.is_empty():
 		return
 
@@ -130,7 +131,7 @@ func _update_recipe_details():
 			recipe_details.text = "[color=#666666]Seleziona una ricetta per vedere i dettagli...[/color]"
 		return
 
-	var recipe_data = CraftingManager.get_recipe_data(selected_recipe_id)
+	var recipe_data = WorldSystemManager.get_recipe_data(selected_recipe_id)
 	if recipe_data.is_empty():
 		return
 
@@ -143,11 +144,11 @@ func _update_recipe_details():
 	for material in materials:
 		var material_id = material.get("id", "")
 		var quantity = material.get("quantity", 1)
-		var material_data = DataManager.get_item_data(material_id)
+		var material_data = WorldSystemManager.get_item_data(material_id)
 		var material_name = material_data.get("name", material_id) if not material_data.is_empty() else material_id
 
 		# Verifica disponibilità
-		var available = PlayerManager.get_item_count(material_id)
+		var available = PlayerSystemManager.get_item_count(material_id)
 		var status_color = "#00FF00" if available >= quantity else "#FF0000"
 		var status_icon = "✓" if available >= quantity else "✗"
 
@@ -155,13 +156,13 @@ func _update_recipe_details():
 
 	# Skill requirement
 	var skill_req = recipe_data.get("required_skill", 0)
-	var current_skill = CraftingManager.get_crafting_skill()
+	var current_skill = WorldSystemManager.get_crafting_skill()
 	var skill_color = "#00FF00" if current_skill >= skill_req else "#FF0000"
 	details_text += "\n[color=#FFFF00]Abilità richiesta:[/color] [color=%s]%d[/color] (attuale: %d)\n" % [skill_color, skill_req, current_skill]
 
 	# Workbench requirement
 	var wb_req = recipe_data.get("requires_workbench", false)
-	var current_wb = CraftingManager.has_workbench()
+	var current_wb = WorldSystemManager.has_workbench()
 	var wb_color = "#00FF00" if current_wb or not wb_req else "#FF0000"
 	var wb_text = "Richiesto" if wb_req else "Non richiesto"
 	var wb_status = "Disponibile" if current_wb else "Non disponibile"
@@ -357,8 +358,8 @@ func _craft_selected_recipe():
 	if selected_recipe_id.is_empty():
 		return
 
-	var result = CraftingManager.attempt_crafting(selected_recipe_id, 1)
-	if result == CraftingManager.CraftingResult.SUCCESS:
+	var success = WorldSystemManager.start_crafting(selected_recipe_id)
+	if success:
 		print("🔨 Crafting iniziato: %s" % selected_recipe_id)
 	else:
 		print("🔨 Crafting fallito per: %s" % selected_recipe_id)

@@ -5,13 +5,13 @@ extends PanelContainer
 @onready var armor_label: Label = $EquipmentVBox/ArmorLabel
 
 func _ready():
-	if PlayerManager:
-		PlayerManager.inventory_changed.connect(update_panel)
+	if PlayerSystemManager:
+		PlayerSystemManager.inventory_changed.connect(update_panel)
 	update_panel()
 
 func update_panel(_arg1 = null, _arg2 = null):
 	"""Aggiorna pannello equipaggiamento corrente"""
-	if not PlayerManager:
+	if not PlayerSystemManager:
 		if weapon_label:
 			weapon_label.text = "ARMA: [ERRORE]"
 		if armor_label:
@@ -20,16 +20,16 @@ func update_panel(_arg1 = null, _arg2 = null):
 	
 	# Aggiorna arma equipaggiata - STILE ASCII PURO
 	if weapon_label:
-		if not PlayerManager.equipped_weapon.is_empty():
-			var weapon_name = PlayerManager.equipped_weapon.get("name", "Arma Sconosciuta")
+		if not PlayerSystemManager.equipped_weapon.is_empty():
+			var weapon_name = PlayerSystemManager.equipped_weapon.get("name", "Arma Sconosciuta")
 			weapon_label.text = "ARMA: %s" % weapon_name
 		else:
 			weapon_label.text = "ARMA: Nessuna"
 	
 	# Aggiorna armatura equipaggiata - STILE ASCII PURO
 	if armor_label:
-		if not PlayerManager.equipped_armor.is_empty():
-			var armor_name = PlayerManager.equipped_armor.get("name", "Armatura Sconosciuta")
+		if not PlayerSystemManager.equipped_armor.is_empty():
+			var armor_name = PlayerSystemManager.equipped_armor.get("name", "Armatura Sconosciuta")
 			armor_label.text = "ARMATURA: %s" % armor_name
 		else:
 			armor_label.text = "ARMATURA: Nessuna"

@@ -23,11 +23,11 @@ const CATEGORY_COLORS = {
 }
 
 func _ready():
-	if PlayerManager:
-		PlayerManager.inventory_changed.connect(update_panel)
-	if InputManager:
-		InputManager.inventory_toggle.connect(_on_inventory_toggle)
-		InputManager.inventory_navigate.connect(_on_inventory_navigate)
+	if PlayerSystemManager:
+		PlayerSystemManager.inventory_changed.connect(update_panel)
+	if InterfaceSystemManager:
+		InterfaceSystemManager.inventory_toggle.connect(_on_inventory_toggle)
+		InterfaceSystemManager.inventory_navigate.connect(_on_inventory_navigate)
 	update_panel()
 
 func update_panel(_arg1 = null, _arg2 = null):
@@ -40,14 +40,14 @@ func update_panel(_arg1 = null, _arg2 = null):
 	# Step 1: Pulisci lista esistente
 	clear_inventory_display()
 	
-	if not PlayerManager:
+	if not PlayerSystemManager:
 		var error_label = Label.new()
-		error_label.text = "[ERROR] PlayerManager non disponibile"
+		error_label.text = "[ERROR] PlayerSystemManager non disponibile"
 		inventory_list.add_child(error_label)
 		return
 	
 	# Step 2: Aggiungi ogni oggetto dell'inventario con selezione visuale - STILE ASCII PURO
-	if PlayerManager.inventory.size() == 0:
+	if PlayerSystemManager.inventory.size() == 0:
 		var empty_label = Label.new()
 		empty_label.text = "- Inventario vuoto -"
 		inventory_list.add_child(empty_label)
@@ -55,28 +55,28 @@ func update_panel(_arg1 = null, _arg2 = null):
 		selected_inventory_index = 0
 	else:
 		# Assicurati che selected_inventory_index sia valido
-		if selected_inventory_index >= PlayerManager.inventory.size():
-			selected_inventory_index = PlayerManager.inventory.size() - 1
+		if selected_inventory_index >= PlayerSystemManager.inventory.size():
+			selected_inventory_index = PlayerSystemManager.inventory.size() - 1
 		if selected_inventory_index < 0:
 			selected_inventory_index = 0
 			
 		# Crea oggetti con indicatore selezione
-		for i in range(PlayerManager.inventory.size()):
-			var item = PlayerManager.inventory[i]
+		for i in range(PlayerSystemManager.inventory.size()):
+			var item = PlayerSystemManager.inventory[i]
 			var is_selected = (i == selected_inventory_index and is_inventory_active)
 			add_inventory_item_to_display_with_selection(item, is_selected)
 	
-	print("InventoryPanel: ✅ Inventario aggiornato (%d oggetti) - Selezione: %d - Modalità attiva: %s" % [PlayerManager.inventory.size(), selected_inventory_index, is_inventory_active])
+	print("InventoryPanel: ✅ Inventario aggiornato (%d oggetti) - Selezione: %d - Modalità attiva: %s" % [PlayerSystemManager.inventory.size(), selected_inventory_index, is_inventory_active])
 
 # ═══ UTILITY INVENTARIO ═══
 
 func get_category_color(item_id: String) -> String:
-	"""Restituisce il colore per la categoria dell'oggetto usando il sistema DataManager"""
-	if not DataManager:
+	"""Restituisce il colore per la categoria dell'oggetto usando il sistema WorldSystemManager"""
+	if not WorldSystemManager:
 		return "#00FF40"  # Verde di default
 	
-	# Usa il nuovo sistema di colori del DataManager
-	var color = DataManager.get_item_color(item_id)
+	# Usa il nuovo sistema di colori del WorldSystemManager
+	var color = WorldSystemManager.get_item_color(item_id)
 	
 	# Converte Color in stringa esadecimale
 	return "#%02X%02X%02X" % [int(color.r * 255), int(color.g * 255), int(color.b * 255)]
@@ -100,14 +100,14 @@ func add_inventory_item_to_display_with_selection(item: Dictionary, is_selected:
 	# HOTFIX: Usa .get("id") per evitare crash se un oggetto non ha un ID.
 	var item_id = item.get("id", "oggetto_sconosciuto")
 
-	# Ottieni dati oggetto dal DataManager (usando il nuovo campo "id")
-	var item_data = DataManager.get_item_data(item_id)
+	# Ottieni dati oggetto dal WorldSystemManager (usando il nuovo campo "id")
+	var item_data = WorldSystemManager.get_item_data(item_id)
 	var item_name = item_data.get("name", item_id) if item_data else item_id
 	
 	# Calcola numero posizione oggetto nella lista (1-based per display)
 	var item_index = -1
-	for i in range(PlayerManager.inventory.size()):
-		if PlayerManager.inventory[i] == item:
+	for i in range(PlayerSystemManager.inventory.size()):
+		if PlayerSystemManager.inventory[i] == item:
 			item_index = i + 1  # Display 1-based (1, 2, 3...)
 			break
 	
@@ -158,16 +158,16 @@ func _on_inventory_toggle():
 	
 	if is_inventory_active:
 		# Attiva modalità inventario
-		InputManager.set_state(InputManager.InputState.INVENTORY)
+		InterfaceSystemManager.set_state(InterfaceSystemManager.InputState.INVENTORY)
 		print("InventoryPanel: 🎒 Modalità inventario ATTIVATA")
 		
 		# PROBLEMA 1 RISOLTO: Evidenzia prima voce immediatamente
-		if PlayerManager and PlayerManager.inventory.size() > 0:
+		if PlayerSystemManager and PlayerSystemManager.inventory.size() > 0:
 			selected_inventory_index = 0  # Reset a prima voce
 		
 	else:
 		# Disattiva modalità inventario
-		InputManager.set_state(InputManager.InputState.MAP)
+		InterfaceSystemManager.set_state(InterfaceSystemManager.InputState.MAP)
 		print("InventoryPanel: 🗺️ Modalità mappa ATTIVATA")
 		
 		# PROBLEMA 2 RISOLTO: Reset evidenziazione quando si esce
@@ -181,17 +181,17 @@ func _on_inventory_navigate(direction: Vector2i):
 	if not is_inventory_active:
 		return  # Ignora se inventario non attivo
 
-	if not PlayerManager or PlayerManager.inventory.size() == 0:
+	if not PlayerSystemManager or PlayerSystemManager.inventory.size() == 0:
 		return  # Nessun oggetto da navigare
 
 	# Logica navigazione inventario
 	if direction.y == -1:  # SU
 		selected_inventory_index -= 1
 		if selected_inventory_index < 0:
-			selected_inventory_index = PlayerManager.inventory.size() - 1  # Wrap around all'ultimo
+			selected_inventory_index = PlayerSystemManager.inventory.size() - 1  # Wrap around all'ultimo
 	elif direction.y == 1:  # GIÙ
 		selected_inventory_index += 1
-		if selected_inventory_index >= PlayerManager.inventory.size():
+		if selected_inventory_index >= PlayerSystemManager.inventory.size():
 			selected_inventory_index = 0  # Wrap around al primo
 
 	print("InventoryPanel: 🎯 Navigazione inventario: index %d" % selected_inventory_index)
@@ -212,7 +212,7 @@ func _input(event):
 			KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9:
 				# Selezione diretta con numeri (1-9)
 				var item_number = event.keycode - KEY_1  # 0-8
-				if item_number < PlayerManager.inventory.size():
+				if item_number < PlayerSystemManager.inventory.size():
 					selected_inventory_index = item_number
 					print("InventoryPanel: 🔢 Selezione diretta: slot %d" % (item_number + 1))
 					update_panel()
@@ -231,11 +231,11 @@ func _input(event):
 
 func _use_selected_item():
 	"""Usa l'oggetto attualmente selezionato"""
-	if not is_inventory_active or not PlayerManager or PlayerManager.inventory.size() == 0:
+	if not is_inventory_active or not PlayerSystemManager or PlayerSystemManager.inventory.size() == 0:
 		return
 
-	if selected_inventory_index >= 0 and selected_inventory_index < PlayerManager.inventory.size():
-		var selected_item = PlayerManager.inventory[selected_inventory_index]
+	if selected_inventory_index >= 0 and selected_inventory_index < PlayerSystemManager.inventory.size():
+		var selected_item = PlayerSystemManager.inventory[selected_inventory_index]
 		var item_id = selected_item.get("id", "")
 
 		if item_id.is_empty():
@@ -243,7 +243,7 @@ func _use_selected_item():
 			return
 
 		# Ottieni dati oggetto
-		var item_data = DataManager.get_item_data(item_id)
+		var item_data = WorldSystemManager.get_item_data(item_id)
 		if item_data.is_empty():
 			print("InventoryPanel: ❌ Dati oggetto non trovati: %s" % item_id)
 			return
@@ -275,7 +275,7 @@ func _use_consumable_item(item: Dictionary, item_data: Dictionary):
 
 	if success:
 		# Rimuovi una unità dall'inventario
-		PlayerManager.remove_item(item_id, 1)
+		PlayerSystemManager.remove_item(item_id, 1)
 		print("InventoryPanel: ✅ Consumabile usato: %s" % item_data.get("name", item_id))
 	else:
 		print("InventoryPanel: ❌ Errore nell'uso del consumabile")
@@ -288,13 +288,13 @@ func _apply_consumable_effects(effects: Array, item: Dictionary) -> bool:
 
 		match effect_type:
 			"heal":
-				PlayerManager.modify_hp(amount)
+				PlayerSystemManager.modify_hp(amount)
 				print("InventoryPanel: ❤️ HP +%d" % amount)
 			"nourish":
-				PlayerManager.modify_food(amount)
+				PlayerSystemManager.modify_food(amount)
 				print("InventoryPanel: 🍖 Fame +%d" % amount)
 			"hydrate":
-				PlayerManager.modify_water(amount)
+				PlayerSystemManager.modify_water(amount)
 				print("InventoryPanel: 💧 Sete +%d" % amount)
 			_:
 				print("InventoryPanel: ❓ Effetto sconosciuto: %s" % effect_type)
@@ -309,11 +309,11 @@ func _equip_item(item: Dictionary, item_data: Dictionary):
 	var success = false
 	match category:
 		"WEAPON":
-			success = PlayerManager.equip_weapon(item_id)
+			success = PlayerSystemManager.equip_weapon(item_id)
 			if success:
 				print("InventoryPanel: ⚔️ Arma equipaggiata: %s" % item_data.get("name", item_id))
 		"ARMOR":
-			success = PlayerManager.equip_armor(item_id)
+			success = PlayerSystemManager.equip_armor(item_id)
 			if success:
 				print("InventoryPanel: 🛡️ Armatura equipaggiata: %s" % item_data.get("name", item_id))
 
@@ -340,11 +340,11 @@ func _scroll_to_selected_item():
 
 func get_selected_item() -> Dictionary:
 	"""Restituisce l'oggetto attualmente selezionato"""
-	if not PlayerManager or PlayerManager.inventory.size() == 0 or selected_inventory_index < 0:
+	if not PlayerSystemManager or PlayerSystemManager.inventory.size() == 0 or selected_inventory_index < 0:
 		return {}
 
-	if selected_inventory_index < PlayerManager.inventory.size():
-		return PlayerManager.inventory[selected_inventory_index]
+	if selected_inventory_index < PlayerSystemManager.inventory.size():
+		return PlayerSystemManager.inventory[selected_inventory_index]
 
 	return {}
 
@@ -355,11 +355,11 @@ func get_selected_item_data() -> Dictionary:
 		return {}
 
 	var item_id = selected_item.get("id", "")
-	return DataManager.get_item_data(item_id)
+	return WorldSystemManager.get_item_data(item_id)
 
 func is_item_selected() -> bool:
 	"""Verifica se c'è un oggetto selezionato"""
-	return selected_inventory_index >= 0 and selected_inventory_index < PlayerManager.inventory.size()
+	return selected_inventory_index >= 0 and selected_inventory_index < PlayerSystemManager.inventory.size()
 
 # ====================
 # DEBUG E TESTING
@@ -367,7 +367,7 @@ func is_item_selected() -> bool:
 
 func debug_add_test_items():
 	"""Aggiunge oggetti di test per debugging"""
-	if not PlayerManager:
+	if not PlayerSystemManager:
 		return
 
 	var test_items = [
@@ -378,17 +378,17 @@ func debug_add_test_items():
 	]
 
 	for item in test_items:
-		PlayerManager.add_item(item.id, item.quantity)
+		PlayerSystemManager.add_item(item.id, item.quantity)
 
 	print("InventoryPanel: 🔧 Oggetti di test aggiunti")
 	update_panel()
 
 func debug_clear_inventory():
 	"""Svuota l'inventario per testing"""
-	if not PlayerManager:
+	if not PlayerSystemManager:
 		return
 
-	PlayerManager.inventory.clear()
+	PlayerSystemManager.inventory.clear()
 	selected_inventory_index = 0
 	print("InventoryPanel: 🔧 Inventario svuotato")
 	update_panel()

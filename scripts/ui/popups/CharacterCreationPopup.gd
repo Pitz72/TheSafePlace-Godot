@@ -38,7 +38,7 @@ func _ready() -> void:
     _connect_button_inputs()
 
 func show_character_creation(char_data: Dictionary) -> void:
-    InputManager.set_state(InputManager.InputState.POPUP)
+    InterfaceSystemManager.set_state(InterfaceSystemManager.InputState.POPUP)
     _is_active = true
     self.show()
     _start_generation_sequence(char_data)
@@ -46,7 +46,7 @@ func show_character_creation(char_data: Dictionary) -> void:
 func close_popup() -> void:
     _is_active = false
     self.hide()
-    InputManager.set_state(InputManager.InputState.MAP)
+    InterfaceSystemManager.set_state(InterfaceSystemManager.InputState.MAP)
     popup_closed.emit()
 
 func _connect_button_inputs() -> void:
@@ -77,8 +77,8 @@ func _on_accept_pressed() -> void:
 
 func _on_reroll_pressed() -> void:
     if _is_active:
-        # Rigenera i dati tramite PlayerManager
-        var new_char_data = PlayerManager.prepare_new_character_data()
+        # Rigenera i dati tramite PlayerSystemManager
+        var new_char_data = PlayerSystemManager.prepare_new_character_data()
         _start_generation_sequence(new_char_data)
 
 func _start_generation_sequence(char_data: Dictionary) -> void:

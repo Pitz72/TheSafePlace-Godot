@@ -7,50 +7,55 @@ extends PanelContainer
 @onready var status_label: RichTextLabel = $SurvivalVBox/StatusLabel
 
 func _ready():
-	if PlayerManager:
-		PlayerManager.resources_changed.connect(update_panel)
-		PlayerManager.stats_changed.connect(update_panel)
-	# Chiama un primo aggiornamento per assicurarsi che i dati siano visibili all'avvio
+	if PlayerSystemManager:
+		PlayerSystemManager.resources_changed.connect(update_panel)
+		PlayerSystemManager.stats_changed.connect(update_panel)
 	update_panel()
 
-func update_panel(_arg1 = null, _arg2 = null):
-	"""Aggiorna pannello sopravvivenza (HP, Food, Water, Status)"""
-	if not PlayerManager:
-		print("SurvivalPanel: ❌ PlayerManager non disponibile")
+func update_panel():
+	"""Aggiorna pannello sopravvivenza con HP, cibo, acqua e status"""
+	if not PlayerSystemManager:
+		print("SurvivalPanel: ❌ PlayerSystemManager non disponibile")
 		return
 	
-	# Verifica che le label esistano prima di aggiornare
+	# Aggiorna HP con colore rosso se basso
 	if hp_label:
-		hp_label.text = "HP: %d/%d" % [PlayerManager.hp, PlayerManager.max_hp]
-		if PlayerManager.hp <= 20:
-			hp_label.text += " [CRITICO!]"
-	
-	if food_label:
-		food_label.text = "Sazietà: %d/%d" % [PlayerManager.food, PlayerManager.max_food]
-		if PlayerManager.food <= 10:
-			food_label.text += " [FAME!]"
-	
-	if water_label:
-		water_label.text = "Idratazione: %d/%d" % [PlayerManager.water, PlayerManager.max_water]
-		if PlayerManager.water <= 10:
-			water_label.text += " [SETE!]"
-	
-	# Aggiorna status del personaggio (M3.T3)
-	if status_label:
-		var status_text = "Status: "
-		if PlayerManager.active_statuses.is_empty():
-			status_text += "Normale"
+		hp_label.text = "HP: %d/%d" % [PlayerSystemManager.hp, PlayerSystemManager.max_hp]
+		if PlayerSystemManager.hp <= 20:
+			hp_label.modulate = Color.RED
 		else:
-			var status_parts = []
-			for status in PlayerManager.active_statuses:
+			hp_label.modulate = Color.WHITE
+	
+	# Aggiorna cibo con colore rosso se basso
+	if food_label:
+		food_label.text = "Sazietà: %d/%d" % [PlayerSystemManager.food, PlayerSystemManager.max_food]
+		if PlayerSystemManager.food <= 10:
+			food_label.modulate = Color.RED
+		else:
+			food_label.modulate = Color.WHITE
+	
+	# Aggiorna acqua con colore rosso se bassa
+	if water_label:
+		water_label.text = "Idratazione: %d/%d" % [PlayerSystemManager.water, PlayerSystemManager.max_water]
+		if PlayerSystemManager.water <= 10:
+			water_label.modulate = Color.RED
+		else:
+			water_label.modulate = Color.WHITE
+	
+	# Aggiorna status del giocatore
+	if status_label:
+		if PlayerSystemManager.active_statuses.is_empty():
+			status_label.text = "Status: Normale"
+			status_label.modulate = Color.GREEN
+		else:
+			for status in PlayerSystemManager.active_statuses:
 				match status:
-					PlayerManager.Status.WOUNDED:
-						status_parts.append("[color=red]Ferito[/color]")
-					PlayerManager.Status.SICK:
-						status_parts.append("[color=orange]Malato[/color]")
-					PlayerManager.Status.POISONED:
-						status_parts.append("[color=purple]Avvelenato[/color]")
-					PlayerManager.Status.NORMAL:
-						status_parts.append("Normale")
-			status_text += ", ".join(status_parts)
-		status_label.text = status_text
+					PlayerSystemManager.Status.WOUNDED:
+						status_label.text = "Status: Ferito"
+					PlayerSystemManager.Status.SICK:
+						status_label.text = "Status: Malato"
+					PlayerSystemManager.Status.POISONED:
+						status_label.text = "Status: Avvelenato"
+					PlayerSystemManager.Status.NORMAL:
+						status_label.text = "Status: Normale"
+				status_label.modulate = Color.YELLOW

@@ -65,6 +65,18 @@ var _is_active: bool = false
 # ========================================
 
 func _ready() -> void:
+	# Connetti ai segnali di PlayerSystemManager
+	if PlayerSystemManager:
+		if not PlayerSystemManager.level_up.is_connected(_on_level_up):
+			PlayerSystemManager.level_up.connect(_on_level_up)
+	
+	# Connetti ai pulsanti (se esistono)
+	# Note: confirm_button e cancel_button non sono definiti in questo popup
+	
+	# Inizializza lo stato
+	_is_active = false
+	visible = false
+	
 	# Debug rimosso per ridurre log
 	
 	# Nascondi popup all'inizio
@@ -81,7 +93,7 @@ func _ready() -> void:
 
 ## Mostra il popup di livellamento (sempre, anche senza punti disponibili)
 func show_level_up_popup() -> void:
-	if not PlayerManager:
+	if not PlayerSystemManager:
 		# Debug rimosso per ridurre log
 		pass
 		return
@@ -97,7 +109,7 @@ func show_level_up_popup() -> void:
 	_update_visual_selection()
 	
 	# Cambia stato input e mostra popup
-	InputManager.set_state(InputManager.InputState.POPUP)
+	InterfaceSystemManager.set_state(InterfaceSystemManager.InputState.POPUP)
 	_is_active = true
 	self.show()
 	

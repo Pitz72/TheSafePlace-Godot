@@ -16,6 +16,13 @@ signal shelter_action_requested(action_index: int)
 var is_day_popup: bool = true
 
 func _ready():
+	# Connetti ai segnali di WorldSystemManager per il crafting
+	if WorldSystemManager:
+		if not WorldSystemManager.crafting_completed.is_connected(_on_crafting_completed):
+			WorldSystemManager.crafting_completed.connect(_on_crafting_completed)
+		if not WorldSystemManager.crafting_failed.is_connected(_on_crafting_failed):
+			WorldSystemManager.crafting_failed.connect(_on_crafting_failed)
+
 	# Connetti segnali dei pulsanti
 	action1_button.connect("pressed", Callable(self, "_on_action_pressed").bind(1))
 	action2_button.connect("pressed", Callable(self, "_on_action_pressed").bind(2))
@@ -72,15 +79,23 @@ func _update_workbench_status():
 		action3_button.text = "[3] Banco da Lavoro (Non disponibile)"
 		action3_button.disabled = true
 
-func _on_action_pressed(action_index: int):
+func _on_action_pressed(action_id: int):
 	"""Gestisce la pressione di un pulsante azione"""
-	print("🏠 Azione rifugio selezionata:", action_index)
-
-	# Emetti segnale per MainGame
-	shelter_action_requested.emit(action_index)
-
-	# Chiudi popup dopo aver inviato l'azione
-	close_popup()
+	match action_id:
+		1:
+			# Ripara rifugio
+			if WorldSystemManager:
+				WorldSystemManager.start_crafting("repair_shelter")
+		2:
+			# Migliora rifugio
+			if WorldSystemManager:
+				WorldSystemManager.start_crafting("upgrade_shelter")
+		3:
+			# Costruisci trappola
+			if WorldSystemManager:
+				WorldSystemManager.start_crafting("build_trap")
+	
+	hide_popup()
 
 func close_popup():
 	"""Chiude il popup"""

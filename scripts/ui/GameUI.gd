@@ -62,8 +62,8 @@ func _ready():
 # ═══ VERIFICA E SETUP INIZIALE ═══
 
 func verify_player_manager():
-	if not PlayerManager:
-		push_error("GameUI: PlayerManager Singleton non configurato correttamente")
+	if not PlayerSystemManager:
+		push_error("GameUI: PlayerSystemManager Singleton non configurato correttamente")
 
 func instantiate_world_scene():
 	if not world_viewport:
@@ -80,30 +80,30 @@ func instantiate_world_scene():
 # ═══ CONNESSIONI SEGNALI ═══
 
 func connect_player_manager_signals():
-	if not PlayerManager:
+	if not PlayerSystemManager:
 		return
 	# I segnali specifici dei pannelli (resources, stats, inventory) sono gestiti dai pannelli stessi.
 	# GameUI gestisce solo segnali più ampi.
 	# Log narrativo gestito direttamente da LogPanel - rimossa connessione duplicata
 
 func _connect_input_manager():
-	if not InputManager:
+	if not InterfaceSystemManager:
 		return
 	# I segnali di inventario sono gestiti da InventoryPanel.
-	InputManager.inventory_use_item.connect(_on_inventory_use_item)
-	InputManager.action_cancel.connect(_on_action_cancel)
-	InputManager.action_confirm.connect(_on_action_confirm)
-	InputManager.level_up_request.connect(_on_level_up_request)
-	InputManager.quest_interface_requested.connect(_on_quest_interface_requested)
-	InputManager.emotional_state_requested.connect(_on_emotional_state_requested)
+	InterfaceSystemManager.inventory_use_item.connect(_on_inventory_use_item)
+	InterfaceSystemManager.action_cancel.connect(_on_action_cancel)
+	InterfaceSystemManager.action_confirm.connect(_on_action_confirm)
+	InterfaceSystemManager.level_up_request.connect(_on_level_up_request)
+	InterfaceSystemManager.quest_interface_requested.connect(_on_quest_interface_requested)
+	InterfaceSystemManager.emotional_state_requested.connect(_on_emotional_state_requested)
 
 func _connect_time_manager_signals():
-	if not TimeManager:
+	if not WorldSystemManager:
 		return
 	# Il segnale time_advanced è gestito da InfoPanel.
-	TimeManager.day_changed.connect(_on_day_changed)
-	TimeManager.night_started.connect(_on_night_started)
-	TimeManager.day_started.connect(_on_day_started)
+	WorldSystemManager.day_changed.connect(_on_day_changed)
+	WorldSystemManager.night_started.connect(_on_night_started)
+	WorldSystemManager.day_started.connect(_on_day_started)
 
 func _connect_main_game_signals():
 	# Connetti al segnale di cambio stato rifugio per aggiornare l'UI
@@ -131,7 +131,7 @@ func _setup_panel_references():
 
 func _on_day_changed(_new_day: int):
 	if log_panel and log_panel.has_method("add_log_message"):
-		log_panel.add_log_message("[color=yellow]🌅 Inizia il %s[/color]" % TimeManager.get_formatted_day())
+		log_panel.add_log_message("[color=yellow]🌅 Inizia il %s[/color]" % WorldSystemManager.get_formatted_day())
 
 func _on_night_started():
 	if log_panel and log_panel.has_method("add_log_message"):
@@ -147,11 +147,11 @@ func _on_shelter_status_changed(_in_shelter: bool):
 	update_all_ui()
 
 func _on_inventory_use_item(slot_number: int):
-	if not PlayerManager or PlayerManager.inventory.size() == 0:
+	if not PlayerSystemManager or PlayerSystemManager.inventory.size() == 0:
 		return
 	var item_index = slot_number - 1
-	if item_index >= 0 and item_index < PlayerManager.inventory.size():
-		var selected_item = PlayerManager.inventory[item_index]
+	if item_index >= 0 and item_index < PlayerSystemManager.inventory.size():
+		var selected_item = PlayerSystemManager.inventory[item_index]
 		_open_item_interaction_popup(selected_item)
 	else:
 		add_log_message("Hotkey [%d]: Slot vuoto" % slot_number)
@@ -169,13 +169,13 @@ func _on_action_confirm():
 		print("GameUI: ✅ Azione confirm (nessuna azione definita)")
 
 func _on_save_request():
-	if SaveLoadManager:
+	if PersistenceSystemManager:
 		_show_save_interface()
 	else:
 		add_log_message("Sistema di salvataggio non disponibile")
 
 func _on_load_request():
-	if SaveLoadManager:
+	if PersistenceSystemManager:
 		_show_load_interface()
 	else:
 		add_log_message("Sistema di caricamento non disponibile")
@@ -214,7 +214,7 @@ func get_world_scene() -> Node:
 func _open_selected_item_popup():
 	if not inventory_panel or not inventory_panel.is_inventory_active:
 		return
-	var selected_item = PlayerManager.inventory[inventory_panel.selected_inventory_index]
+	var selected_item = PlayerSystemManager.inventory[inventory_panel.selected_inventory_index]
 	_open_item_interaction_popup(selected_item)
 
 func _open_item_interaction_popup(item: Dictionary):
@@ -229,7 +229,7 @@ func _on_item_popup_closed(popup_instance):
 		popup_instance.queue_free()
 
 func _on_level_up_request():
-	if not PlayerManager: return
+	if not PlayerSystemManager: return
 	_open_level_up_popup()
 
 func _open_level_up_popup():
@@ -264,17 +264,17 @@ func _on_character_creation_popup_closed():
 	is_character_creation_popup_active = false
 
 func _on_character_accepted():
-	if PlayerManager:
-		PlayerManager.finalize_character_creation()
-		PlayerManager._add_starting_items()
+	if PlayerSystemManager:
+		PlayerSystemManager.finalize_character_creation()
+		PlayerSystemManager._add_starting_items()
 		update_all_ui()
 
 # ═══ SISTEMA EVENTI UI (FASE 4) ═══
 
 func _initialize_event_system():
-	if EventManager:
-		EventManager.event_triggered.connect(_on_event_triggered)
-		EventManager.event_choice_resolved.connect(_on_event_choice_resolved)
+	if NarrativeSystemManager:
+		NarrativeSystemManager.event_triggered.connect(_on_event_triggered)
+		NarrativeSystemManager.skill_check_completed.connect(_on_skill_check_completed)
 
 func _on_event_triggered(event_data: Dictionary):
 	if is_event_popup_active: return
@@ -284,8 +284,13 @@ func _on_event_triggered(event_data: Dictionary):
 		event_popup_instance.show_event(event_data)
 		is_event_popup_active = true
 
-func _on_event_choice_resolved(_result_text: String, narrative_log: String, skill_check_details: Dictionary):
-	add_log_message(narrative_log)
+func _on_skill_check_completed(skill_check_details: Dictionary):
+	# Aggiungi il log narrativo se presente nei dettagli
+	var narrative_log = skill_check_details.get("narrative_text", "")
+	if narrative_log != "":
+		add_log_message(narrative_log)
+	
+	# Mostra i dettagli dello skill check se presenti
 	if not skill_check_details.is_empty():
 		var stat_name = skill_check_details.get("stat_used", "sconosciuta").capitalize()
 		var roll = skill_check_details.get("roll", 0)
@@ -300,14 +305,96 @@ func _on_event_choice_resolved(_result_text: String, narrative_log: String, skil
 	update_all_ui()
 
 func _create_event_popup():
+	CrashLogger.log_critical("GameUI", "_create_event_popup called")
+	print("[GameUI] _create_event_popup chiamata")
+	
+	# Verifica che EventPopupScene sia disponibile
+	if not EventPopupScene:
+		CrashLogger.log_crash("GameUI._create_event_popup", "EventPopupScene non disponibile")
+		print("[GameUI] ERRORE: EventPopupScene non disponibile in _create_event_popup")
+		return
+	
+	CrashLogger.log_critical("GameUI", "Instantiating EventPopup")
+	print("[GameUI] Istanziando EventPopupScene...")
 	event_popup_instance = EventPopupScene.instantiate()
+	
+	if not event_popup_instance:
+		CrashLogger.log_crash("GameUI._create_event_popup", "Istanziazione fallita")
+		print("[GameUI] ERRORE: Istanziazione fallita")
+		return
+	
+	CrashLogger.log_critical("GameUI", "Adding EventPopup to scene tree")
+	print("[GameUI] Aggiungendo EventPopup come child...")
 	add_child(event_popup_instance)
-	event_popup_instance.choice_selected.connect(_on_popup_choice_selected)
-	event_popup_instance.popup_closed.connect(_on_popup_closed)
+	
+	# Connetti segnali con controlli di sicurezza
+	if event_popup_instance.has_signal("choice_selected"):
+		if not event_popup_instance.choice_selected.is_connected(_on_popup_choice_selected):
+			CrashLogger.log("GameUI", "Connecting choice_selected signal")
+			event_popup_instance.choice_selected.connect(_on_popup_choice_selected)
+			print("[GameUI] Connesso segnale choice_selected")
+	else:
+		CrashLogger.log_crash("GameUI._create_event_popup", "Segnale choice_selected non trovato")
+		print("[GameUI] AVVISO: EventPopup non ha segnale choice_selected")
+	
+	if event_popup_instance.has_signal("popup_closed"):
+		if not event_popup_instance.popup_closed.is_connected(_on_popup_closed):
+			CrashLogger.log("GameUI", "Connecting popup_closed signal")
+			event_popup_instance.popup_closed.connect(_on_popup_closed)
+			print("[GameUI] Connesso segnale popup_closed")
+	else:
+		CrashLogger.log_crash("GameUI._create_event_popup", "Segnale popup_closed non trovato")
+		print("[GameUI] AVVISO: EventPopup non ha segnale popup_closed")
+	
+	print("[GameUI] EventPopup creato e configurato con successo")
+
+# Funzione pubblica per mostrare eventi (chiamata da MainGame)
+func show_event_popup(event_data: Dictionary):
+	CrashLogger.log_critical("GameUI", "show_event_popup called", "Event: %s" % str(event_data))
+	print("[GameUI] show_event_popup chiamata con evento: ", event_data.get("title", "Sconosciuto"))
+	
+	# Controlli di sicurezza robusti
+	if not event_data or event_data.is_empty():
+		CrashLogger.log_crash("GameUI.show_event_popup", "event_data vuoto o null")
+		print("[GameUI] ERRORE: event_data vuoto o null")
+		return
+		
+	if is_event_popup_active:
+		CrashLogger.log_crash("GameUI.show_event_popup", "Popup già attivo")
+		print("[GameUI] Popup già attivo, ignorando nuovo evento")
+		return
+	
+	# Verifica che EventPopupScene sia disponibile
+	if not EventPopupScene:
+		CrashLogger.log_crash("GameUI.show_event_popup", "EventPopupScene non precaricato")
+		print("[GameUI] ERRORE: EventPopupScene non precaricato")
+		return
+	
+	# Crea istanza popup se necessario
+	if not event_popup_instance:
+		CrashLogger.log_critical("GameUI", "Creating event popup instance")
+		print("[GameUI] Creando nuova istanza EventPopup...")
+		_create_event_popup()
+		
+		# Verifica che la creazione sia riuscita
+		if not event_popup_instance:
+			print("[GameUI] ERRORE: Impossibile creare istanza EventPopup")
+			return
+	
+	# Verifica che l'istanza abbia il metodo show_event
+	if not event_popup_instance.has_method("show_event"):
+		print("[GameUI] ERRORE: EventPopup non ha il metodo show_event")
+		return
+	
+	# Mostra l'evento
+	print("[GameUI] Mostrando evento popup...")
+	event_popup_instance.show_event(event_data)
+	is_event_popup_active = true
+	print("[GameUI] Evento popup mostrato con successo")
 
 func _on_popup_choice_selected(choice_index: int):
-	if EventManager and EventManager.current_event_id != "":
-		EventManager.process_event_choice(EventManager.current_event_id, int(choice_index))
+	if NarrativeSystemManager and NarrativeSystemManager.current_event_id != "":
+		NarrativeSystemManager.process_event_choice(NarrativeSystemManager.current_event_id, int(choice_index))
 
 func _on_popup_closed():
 	is_event_popup_active = false
@@ -318,12 +405,12 @@ func is_event_system_active() -> bool:
 # ═══ SISTEMA COMBATTIMENTO UI ═══
 
 func _initialize_combat_system():
-	if CombatManager:
-		CombatManager.combat_started.connect(_on_combat_started)
-		CombatManager.combat_ended.connect(_on_combat_ended)
+	if CombatSystemManager:
+		CombatSystemManager.combat_started.connect(_on_combat_started)
+		CombatSystemManager.combat_ended.connect(_on_combat_ended)
 		# Connessione aggiuntiva per garantire che il popup si chiuda
-		if not CombatManager.combat_ended.is_connected(_on_combat_ended):
-			CombatManager.combat_ended.connect(_on_combat_ended)
+		if not CombatSystemManager.combat_ended.is_connected(_on_combat_ended):
+			CombatSystemManager.combat_ended.connect(_on_combat_ended)
 			
 		print("✅ GameUI: Sistema combattimento inizializzato")
 
@@ -339,21 +426,21 @@ func _on_combat_started(enemy_data: Dictionary):
 		is_combat_popup_active = true
 		print("⚔️ GameUI: CombatPopup mostrato per nemico:", enemy_data.get("name", "Sconosciuto"))
 
-func _on_combat_ended(result: CombatManager.CombatResult, rewards: Dictionary):
+func _on_combat_ended(result: CombatSystemManager.CombatResult, rewards: Dictionary):
 	# Mostra risultati combattimento nel log
-	# La logica del messaggio è ora gestita dal CombatManager, qui chiudiamo solo la UI
+	# La logica del messaggio è ora gestita dal CombatSystemManager, qui chiudiamo solo la UI
 	if is_combat_popup_active:
 		if combat_popup_instance and is_instance_valid(combat_popup_instance):
 			combat_popup_instance._close_popup()
 		is_combat_popup_active = false
 
 	# Mostra ricompense se presenti
-	if result == CombatManager.CombatResult.PLAYER_VICTORY and not rewards.is_empty():
+	if result == CombatSystemManager.CombatResult.PLAYER_VICTORY and not rewards.is_empty():
 		var reward_message = "[color=#00ff00]Ricompense ottenute:[/color]\n"
 		
 		# Gestione XP
 		if rewards.has("xp") and rewards.xp > 0:
-			PlayerManager.add_experience(rewards.xp, "Combattimento")
+			PlayerSystemManager.add_experience(rewards.xp, "Combattimento")
 			reward_message += "• %d Punti Esperienza\n" % rewards.xp
 		
 		# Gestione Oggetti
@@ -361,9 +448,9 @@ func _on_combat_ended(result: CombatManager.CombatResult, rewards: Dictionary):
 			for item_reward in rewards.items:
 				var item_id = item_reward.id
 				var quantity = item_reward.quantity
-				PlayerManager.add_item(item_id, quantity)
+				PlayerSystemManager.add_item(item_id, quantity)
 				
-				var item_data = DataManager.get_item_data(item_id)
+				var item_data = WorldSystemManager.get_item_data(item_id)
 				var item_name = item_data.get("name", item_id) if not item_data.is_empty() else item_id
 				reward_message += "• %dx %s\n" % [quantity, item_name]
 				
@@ -390,8 +477,8 @@ func is_combat_system_active() -> bool:
 # ═══ SISTEMA CRAFTING UI ═══
 
 func _initialize_crafting_system():
-	if CraftingManager:
-		CraftingManager.workbench_access_changed.connect(_on_workbench_access_changed)
+	if WorldSystemManager:
+		WorldSystemManager.workbench_access_changed.connect(_on_workbench_access_changed)
 		print("✅ GameUI: Sistema crafting inizializzato")
 
 func _on_workbench_access_changed(has_access: bool):
@@ -430,7 +517,7 @@ func _on_crafting_popup_closed():
 
 func _on_crafting_completed(item_id: String, quantity: int):
 	# Mostra messaggio di successo
-	var item_data = DataManager.get_item_data(item_id)
+	var item_data = WorldSystemManager.get_item_data(item_id)
 	var item_name = item_data.get("name", item_id) if not item_data.is_empty() else item_id
 	add_log_message("[color=#00FF00]🔨 Crafting completato: %dx %s[/color]" % [quantity, item_name])
 
@@ -457,7 +544,7 @@ func _force_status_update():
 
 # Mostra interfaccia di salvataggio
 func _show_save_interface():
-	var save_slots = SaveLoadManager.get_available_save_slots()
+	var save_slots = PersistenceSystemManager.get_save_list()
 	var message = "[color=#00ff00]SALVATAGGIO PARTITA[/color]\n\n"
 	message += "Slot disponibili:\n"
 
@@ -470,9 +557,9 @@ func _show_save_interface():
 
 # Mostra interfaccia di caricamento
 func _show_load_interface():
-	var save_slots = SaveLoadManager.get_available_save_slots()
-	var message = "[color=#ffff00]CARICAMENTO PARTITA[/color]\n\n"
-	message += "Partite salvate:\n"
+	var save_slots = PersistenceSystemManager.get_save_list()
+	var message = "[color=#00ff00]CARICAMENTO PARTITA[/color]\n\n"
+	message += "Seleziona uno slot:\n"
 
 	for i in range(save_slots.size()):
 		var slot_info = save_slots[i]
@@ -483,11 +570,11 @@ func _show_load_interface():
 
 # Mostra interfaccia quest
 func _show_quest_interface():
-	if not QuestManager:
+	if not NarrativeSystemManager:
 		add_log_message("Sistema quest non disponibile")
 		return
 
-	var active_quests = QuestManager.get_active_quests()
+	var active_quests = NarrativeSystemManager.get_active_quests()
 	var message = "[color=#ff00ff]MISSIONI ATTIVE[/color]\n\n"
 
 	if active_quests.size() == 0:
@@ -501,14 +588,19 @@ func _show_quest_interface():
 
 # Mostra stato emotivo del giocatore
 func _show_emotional_state():
-	if not NarrativeManager:
+	if not NarrativeSystemManager:
 		add_log_message("Sistema narrativo non disponibile")
 		return
 
-	var emotional_state = NarrativeManager.get_emotional_state()
+	var emotional_snapshot = NarrativeSystemManager.get_emotional_state_snapshot()
+	var state_enum = emotional_snapshot.get("emotional_state", NarrativeSystemManager.EmotionalState.COLD)
+	var state_name = NarrativeSystemManager._get_emotional_state_name(state_enum)
+	var understanding = emotional_snapshot.get("understanding_level", 0)
+	var memories_unlocked = emotional_snapshot.get("memory_strength", {}).size()
+
 	var message = "[color=#ff6600]STATO EMOTIVO[/color]\n\n"
-	message += "Stato attuale: %s\n" % emotional_state.current_state
-	message += "Livello connessione: %d/5\n" % emotional_state.connection_level
-	message += "Ricordi sbloccati: %d/8" % emotional_state.memories_unlocked
+	message += "Stato attuale: %s\n" % state_name
+	message += "Livello comprensione: %d/100\n" % understanding
+	message += "Ricordi sbloccati: %d/8" % memories_unlocked
 
 	add_log_message(message)

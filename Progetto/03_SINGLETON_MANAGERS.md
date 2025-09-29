@@ -1,21 +1,29 @@
-# 🎛️ SINGLETON MANAGERS SYSTEM - THE SAFE PLACE v0.9.7.1
+# 🎛️ SINGLETON MANAGERS SYSTEM - THE SAFE PLACE v0.9.7.3
 
 ## 🎯 **OVERVIEW SISTEMA MANAGERS**
 
-Il progetto utilizza un sistema di **12 Singleton Managers** implementati tramite il sistema Autoload di Godot. Ogni manager ha responsabilità specifiche e ben definite, comunicando attraverso il sistema di segnali per mantenere il disaccoppiamento architetturale.
+Il progetto utilizza un sistema di **7 Singleton Managers consolidati** implementati tramite il sistema Autoload di Godot. Questa architettura consolidata riduce la complessità mantenendo tutte le funzionalità attraverso manager specializzati che comunicano via sistema di segnali per il disaccoppiamento architetturale.
+
+### **🔄 Consolidamento v0.9.7.3**
+- **Prima:** 12 manager separati con sovrapposizioni funzionali
+- **Dopo:** 7 manager consolidati con responsabilità chiare
+- **Benefici:** Riduzione complessità, migliori performance, manutenibilità migliorata
+- **Compatibilità:** Mantenuti tutti gli alias legacy per retrocompatibilità
 
 ---
 
-## 🗄️ **1. DATAMANAGER**
+## 🗄️ **1. COREDATAMANAGER** *(Consolidato)*
 
 ### **Responsabilità Principali**
-- Caricamento e caching di tutti i database JSON
+- Caricamento e caching di tutti i database JSON (items, enemies, quests)
 - Validazione integrità dati oggetti
 - Unificazione database categorizzati
 - Sistema colori oggetti basato su categoria/rarità
 - API per accesso dati validati
+- **NUOVO:** Gestione dati nemici e quest (consolidato da EventManager)
 
-### **File:** `scripts/managers/DataManager.gd`
+### **File:** `scripts/managers/CoreDataManager.gd`
+### **Alias Legacy:** `DataManager` → `CoreDataManager`
 
 ### **Struttura Dati Gestite**
 ```gdscript
@@ -83,7 +91,7 @@ const RARITY_MULTIPLIERS: Dictionary = {
 
 ---
 
-## 👤 **2. PLAYERMANAGER**
+## 👤 **2. PLAYERSYSTEMMANAGER** *(Consolidato)*
 
 ### **Responsabilità Principali**
 - Gestione stato completo del giocatore
@@ -92,8 +100,10 @@ const RARITY_MULTIPLIERS: Dictionary = {
 - Stati fisici (normale, ferito, malato, avvelenato)
 - Applicazione conseguenze eventi
 - Calcolo HP dinamico basato su Vigore
+- **NUOVO:** Consolidato da PlayerManager + TimeManager per gestione sopravvivenza
 
-### **File:** `scripts/managers/PlayerManager.gd`
+### **File:** `scripts/managers/PlayerSystemManager.gd`
+### **Alias Legacy:** `PlayerManager` → `PlayerSystemManager`
 
 ### **Struttura Stato Player**
 ```gdscript

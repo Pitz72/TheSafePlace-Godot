@@ -12,11 +12,22 @@ var inventory_panel # Assicurati di impostarlo da GameUI
 var is_in_shelter: bool = false
 
 func _ready():
+	# Connetti ai segnali dei manager
+	if WorldSystemManager:
+		WorldSystemManager.crafting_completed.connect(_on_crafting_completed)
+		WorldSystemManager.crafting_failed.connect(_on_crafting_failed)
+	
+	if TimeSystemManager:
+		TimeSystemManager.time_changed.connect(_on_time_changed)
+	
 	# Connetti al segnale rifugio da MainGame
 	var main_game = get_node("/root/MainGame")
 	if main_game and main_game.has_signal("shelter_status_changed"):
 		main_game.shelter_status_changed.connect(_on_shelter_status_changed)
 		print("✅ CommandsPanel connesso a shelter_status_changed")
+	
+	# Inizializza il pannello
+	_update_display()
 
 func _on_shelter_status_changed(in_shelter: bool):
 	"""Callback per cambio stato rifugio"""
@@ -55,6 +66,23 @@ func update_panel(is_inventory_active: bool):
 # Utility per controllare se è notte
 func _is_night() -> bool:
 	return TimeManager and TimeManager.is_night()
+
+func _on_crafting_completed(recipe_id: String, result_item: Dictionary):
+	"""Gestisce il completamento del crafting"""
+	_update_display()
+
+func _on_crafting_failed(recipe_id: String, reason: String):
+	"""Gestisce il fallimento del crafting"""
+	_update_display()
+
+func _on_time_changed(current_time: Dictionary):
+	"""Gestisce il cambio di tempo"""
+	_update_display()
+
+func _update_display():
+	"""Aggiorna il display del pannello"""
+	if inventory_panel == null or not inventory_panel.is_inventory_active:
+		update_panel(false)
 
 ## Imposta il riferimento al pannello inventario
 func set_inventory_panel(panel) -> void:

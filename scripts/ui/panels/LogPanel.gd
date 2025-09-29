@@ -30,8 +30,12 @@ extends PanelContainer
 @onready var log_display: RichTextLabel = $LogVBox/LogDisplay
 
 func _ready():
-	if PlayerManager:
-		PlayerManager.narrative_log_generated.connect(add_log_message)
+	# Connetti al segnale di log narrativo del PlayerSystemManager
+	if PlayerSystemManager:
+		PlayerSystemManager.narrative_log_generated.connect(add_log_message)
+	
+	# Aggiungi messaggio di benvenuto
+	add_log_message("[color=cyan]Sistema di log inizializzato.[/color]")
 
 func add_log_message(message: String):
 	"""Aggiunge un messaggio timestampato al diario - STILE ASCII"""
@@ -39,7 +43,7 @@ func add_log_message(message: String):
 		print("LogPanel: [ERROR] log_display è null - messaggio perso: " + message)
 		return
 	
-	var timestamp = get_current_timestamp()
+	var timestamp = get_timestamp()
 	var formatted_message = "[color=yellow]%s[/color] %s\n" % [timestamp, message]
 	
 	log_display.append_text(formatted_message)
@@ -47,12 +51,12 @@ func add_log_message(message: String):
 	# Scroll automatico all'ultimo messaggio
 	log_display.scroll_to_line(log_display.get_line_count() - 1)
 
-func get_current_timestamp() -> String:
-	"""Genera timestamp per messaggi diario - M3.T2 Sistema Temporale"""
-	if TimeManager:
-		return "[%s]" % TimeManager.get_formatted_time()
+func get_timestamp() -> String:
+	"""Restituisce timestamp formattato per i messaggi di log"""
+	if WorldSystemManager:
+		return "[%s]" % WorldSystemManager.get_formatted_time()
 	else:
-		return "[08:00]"  # Fallback se TimeManager non disponibile
+		return "[08:00]"  # Fallback se WorldSystemManager non disponibile
 
 func clear_log():
 	"""Pulisce completamente il diario"""

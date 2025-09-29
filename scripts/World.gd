@@ -130,21 +130,21 @@ var river_failure_messages = [
 
 func _handle_river_crossing() -> void:
 	"""Gestisce narrativa e skill check per attraversamento fiume secondo nuove regole"""
-	if PlayerManager:
+	if PlayerSystemManager:
 		# 1) Messaggio di attraversamento base (blu), sempre
 		var base_msg = river_crossing_messages[randi() % river_crossing_messages.size()]
-		PlayerManager.narrative_log_generated.emit(base_msg)
+		PlayerSystemManager.narrative_log_generated.emit(base_msg)
 		
 		# 2) Skill check leggero: di giorno molto facile, di notte leggermente più difficile
-		var is_night = TimeManager and TimeManager.is_night()
+		var is_night = WorldSystemManager and WorldSystemManager.is_night()
 		var dc = 7 if is_night else 5  # DC estremamente bassa
 		# Usa AGILITÀ come stat di default per il guado
-		var result = PlayerManager.skill_check("agilita", dc, 0)
+		var result = PlayerSystemManager.skill_check("agilita", dc, 0)
 		
 		if result.get("success", false):
 			# Messaggio di successo extra (blu)
 			var ok_msg = river_success_messages[randi() % river_success_messages.size()]
-			PlayerManager.narrative_log_generated.emit(ok_msg)
+			PlayerSystemManager.narrative_log_generated.emit(ok_msg)
 		else:
 			# Fallimento: piccolissima chance di perdere 1-2 HP (più probabile di notte)
 			# Probabilità: giorno 5%, notte 12%
@@ -153,11 +153,11 @@ func _handle_river_crossing() -> void:
 			if randf() < chance:
 				# 70% → 1 HP, 30% → 2 HP
 				damage = 1 if randf() < 0.7 else 2
-				PlayerManager.modify_hp(-damage)
-				PlayerManager.narrative_log_generated.emit("[color=red]Perdi %d HP durante l'attraversamento del fiume.[/color]" % damage)
+				PlayerSystemManager.modify_hp(-damage)
+				PlayerSystemManager.narrative_log_generated.emit("[color=red]Perdi %d HP durante l'attraversamento del fiume.[/color]" % damage)
 			# Messaggio rosso di fallimento narrativo (sempre mostrato sul fallimento)
 			var fail_msg = river_failure_messages[randi() % river_failure_messages.size()]
-			PlayerManager.narrative_log_generated.emit(fail_msg)
+			PlayerSystemManager.narrative_log_generated.emit(fail_msg)
 
 # CAMERA SMOOTH TARGET (FIX SALTELLO)
 var target_camera_position: Vector2 = Vector2.ZERO
@@ -355,15 +355,15 @@ func _update_camera_target():
 
 ## Connette i segnali InputManager per gestione movimento centralizzata
 func _connect_input_manager():
-	"""Configura connessioni ai segnali InputManager per movimento player"""
-	if not InputManager:
+	"""Configura connessioni ai segnali InterfaceSystemManager per movimento player"""
+	if not InterfaceSystemManager:
 		# Debug rimosso per ridurre log
 		pass
 		return
 	
 	# Connetti segnale movimento mappa
-	if not InputManager.map_move.is_connected(_on_map_move):
-		InputManager.map_move.connect(_on_map_move)
+	if not InterfaceSystemManager.map_move.is_connected(_on_map_move):
+		InterfaceSystemManager.map_move.connect(_on_map_move)
 		# Debug rimosso per ridurre log
 	
 	# Debug rimosso per ridurre log
@@ -385,7 +385,7 @@ func _connect_to_gameui():
 		# Debug rimosso per ridurre log
 		pass
 
-## Callback per movimento player tramite InputManager
+## Callback per movimento player tramite InterfaceSystemManager
 ## @param direction: Vector2i direzione movimento (-1,0,1 per x/y)
 func _on_map_move(direction: Vector2i):
 	"""Gestisce movimento player con penalità fiume, log movimento e aggiornamenti UI"""
@@ -394,12 +394,12 @@ func _on_map_move(direction: Vector2i):
 	if movement_penalty > 0:
 		movement_penalty -= 1
 		# Debug rimosso per ridurre log
-		if PlayerManager:
-			PlayerManager.narrative_log_generated.emit("Penalità movimento: resta %d turni" % movement_penalty)
+		if PlayerSystemManager:
+			PlayerSystemManager.narrative_log_generated.emit("Penalità movimento: resta %d turni" % movement_penalty)
 			narrative_message_sent.emit()
 		return  # Salta turno
 	
-	# Calcola nuova posizione basata su direzione InputManager
+	# Calcola nuova posizione basata su direzione InterfaceSystemManager
 	var new_position = player_pos + direction
 	
 	# Valida movimento
@@ -424,8 +424,8 @@ func _on_map_move(direction: Vector2i):
 		player_moved.emit(new_position, terrain_name)
 		
 		# AVANZAMENTO TEMPO: Ogni movimento = 30 minuti
-		if TimeManager:
-			TimeManager.advance_time_by_moves(1)
+		if WorldSystemManager:
+			WorldSystemManager.advance_time_by_moves(1)
 			# (Regola aggiornata) Nessuna penalità HP generica per movimento notturno
 			# La difficoltà notturna è gestita nello skill check del fiume
 
@@ -439,14 +439,14 @@ func _on_map_move(direction: Vector2i):
 		if destination_char == "M":
 			# Messaggio ironico per le montagne
 			var random_message = mountain_fail_messages[randi() % mountain_fail_messages.size()]
-			if PlayerManager:
-				PlayerManager.narrative_log_generated.emit(random_message)
+			if PlayerSystemManager:
+				PlayerSystemManager.narrative_log_generated.emit(random_message)
 			narrative_message_sent.emit()
 		else:
 			# Messaggio generico per altri ostacoli
 			var direction_name = direction_to_name.get(direction, "Direzione Sconosciuta")
-			if PlayerManager:
-				PlayerManager.narrative_log_generated.emit("Movimento bloccato verso %s: ostacolo invalicabile" % direction_name)
+			if PlayerSystemManager:
+				PlayerSystemManager.narrative_log_generated.emit("Movimento bloccato verso %s: ostacolo invalicabile" % direction_name)
 
 		# Debug rimosso per ridurre log
 

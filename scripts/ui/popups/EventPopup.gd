@@ -38,10 +38,10 @@ func _ready():
 	# Connetti segnale chiusura
 	if close_button:
 		close_button.pressed.connect(_on_close_button_pressed)
-	
-	# Connetti al nuovo segnale di EventManager
-	if EventManager and not EventManager.skill_check_completed.is_connected(_on_skill_check_completed):
-		EventManager.skill_check_completed.connect(_on_skill_check_completed)
+	func _ready():
+	# Connetti al nuovo segnale di NarrativeSystemManager
+	if NarrativeSystemManager and not NarrativeSystemManager.skill_check_completed.is_connected(_on_skill_check_completed):
+		NarrativeSystemManager.skill_check_completed.connect(_on_skill_check_completed)
 		
 	result_container.visible = false
 	# Debug rimosso per ridurre log
@@ -49,25 +49,47 @@ func _ready():
 
 # Mostra popup con dati evento
 func show_event(event_data: Dictionary):
-	# Debug rimosso per ridurre log
-	pass
+	CrashLogger.log_critical("EventPopup", "show_event called", "Event: %s" % str(event_data))
+	print("[EventPopup] show_event chiamata con evento: ", event_data.get("title", "Sconosciuto"))
 	
+	# Controlli di sicurezza
+	if not event_data or event_data.is_empty():
+		CrashLogger.log_crash("EventPopup.show_event", "event_data vuoto o null")
+		print("[EventPopup] ERRORE: event_data vuoto o null")
+		return
+	
+	if is_popup_active:
+		CrashLogger.log_crash("EventPopup.show_event", "Popup già attivo")
+		print("[EventPopup] AVVISO: Popup già attivo")
+		return
+	
+	CrashLogger.log_critical("EventPopup", "Setting popup active and processing event data")
+	print("[EventPopup] Impostando dati evento...")
 	current_event_data = event_data
 	is_popup_active = true
 	selected_choice_index = 0
 	is_awaiting_final_input = false
 	
 	# Aggiorna contenuto popup
+	CrashLogger.log_critical("EventPopup", "Updating popup content")
+	print("[EventPopup] Aggiornando contenuto popup...")
 	_update_popup_content()
 	
 	# Mostra popup con animazione
+	CrashLogger.log_critical("EventPopup", "Making popup visible with animation")
+	print("[EventPopup] Mostrando popup con animazione...")
 	visible = true
 	modulate.a = 0.0
 	var tween = create_tween()
 	tween.tween_property(self, "modulate:a", 1.0, 0.3)
 	
 	# Imposta focus sulla prima scelta
+	CrashLogger.log("EventPopup", "Setting focus on first choice")
+	print("[EventPopup] Impostando focus sulla prima scelta...")
 	_update_choice_selection()
+	
+	CrashLogger.log_critical("EventPopup", "Event shown successfully")
+	print("[EventPopup] Evento mostrato con successo")
 
 # Aggiorna contenuto del popup
 func _update_popup_content():
@@ -169,7 +191,7 @@ func _on_choice_selected(choice_index: int):
 	event_description.text = "Esecuzione test di abilità..."
 	choice_selected.emit(choice_index)
 
-# Chiamata quando EventManager emette il risultato dello skill check
+# Chiamata quando NarrativeSystemManager emette il risultato dello skill check
 func _on_skill_check_completed(skill_check_details: Dictionary):
 	if not is_popup_active: return
 
