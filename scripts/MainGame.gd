@@ -197,100 +197,64 @@ func _process(delta):
 		PlayerSystemManager.narrative_log_generated.emit(random_message)
 		time_since_last_message = 0.0 # Resetta il timer
 
-# Gestisce il movimento del giocatore e triggera eventi
+# Gestisce il movimento del giocatore e triggera eventi (versione semplificata)
 func _on_player_moved(position: Vector2i, terrain_type: String):
-	CrashLogger.log("MainGame", "Player moved", "Position: %s, Terrain: %s" % [str(position), terrain_type])
-	TSPLogger.debug("MainGame", "Giocatore mosso in posizione: %s, terreno: %s" % [str(position), terrain_type])
-	
-	# Incrementa contatore passi
 	steps_since_last_event += 1
+	time_since_last_event += 1.0
 	
-	# Guadagna esperienza per il movimento (5-10 di giorno, 5-15 di notte)
-	var exp_gained: int
-	if TimeSystemManager.is_night():
-		exp_gained = randi_range(5, 15)  # Più esperienza di notte per la difficoltà
-	else:
-		exp_gained = randi_range(5, 10)  # Esperienza normale di giorno
-	
-	# Aggiungi esperienza (i messaggi sono gestiti internamente da PlayerSystemManager)
+	# Guadagna esperienza per il movimento
+	var exp_gained = randi_range(5, 15) if TimeSystemManager.is_night() else randi_range(5, 10)
 	PlayerSystemManager.add_experience(exp_gained, "esplorazione")
 	
-	# Mappa terreno a bioma per EventManager
 	var new_biome = _map_terrain_to_biome(terrain_type)
-
-	# GESTIONE STATO RIFUGIO
+	
+	# Gestione stato rifugio
 	var was_in_shelter = is_in_shelter
 	is_in_shelter = (new_biome == "ristoro")
-
-	# Se lo stato rifugio è cambiato, emetti segnale e aggiorna crafting
+	
 	if was_in_shelter != is_in_shelter:
 		shelter_status_changed.emit(is_in_shelter)
 		_update_crafting_access(is_in_shelter)
-		TSPLogger.info("MainGame", "Stato rifugio cambiato: %s" % ["ENTRATO" if is_in_shelter else "USCITO"])
-
-		# Se entriamo in un rifugio di giorno, mostra popup opzioni
 		if is_in_shelter and not TimeSystemManager.is_night():
 			_show_day_shelter_popup()
 	
-	# GESTIONE RIFUGIO NOTTURNO
+	# Riposo notturno automatico nei rifugi
 	if is_in_shelter and TimeSystemManager.is_night():
-		TSPLogger.info("MainGame", "Rifugio notturno - unica opzione: riposo completo fino al mattino")
 		_shelter_night_rest()
-		return  # Non continuare con eventi normali
-
-	# Controlla se il bioma è cambiato per il messaggio narrativo
-	if new_biome != current_biome:
-		if biome_entry_messages.has(new_biome):
-			var msg_data = biome_entry_messages[new_biome]
-			PlayerSystemManager.narrative_log_generated.emit("[color=%s]%s[/color]" % [msg_data.color, msg_data.text])
-			time_since_last_message = 0.0 # Resetta il timer atmosfera
-		current_biome = new_biome
-	
-	# Verifica se può triggerare un evento
-	if _can_trigger_event(new_biome):
-		CrashLogger.log_critical("MainGame", "Attempting to trigger event", "Position: %s" % str(position))
-		
-		# Controllo di sicurezza per EventManager prima del trigger
-		if not EventManager:
-			CrashLogger.log_crash("MainGame._on_player_moved", "EventManager non disponibile")
-			TSPLogger.error("MainGame", "ERRORE CRITICO: EventManager non disponibile per trigger evento")
-			return
-		
-		# Verifica che EventManager abbia il metodo necessario
-		if not EventManager.has_method("trigger_random_event"):
-			CrashLogger.log_crash("MainGame._on_player_moved", "EventManager.trigger_random_event non disponibile")
-			TSPLogger.error("MainGame", "ERRORE: EventManager non ha il metodo trigger_random_event")
-			return
-		
-		CrashLogger.log_critical("MainGame", "Calling EventManager.trigger_random_event")
-		TSPLogger.debug("MainGame", "Triggering evento per bioma: %s" % new_biome)
-		call_deferred("_trigger_event_safely", new_biome)
-	
-	# Controlla sempre i trigger della quest dopo ogni mossa
-	QuestManager.check_all_triggers()
-	
-	TSPLogger.debug("MainGame", "Passi dall'ultimo evento: %d" % [steps_since_last_event])
-
-func _trigger_event_safely(biome: String):
-	CrashLogger.log_critical("MainGame", "Executing deferred event trigger")
-	EventManager.trigger_random_event(biome)
-
-# Verifica se può triggerare un evento (cooldown + passi)
-func _can_trigger_event(_biome: String) -> bool:
-	# Controlla se sono passati abbastanza passi e tempo
-	var time_passed = time_since_last_event >= event_cooldown_time
-	var steps_passed = steps_since_last_event >= steps_threshold
-	
-	return time_passed and steps_passed
-
-# Tenta di triggerare un evento basato su probabilità bioma
-func _attempt_event_trigger(biome: String):
-	# NUOVA LOGICA: I rifugi NON hanno eventi casuali, ma azioni contestuali
-	if biome == "ristoro":
-		TSPLogger.info("MainGame", "Rifugio rilevato - eventi casuali disattivati, azioni contestuali attive")
 		return
 	
-	TSPLogger.debug("MainGame", "Tentativo evento per bioma: %s" % biome)
+	# Aggiorna bioma corrente e mostra messaggio se cambiato
+	if current_biome != new_biome:
+		current_biome = new_biome
+		_show_biome_entry_message(new_biome)
+	
+	# Trigger evento se possibile
+	if _can_trigger_event(new_biome):
+		_trigger_event_for_biome(new_biome)
+	
+	# Controlla trigger quest
+	QuestManager.check_all_triggers()
+
+func _show_biome_entry_message(biome: String):
+	"""Mostra messaggio di entrata nel bioma"""
+	if biome_entry_messages.has(biome):
+		var msg_data = biome_entry_messages[biome]
+		PlayerSystemManager.narrative_log_generated.emit("[color=%s]%s[/color]" % [msg_data.color, msg_data.text])
+		time_since_last_message = 0.0
+
+func _trigger_event_for_biome(biome: String):
+	"""Triggera evento per bioma specificato"""
+	# I rifugi non hanno eventi casuali
+	if biome == "ristoro":
+		return
+	
+	TSPLogger.debug("MainGame", "Triggering evento per bioma: %s" % biome)
+	
+	# Usa NarrativeSystemManager invece di EventManager
+	var event_result = NarrativeSystemManager.trigger_random_event(biome)
+	if event_result.get("triggered", false):
+		_on_event_triggered(event_result.get("event", {}))
+		_reset_cooldowns()
 
 # Reset dei cooldown dopo un evento
 func _reset_cooldowns():

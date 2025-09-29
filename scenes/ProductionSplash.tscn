@@ -60,7 +60,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0, 1)
 theme_override_fonts/font = ExtResource("3_dos_font")
 theme_override_font_sizes/font_size = 16
-text = "v0.9.7.3 - Manager Consolidation"
+text = "v0.9.7.4 - Event System Optimization"
 horizontal_alignment = 1
 
 [node name="TaglineLabel" type="Label" parent="ProductionContainer/VBoxContainer"]

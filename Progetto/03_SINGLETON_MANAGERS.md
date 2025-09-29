@@ -1,10 +1,10 @@
-# 🎛️ SINGLETON MANAGERS SYSTEM - THE SAFE PLACE v0.9.7.3
+# 🎛️ SINGLETON MANAGERS SYSTEM - THE SAFE PLACE v0.9.7.4
 
 ## 🎯 **OVERVIEW SISTEMA MANAGERS**
 
 Il progetto utilizza un sistema di **7 Singleton Managers consolidati** implementati tramite il sistema Autoload di Godot. Questa architettura consolidata riduce la complessità mantenendo tutte le funzionalità attraverso manager specializzati che comunicano via sistema di segnali per il disaccoppiamento architetturale.
 
-### **🔄 Consolidamento v0.9.7.3**
+### **🔄 Consolidamento v0.9.7.4**
 - **Prima:** 12 manager separati con sovrapposizioni funzionali
 - **Dopo:** 7 manager consolidati con responsabilità chiare
 - **Benefici:** Riduzione complessità, migliori performance, manutenibilità migliorata

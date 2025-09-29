@@ -1,4 +1,4 @@
-# 📚 INDICE GLOBALE DOCUMENTAZIONE - THE SAFE PLACE v0.9.7.3
+# 📚 INDICE GLOBALE DOCUMENTAZIONE - THE SAFE PLACE v0.9.7.4
 
 ## 🎯 **NAVIGAZIONE RAPIDA**
 
@@ -17,7 +17,7 @@ Questo è l'indice unificato di tutta la documentazione del progetto "The Safe P
 | [00_INDICE_DOCUMENTAZIONE_PROGETTO.md](Progetto/00_INDICE_DOCUMENTAZIONE_PROGETTO.md) | Indice specifico documentazione tecnica | ✅ |
 | [01_ARCHITETTURA_GENERALE.md](Progetto/01_ARCHITETTURA_GENERALE.md) | Visione d'insieme sistema e componenti | ✅ |
 | [02_GODOT_ENGINE_SPECIFICS.md](Progetto/02_GODOT_ENGINE_SPECIFICS.md) | Specifiche tecniche Godot 4.x | ✅ |
-| [03_SINGLETON_MANAGERS.md](Progetto/03_SINGLETON_MANAGERS.md) | **Sistema manager consolidato (v0.9.7.3)** | ✅ |
+| [03_SINGLETON_MANAGERS.md](Progetto/03_SINGLETON_MANAGERS.md) | **Sistema manager consolidato (v0.9.7.4)** | ✅ |
 
 ### **🗄️ DATABASE E DATI (04-07)**
 | File | Descrizione | Stato |
@@ -150,12 +150,12 @@ Questo è l'indice unificato di tutta la documentazione del progetto "The Safe P
 | [README.md](README.md) | Introduzione progetto | ✅ |
 | [CHANGELOG.md](CHANGELOG.md) | Registro modifiche v0.9.0 | ✅ |
 | [CHANGELOG_v0.9.5.md](CHANGELOG_v0.9.5.md) | Registro modifiche v0.9.5 | ✅ |
-| [CHANGELOG_v0.9.7.3.md](CHANGELOG_v0.9.7.3.md) | **Registro consolidamento manager** | ✅ |
-| [ANTI_REGRESSION_v0.9.7.3.md](ANTI_REGRESSION_v0.9.7.3.md) | **Test anti-regressione consolidamento** | ✅ |
+| [CHANGELOG_v0.9.7.4.md](CHANGELOG_v0.9.7.4.md) | **Registro ottimizzazione sistema eventi** | ✅ |
+| [ANTI_REGRESSION_v0.9.7.4.md](ANTI_REGRESSION_v0.9.7.4.md) | **Test anti-regressione ottimizzazione** | ✅ |
 | **DOCUMENTATION_INDEX.md** | **Questo indice globale** | ✅ |
 
 ### **File di Configurazione**
-- [project.godot](project.godot): Configurazione progetto Godot (v0.9.7.3)
+- [project.godot](project.godot): Configurazione progetto Godot (v0.9.7.4)
 - [.gitignore](.gitignore): Configurazione Git
 - [.gdignore](.gdignore): Configurazione Godot ignore
 
@@ -165,7 +165,7 @@ Questo è l'indice unificato di tutta la documentazione del progetto "The Safe P
 
 ### **👨‍💻 Per Sviluppatori**
 1. **Inizia qui**: [01_ARCHITETTURA_GENERALE.md](Progetto/01_ARCHITETTURA_GENERALE.md)
-2. **Singleton Managers**: [03_SINGLETON_MANAGERS.md](Progetto/03_SINGLETON_MANAGERS.md) *(Aggiornato v0.9.7.3)*
+2. **Singleton Managers**: [03_SINGLETON_MANAGERS.md](Progetto/03_SINGLETON_MANAGERS.md) *(Aggiornato v0.9.7.4)*
 3. **Pattern di codice**: [15_CODE_PATTERNS.md](Progetto/15_CODE_PATTERNS.md)
 4. **API Reference**: [35_API_REFERENCE.md](Progetto/35_API_REFERENCE.md)
 5. **Diagrammi**: [architecture_overview.svg](diagrams/architecture_overview.svg)
@@ -177,7 +177,7 @@ Questo è l'indice unificato di tutta la documentazione del progetto "The Safe P
 4. **Sistemi core**: Documenti 08-14
 5. **API completa**: [35_API_REFERENCE.md](Progetto/35_API_REFERENCE.md)
 6. **Dipendenze**: [manager_dependencies.svg](diagrams/manager_dependencies.svg)
-7. **Consolidamento**: [CHANGELOG_v0.9.7.3.md](CHANGELOG_v0.9.7.3.md) + [ANTI_REGRESSION_v0.9.7.3.md](ANTI_REGRESSION_v0.9.7.3.md)
+7. **Consolidamento**: [CHANGELOG_v0.9.7.4.md](CHANGELOG_v0.9.7.4.md) + [ANTI_REGRESSION_v0.9.7.4.md](ANTI_REGRESSION_v0.9.7.4.md)
 
 ### **🎮 Per Game Designer**
 1. **Contenuti narrativi**: [18_NARRATIVE_CONTENT.md](Progetto/18_NARRATIVE_CONTENT.md)
@@ -199,17 +199,17 @@ Questo è l'indice unificato di tutta la documentazione del progetto "The Safe P
 
 ### **Copertura Documentale**
 - **File totali**: 57 documenti (39 tecnici + 5 diagrammi + 5 utente finale + 8 versioning/protezione)
-- **Copertura sistemi**: 100% (7/7 Manager Consolidati v0.9.7.3)
+- **Copertura sistemi**: 100% (7/7 Manager Consolidati v0.9.7.4)
 - **Copertura database**: 100% (15/15 database JSON)
 - **Documentazione inline**: 95%+ coverage
 - **Diagrammi architetturali**: 4 visualizzazioni complete
 - **Documentazione utente**: 5 guide complete per giocatori
-- **Sistema anti-regressione**: Attivo con checkpoint v0.9.7.3
+- **Sistema anti-regressione**: Attivo con checkpoint v0.9.7.4
 
 ### **Qualità Documentazione**
 - **Standardizzazione**: Formato uniforme con emoji e sezioni
 - **Navigabilità**: Cross-reference e indici strutturati
-- **Aggiornamento**: Sincronizzato con codice v0.9.7.3
+- **Aggiornamento**: Sincronizzato con codice v0.9.7.4
 - **Accessibilità LLM**: Ottimizzato per AI comprehension
 - **Consolidamento**: Architettura semplificata da 12 a 7 manager
 
@@ -222,7 +222,7 @@ Questo è l'indice unificato di tutta la documentazione del progetto "The Safe P
 2. **Aggiornamento docs**: Sincronizzazione documentazione
 3. **Verifica cross-reference**: Controllo collegamenti
 4. **Update indici**: Aggiornamento questo file e indici specifici
-5. **Test anti-regressione**: Verifica compatibilità (v0.9.7.3+)
+5. **Test anti-regressione**: Verifica compatibilità (v0.9.7.4+)
 
 ### **Responsabilità**
 - **Sviluppatori**: Aggiornamento documentazione tecnica
@@ -245,7 +245,7 @@ Questo è l'indice unificato di tutta la documentazione del progetto "The Safe P
 
 ---
 
-*Indice globale aggiornato per v0.9.7.3 - Manager Consolidation*
+*Indice globale aggiornato per v0.9.7.4 - Event System Optimization*
 
 **🎯 NAVIGAZIONE RAPIDA:**
 - 📁 [Documentazione Tecnica](Progetto/) - Sistema completo LLM-friendly

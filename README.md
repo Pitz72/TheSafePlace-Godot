@@ -1,4 +1,4 @@
-# 🏠 The Safe Place v0.9.7.3 "Manager Consolidation"
+# 🏠 The Safe Place v0.9.7.4 "Event System Optimization"
 
 *Un GDR testuale enterprise-level con narrativa profonda, sistema eventi rivoluzionario e architettura consolidata*
 
@@ -21,7 +21,7 @@
 
 ## 🚀 Stato del Progetto
 
-**Versione Attuale**: v0.9.7.3 "Manager Consolidation"
+**Versione Attuale**: v0.9.7.4 "Event System Optimization"
 
 ### ✅ Sistemi Implementati
 - ✅ **🎮 Navigazione Keyboard-Only**: Sistema completo per menu opzioni con accessibilità totale
@@ -30,7 +30,7 @@
 - ✅ **⚔️ Sistema di Combattimento**: Turn-based, UI, abilità, stati, XP e loot.
 - ✅ **🏕️ Sistema Rifugi**: Aree sicure con azioni diurne e riposo notturno.
 - ✅ **📊 Database Espanso**: 89 item unici con 37 nuove aggiunte
-- ✅ **🧪 Testing Industriale**: Framework automatizzato con anti-regressione v0.9.7.3
+- ✅ **🧪 Testing Industriale**: Framework automatizzato con anti-regressione v0.9.7.4
 - ✅ **⚡ Performance Ottimale**: 60+ FPS, <100MB RAM, zero memory leaks
 - ✅ **🔧 Quality Assurance**: Error handling robusto, sincronizzazione 100%
 - ✅ **🏗️ Manager Consolidation**: Architettura semplificata da 12 a 7 manager
@@ -109,7 +109,7 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file `LICENSE` per i de
 
 ## 🏷️ Tag e Versioni
 
-- `v0.9.7.3` - Manager Consolidation (Corrente)
+- `v0.9.7.4` - Event System Optimization (Corrente)
 - `v0.9.7.2` - What a Beautiful Entrance Door!
 - `v0.9.7.1` - Is it a Game or a Library?
 - `v0.9.7` - Climbing the China Mountains
@@ -134,7 +134,7 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file `LICENSE` per i de
 *Sviluppato con ❤️ e l'assistenza di Claude AI*
 
 [![Godot Engine](https://img.shields.io/badge/Godot-4.4.1-blue.svg)](https://godotengine.org/)
-[![Version](https://img.shields.io/badge/Version-v0.9.7.3-green.svg)](CHANGELOG_v0.9.7.3.md)
+[![Version](https://img.shields.io/badge/Version-v0.9.7.4-green.svg)](CHANGELOG_v0.9.7.4.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Enterprise%20Ready-brightgreen.svg)](DOCUMENTATION_INDEX.md)
 
@@ -144,11 +144,11 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file `LICENSE` per i de
 
 **The Safe Place** è un GDR testuale che combina l'estetica retrò dei monitor CRT con meccaniche di gioco moderne. Il giocatore esplora un mondo post-apocalittico alla ricerca di un rifugio sicuro, affrontando eventi dinamici, gestendo risorse vitali e prendendo decisioni che influenzano la sopravvivenza.
 
-### **🎯 Caratteristiche Principali v0.9.7.3 "Manager Consolidation"**
+### **🎯 Caratteristiche Principali v0.9.7.4 "Event System Optimization"**
 
 - **🏗️ Architettura Consolidata:** 7 Manager Consolidati (da 12) con pattern design ottimizzati
 - **📊 Sincronizzazione Perfetta:** 57+ documenti tecnici, codice e documentazione 100% allineati
-- **🧪 Testing Anti-Regressione:** Framework completo con checkpoint v0.9.7.3
+- **🧪 Testing Anti-Regressione:** Framework completo con checkpoint v0.9.7.4
 - **⚡ Performance Eccellente:** 60+ FPS stabili, <100MB RAM, zero memory leaks
 - **🎮 Sistemi Avanzati:** Quest narrativo, crafting dinamico, combattimento bilanciato
 - **🖥️ UI Enterprise-Level:** Popup interattivi, menu principale, gestione stati complessa
@@ -220,7 +220,7 @@ Durante l'esplorazione incontrerai eventi casuali che richiedono decisioni strat
 
 ## 🏗️ **ARCHITETTURA TECNICA**
 
-### **Consolidated Managers (v0.9.7.3)**
+### **Consolidated Managers (v0.9.7.4)**
 - **CoreDataManager:** Database oggetti, validazione, cache + gestione nemici e quest
 - **PlayerSystemManager:** Statistiche, inventario, risorse vitali + gestione sopravvivenza
 - **WorldSystemManager:** Mondo, movimento + ciclo temporale e penalità
@@ -279,7 +279,7 @@ MainGame.gd (Scene Root)
 - Time management con ciclo giorno/notte
 - **Event system completo con skill check** ⭐ v0.4.0
 
-### **✅ Milestone 4: Manager Consolidation** ⭐ v0.9.7.3
+### **✅ Milestone 4: Event System Optimization** ⭐ v0.9.7.4
 - Architettura consolidata da 12 a 7 manager
 - Compatibilità legacy al 100%
 - Performance e manutenibilità migliorate
@@ -444,10 +444,10 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi il file [`LICENSE`](LICENS
 
 ---
 
-**🏠 The Safe Place v0.9.7.3 "Manager Consolidation"**
+**🏠 The Safe Place v0.9.7.4 "Event System Optimization"**
 *Architettura consolidata con 7 manager ottimizzati per performance e manutenibilità*
 
 ---
 
 *Ultimo aggiornamento: Gennaio 2025*
-*Versione README: v0.9.7.3*
+*Versione README: v0.9.7.4*

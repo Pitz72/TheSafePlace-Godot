@@ -98,12 +98,13 @@ var main_quest_id: String = "main_quest_ultimate_surviver"
 var main_quest_stages: Array = []
 
 # ========================================
-# VARIABILI EVENTI
+# VARIABILI EVENTI OTTIMIZZATE
 # ========================================
 
-## Cache eventi per performance
+## Cache eventi ottimizzata con lazy loading
 var cached_events: Dictionary = {}
 var biome_event_pools: Dictionary = {}
+var _cache_initialized: bool = false
 
 ## Gestione evento corrente
 var current_event: Dictionary = {}
@@ -545,3 +546,98 @@ func debug_print_narrative_status():
 	print("Quest completate: ", completed_quests.size())
 	print("Empatia: ", character_empathy)
 	print("Ricordi: ", memory_strength)
+
+# ========================================
+# API EVENTI OTTIMIZZATA
+# ========================================
+
+func initialize_events():
+	"""Inizializza il sistema eventi con lazy loading"""
+	if not _cache_initialized:
+		_preload_critical_events()
+		_cache_initialized = true
+		TSPLogger.success("NarrativeSystemManager", "Sistema eventi inizializzato con lazy loading")
+
+func trigger_random_event(biome: String) -> Dictionary:
+	"""Triggera evento casuale per bioma (versione ottimizzata)"""
+	var events = _get_biome_events_optimized(biome)
+	if events.is_empty():
+		return {"triggered": false, "reason": "Nessun evento disponibile per bioma: %s" % biome}
+	
+	var random_event = events[randi() % events.size()]
+	var event_data = _get_event_data_optimized(random_event.id)
+	
+	if event_data.is_empty():
+		return {"triggered": false, "reason": "Dati evento non trovati: %s" % random_event.id}
+	
+	current_event = event_data
+	current_event_id = random_event.id
+	
+	event_triggered.emit(event_data)
+	return {"triggered": true, "event": event_data}
+
+func _get_biome_events_optimized(biome: String) -> Array:
+	"""Ottiene eventi per bioma con cache intelligente"""
+	# Controlla cache prima
+	if biome_event_pools.has(biome):
+		return biome_event_pools[biome]
+	
+	# Carica solo se necessario
+	var events = _load_biome_events(biome)
+	if not events.is_empty():
+		biome_event_pools[biome] = events
+	
+	return events
+
+func _get_event_data_optimized(event_id: String) -> Dictionary:
+	"""Ottiene dati evento con cache ottimizzata"""
+	# Controlla cache prima
+	if cached_events.has(event_id):
+		return cached_events[event_id]
+	
+	# Carica solo se necessario
+	var event_data = _load_single_event(event_id)
+	if not event_data.is_empty():
+		cached_events[event_id] = event_data
+	
+	return event_data
+
+func _preload_critical_events():
+	"""Precarica solo eventi critici per performance"""
+	var critical_events = ["random_events", "main_quest_events"]
+	
+	for event_type in critical_events:
+		var file_path = "res://data/events/%s.json" % event_type
+		var data = CoreDataManager.load_json_file(file_path)
+		if not data.is_empty():
+			cached_events[event_type] = data
+
+func _load_biome_events(biome: String) -> Array:
+	"""Carica eventi per bioma specifico"""
+	var biome_file = "res://data/events/%s_events.json" % biome
+	var events_data = CoreDataManager.load_json_file(biome_file)
+	
+	if events_data.is_empty():
+		TSPLogger.warn("NarrativeSystemManager", "Nessun evento trovato per bioma: %s" % biome)
+		return []
+	
+	return events_data.get("events", [])
+
+func _load_single_event(event_id: String) -> Dictionary:
+	"""Carica singolo evento"""
+	# Prima prova nei file bioma già caricati
+	for biome in biome_event_pools:
+		for event in biome_event_pools[biome]:
+			if event.get("id") == event_id:
+				return event
+	
+	# Se non trovato, carica da file specifico
+	var event_file = "res://data/events/single/%s.json" % event_id
+	return CoreDataManager.load_json_file(event_file)
+
+func clear_event_cache():
+	"""Pulisce cache eventi per liberare memoria"""
+	cached_events.clear()
+	biome_event_pools.clear()
+	_cache_initialized = false
+	TSPLogger.info("NarrativeSystemManager", "Cache eventi pulita")
