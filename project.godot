@@ -17,7 +17,7 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 
 [autoload]
 
-ThemeManager="*res://scripts/ThemeManager.gd"
+ThemeManager="*res://scripts/managers/ThemeManager.gd"
 DataManager="*res://scripts/managers/DataManager.gd"
 PlayerManager="*res://scripts/managers/PlayerManager.gd"
 InputManager="*res://scripts/managers/InputManager.gd"

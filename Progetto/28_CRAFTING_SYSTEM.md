@@ -1,5 +1,9 @@
 # 🔨 CRAFTING SYSTEM - THE SAFE PLACE v0.9.5
 
+> [!WARNING]
+> **ATTENZIONE: STATO DESIDERATO, NON ATTUALE**
+> Questo documento descrive un'architettura ideale e non riflette l'implementazione corrente del `CraftingManager.gd`, che è presumibilmente un prototipo isolato. Il contenuto di questo file deve essere completamente verificato e riscritto durante la Fase 2 del piano di recupero.
+
 ## 🎯 **OVERVIEW SISTEMA CRAFTING**
 
 Il Crafting System di The Safe Place implementa un sistema completo di produzione e creazione oggetti che si integra con l'inventario del giocatore e i rifugi nel mondo di gioco. Il sistema permette ai giocatori di combinare materiali grezzi per creare equipaggiamento, consumabili e strumenti utili per la sopravvivenza.

@@ -1,5 +1,9 @@
 # 🎯 QUEST SYSTEM - THE SAFE PLACE v0.9.5
 
+> [!WARNING]
+> **ATTENZIONE: STATO DESIDERATO, NON ATTUALE**
+> Questo documento descrive un'architettura ideale e non riflette l'implementazione corrente del `QuestManager.gd`, che è presumibilmente un prototipo isolato. Il contenuto di questo file deve essere completamente verificato e riscritto durante la Fase 2 del piano di recupero.
+
 ## 🎯 **OVERVIEW SISTEMA QUEST**
 
 Il Quest System di The Safe Place gestisce missioni strutturate e progressione narrativa attraverso una serie di obiettivi collegati. Il sistema supporta quest principali che guidano la storia e quest secondarie che arricchiscono l'esperienza di gioco, creando un senso di scopo e direzione nel mondo post-apocalittico.

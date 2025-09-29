@@ -1,5 +1,9 @@
 # ⚔️ COMBAT SYSTEM - THE SAFE PLACE v0.9.5
 
+> [!WARNING]
+> **ATTENZIONE: STATO DESIDERATO, NON ATTUALE**
+> Questo documento descrive un'architettura ideale e non riflette l'implementazione corrente del `CombatManager.gd`, che è un prototipo isolato con dati hardcoded. Il contenuto di questo file deve essere completamente verificato e riscritto durante la Fase 2 del piano di recupero.
+
 ## 🎯 **OVERVIEW SISTEMA COMBATTIMENTO**
 
 Il Combat System di The Safe Place implementa un sistema di combattimento turn-based completo che si integra perfettamente con il sistema eventi esistente. Il sistema gestisce combattimenti dinamici con nemici procedurali, calcolo danni basato su statistiche e risoluzione automatica dei turni.

@@ -1,5 +1,9 @@
 # 💾 SAVE/LOAD SYSTEM - THE SAFE PLACE v0.9.5
 
+> [!WARNING]
+> **ATTENZIONE: STATO DESIDERATO, NON ATTUALE**
+> Questo documento descrive un'architettura ideale e non riflette l'implementazione corrente del `SaveLoadManager.gd`, che è presumibilmente un prototipo isolato. Il contenuto di questo file deve essere completamente verificato e riscritto durante la Fase 2 del piano di recupero.
+
 ## 🎯 **OVERVIEW SISTEMA SALVATAGGIO**
 
 Il Save/Load System di The Safe Place gestisce la persistenza completa dello stato di gioco attraverso un sistema robusto di salvataggio basato su file JSON. Il sistema supporta salvataggi multipli, backup automatici, validazione integrità e recovery da corruzioni, garantendo che il progresso del giocatore sia sempre sicuro.
