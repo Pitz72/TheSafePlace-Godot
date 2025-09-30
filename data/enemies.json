@@ -1,0 +1,105 @@
+{
+  "wolf": {
+    "id": "wolf",
+    "name": "Lupo Affamato",
+    "hp": 15,
+    "max_hp": 15,
+    "damage": 4,
+    "defense": 1,
+    "accuracy": 13,
+    "xp_reward": 25,
+    "loot_table": [
+      {
+        "item_id": "wolf_pelt",
+        "chance": 0.7,
+        "quantity": {
+          "min": 1,
+          "max": 1
+        }
+      },
+      {
+        "item_id": "raw_meat",
+        "chance": 0.5,
+        "quantity": {
+          "min": 1,
+          "max": 2
+        }
+      }
+    ],
+    "difficulty_modifier": 1.0
+  },
+  "bandit": {
+    "id": "bandit",
+    "name": "Bandito",
+    "hp": 20,
+    "max_hp": 20,
+    "damage": 6,
+    "defense": 2,
+    "accuracy": 12,
+    "xp_reward": 40,
+    "loot_table": [
+      {
+        "item_id": "rusty_knife",
+        "chance": 0.6,
+        "quantity": {
+          "min": 1,
+          "max": 1
+        }
+      },
+      {
+        "item_id": "cloth_scraps",
+        "chance": 0.4,
+        "quantity": {
+          "min": 1,
+          "max": 3
+        }
+      },
+      {
+        "item_id": "ration_pack",
+        "chance": 0.3,
+        "quantity": {
+          "min": 1,
+          "max": 1
+        }
+      }
+    ],
+    "difficulty_modifier": 1.2
+  },
+  "mutant": {
+    "id": "mutant",
+    "name": "Mutante",
+    "hp": 25,
+    "max_hp": 25,
+    "damage": 8,
+    "defense": 3,
+    "accuracy": 11,
+    "xp_reward": 60,
+    "loot_table": [
+      {
+        "item_id": "mutant_tooth",
+        "chance": 0.8,
+        "quantity": {
+          "min": 1,
+          "max": 2
+        }
+      },
+      {
+        "item_id": "strange_meat",
+        "chance": 0.6,
+        "quantity": {
+          "min": 1,
+          "max": 1
+        }
+      },
+      {
+        "item_id": "radioactive_material",
+        "chance": 0.2,
+        "quantity": {
+          "min": 1,
+          "max": 1
+        }
+      }
+    ],
+    "difficulty_modifier": 1.5
+  }
+}

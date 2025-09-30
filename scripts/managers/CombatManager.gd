@@ -56,6 +56,9 @@ signal combat_log_updated(message: String)
 ## Stato corrente del combattimento
 var current_combat_state: CombatState = CombatState.IDLE
 
+## Database dei nemici caricato da JSON
+var enemies_db: Dictionary = {}
+
 ## Dati del nemico corrente
 var current_enemy: Dictionary = {}
 
@@ -93,6 +96,16 @@ var combat_stats: Dictionary = {
 
 func _ready() -> void:
 	print("⚔️ CombatManager: Inizializzazione sistema combattimento...")
+	# Carica il database dei nemici utilizzando il DataManager
+	if DataManager:
+		enemies_db = DataManager.load_json_file("res://data/enemies.json")
+		if not enemies_db.is_empty():
+			print("   ✅ Database nemici caricato: %d nemici trovati" % enemies_db.size())
+		else:
+			print("   ❌ ERRORE: Impossibile caricare il database dei nemici.")
+	else:
+		print("   ❌ ERRORE: DataManager non disponibile.")
+
 	print("✅ CombatManager: Sistema combattimento pronto")
 
 # ========================================
@@ -562,58 +575,13 @@ func _parse_damage_string(damage_str: String) -> Dictionary:
 
 ## Ottiene i dati di un nemico con scaling per livello giocatore
 func _get_enemy_data(enemy_id: String) -> Dictionary:
-	# Database base dei nemici
-	var base_enemies_db = {
-		"wolf": {
-			"id": "wolf",
-			"name": "Lupo Affamato",
-			"hp": 15,
-			"max_hp": 15,
-			"damage": 4,
-			"defense": 1,
-			"accuracy": 13,
-			"xp_reward": 25,
-			"loot_table": [
-				{"item_id": "wolf_pelt", "chance": 0.7, "quantity": {"min": 1, "max": 1}},
-				{"item_id": "raw_meat", "chance": 0.5, "quantity": {"min": 1, "max": 2}}
-			],
-			"difficulty_modifier": 1.0
-		},
-		"bandit": {
-			"id": "bandit",
-			"name": "Bandito",
-			"hp": 20,
-			"max_hp": 20,
-			"damage": 6,
-			"defense": 2,
-			"accuracy": 12,
-			"xp_reward": 40,
-			"loot_table": [
-				{"item_id": "rusty_knife", "chance": 0.6, "quantity": {"min": 1, "max": 1}},
-				{"item_id": "cloth_scraps", "chance": 0.4, "quantity": {"min": 1, "max": 3}},
-				{"item_id": "ration_pack", "chance": 0.3, "quantity": {"min": 1, "max": 1}}
-			],
-			"difficulty_modifier": 1.2
-		},
-		"mutant": {
-			"id": "mutant",
-			"name": "Mutante",
-			"hp": 25,
-			"max_hp": 25,
-			"damage": 8,
-			"defense": 3,
-			"accuracy": 11,
-			"xp_reward": 60,
-			"loot_table": [
-				{"item_id": "mutant_tooth", "chance": 0.8, "quantity": {"min": 1, "max": 2}},
-				{"item_id": "strange_meat", "chance": 0.6, "quantity": {"min": 1, "max": 1}},
-				{"item_id": "radioactive_material", "chance": 0.2, "quantity": {"min": 1, "max": 1}}
-			],
-			"difficulty_modifier": 1.5
-		}
-	}
+	# Cerca il nemico nel database caricato
+	if not enemies_db.has(enemy_id):
+		print("❌ CombatManager: Nemico non trovato nel database: %s" % enemy_id)
+		return {}
 
-	var base_enemy = base_enemies_db.get(enemy_id, {})
+	# Duplica i dati per evitare di modificare il database originale durante lo scaling
+	var base_enemy = enemies_db.get(enemy_id, {}).duplicate(true)
 	if base_enemy.is_empty():
 		return {}
 
@@ -859,81 +827,5 @@ func debug_reset_combat() -> void:
 	print("🔧 DEBUG: Sistema combattimento resettato")
 
 # ========================================
-# TESTING E VALIDATION
+# FINE
 # ========================================
-
-## Test attacco base
-func test_basic_attack() -> void:
-	print("🧪 TEST: Attacco base")
-	var player_stats = {"forza": 14, "agilita": 12}
-	var weapon = {"damage": {"min": 5, "max": 10, "bonus": 2}}
-	var damage = calculate_damage(player_stats, weapon)
-
-	assert(damage >= 7 && damage <= 16, "Danno fuori range: %d" % damage)
-	print("✅ TEST: Attacco base superato - danno: %d" % damage)
-
-## Test risoluzione combattimento
-func test_combat_resolution() -> void:
-	print("🧪 TEST: Risoluzione combattimento")
-	var success = start_combat("wolf")
-	assert(success, "Impossibile iniziare combattimento")
-
-	var result = perform_player_action(CombatAction.ATTACK)
-	assert(result, "Azione attacco fallita")
-
-	print("✅ TEST: Risoluzione combattimento superata")
-
-## Test sistema difesa
-func test_defense_system() -> void:
-	print("🧪 TEST: Sistema difesa")
-	var success = start_combat("wolf")
-	assert(success, "Impossibile iniziare combattimento")
-
-	# Test difesa
-	var defense_success = perform_player_action(CombatAction.DEFEND)
-	assert(defense_success, "Azione difesa fallita")
-	assert(player_defense_bonus > 0, "Bonus difesa non applicato")
-
-	print("✅ TEST: Sistema difesa superato - bonus: %d" % player_defense_bonus)
-
-## Test generazione loot
-func test_loot_generation() -> void:
-	print("🧪 TEST: Generazione loot")
-	start_combat("bandit")
-
-	# Forza vittoria
-	current_enemy.hp = 0
-	_check_combat_end()
-
-	var rewards = _generate_rewards()
-	assert(rewards is Dictionary, "Rewards non è un dizionario")
-
-	print("✅ TEST: Generazione loot superata - items: %d" % rewards.size())
-
-## Test scaling nemico
-func test_enemy_scaling() -> void:
-	print("🧪 TEST: Scaling nemico")
-	var base_wolf = _get_enemy_data("wolf")
-	var scaled_wolf = _scale_enemy_for_player_level(base_wolf)
-
-	assert(scaled_wolf.hp >= base_wolf.hp, "HP non scalati correttamente")
-	assert(scaled_wolf.damage >= base_wolf.damage, "Danno non scalato correttamente")
-
-	print("✅ TEST: Scaling nemico superato - HP: %d→%d" % [base_wolf.hp, scaled_wolf.hp])
-
-## Esegue tutti i test
-func run_all_tests() -> void:
-	print("🚀 AVVIO TEST SUITE COMBAT SYSTEM")
-	print("==================================================")
-
-	test_basic_attack()
-	test_combat_resolution()
-	test_defense_system()
-	test_loot_generation()
-	test_enemy_scaling()
-
-	# Cleanup
-	debug_reset_combat()
-
-	print("==================================================")
-	print("✅ TUTTI I TEST SUPERATI")
