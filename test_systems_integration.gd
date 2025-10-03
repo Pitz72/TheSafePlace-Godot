@@ -246,6 +246,52 @@ func test_quest_narrative_integration():
 		return NarrativeSystemManager.has_method("try_trigger_event")
 	)
 	
+	# Test nuovi metodi implementati (M3.T3)
+	run_test("initialize_quests method exists", func():
+		return NarrativeSystemManager.has_method("initialize_quests")
+	)
+	
+	run_test("check_all_triggers method exists", func():
+		return NarrativeSystemManager.has_method("check_all_triggers")
+	)
+	
+	# Test funzionalità initialize_quests
+	run_test("initialize_quests functionality", func():
+		# Testa che il metodo possa essere chiamato senza errori
+		NarrativeSystemManager.initialize_quests()
+		# Verifica che le quest siano state inizializzate
+		return NarrativeSystemManager.main_quest_id != ""
+	)
+	
+	# Test funzionalità check_all_triggers
+	run_test("check_all_triggers functionality", func():
+		# Assicurati che ci siano dati quest caricati
+		if NarrativeSystemManager.main_quest_data.is_empty():
+			# Carica dati di test
+			NarrativeSystemManager.main_quest_data = {
+				"phases": [
+					{
+						"id": "test_phase",
+						"title": "Test Phase",
+						"description": "Test description",
+						"trigger_condition": "hp > 50"
+					}
+				]
+			}
+		
+		# Testa che il metodo possa essere chiamato senza errori
+		NarrativeSystemManager.check_all_triggers()
+		return true  # Se arriviamo qui senza crash, il test passa
+	)
+	
+	# Test sistema di parsing trigger
+	run_test("trigger parsing system", func():
+		# Test condizioni numeriche
+		var test_condition = "hp > 50"
+		var result = NarrativeSystemManager._evaluate_trigger_condition(test_condition)
+		return typeof(result) == TYPE_BOOL  # Deve restituire un booleano
+	)
+	
 	print("")
 
 # ========================================
@@ -322,10 +368,11 @@ func run_test(test_name: String, test_func: Callable) -> bool:
 	var result = false
 	var error_msg = ""
 	
-	try:
-		result = test_func.call()
-	except:
-		error_msg = "Exception during test execution"
+	# GDScript doesn't support try/except - call directly
+	result = test_func.call()
+	if result == null:
+		result = false
+		error_msg = "Test returned null"
 	
 	if result:
 		passed_tests += 1

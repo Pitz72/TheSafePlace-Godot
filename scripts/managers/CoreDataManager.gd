@@ -1,9 +1,9 @@
 extends Node
 
-## CoreDataManager - Consolidamento DataManager + Validazione Avanzata
+## CoreDataManager - Consolidamento CoreDataManager + Validazione Avanzata
 ## 
 ## Responsabilità unificate:
-## - Caricamento e caching database JSON (DataManager)
+## - Caricamento e caching database JSON (CoreDataManager)
 ## - Validazione integrità dati oggetti
 ## - Sistema colori oggetti basato su categoria/rarità
 ## - API per accesso dati validati
@@ -125,14 +125,48 @@ func _unify_databases():
 	"""Unifica tutti i database categorizzati in un unico dizionario"""
 	items.clear()
 	
-	var all_databases = [weapons, armor, consumables, crafting_materials, ammo, quest_items, unique_items]
+	var all_databases = [
+		{"data": weapons, "key": "weapons"},
+		{"data": armor, "key": "armor"},
+		{"data": consumables, "key": "consumables"},
+		{"data": crafting_materials, "key": "misc_items"},
+		{"data": ammo, "key": "ammo"},
+		{"data": quest_items, "key": "quest_items"},
+		{"data": unique_items, "key": "unique_items"}
+	]
 	
-	for database in all_databases:
-		for item_id in database.keys():
-			if validate_item_data(database[item_id]):
-				items[item_id] = database[item_id]
-			else:
-				print("⚠️ CoreDataManager: Oggetto non valido ignorato: ", item_id)
+	for db_info in all_databases:
+		var database = db_info.data
+		var main_key = db_info.key
+		
+		# Controlla se il database ha la struttura nidificata
+		if database.has(main_key):
+			var items_data = database[main_key]
+			
+			# Gestisce sia Array che Dictionary
+			if items_data is Array:
+				# Struttura Array: [{"id": "...", ...}, ...]
+				for item_data in items_data:
+					if item_data is Dictionary and validate_item_data(item_data):
+						items[item_data.id] = item_data
+					else:
+						print("⚠️ CoreDataManager: Oggetto non valido ignorato: ", item_data)
+			elif items_data is Dictionary:
+				# Struttura Dictionary: {"item_id": {...}, ...}
+				for item_id in items_data.keys():
+					var item_data = items_data[item_id]
+					if item_data is Dictionary and validate_item_data(item_data):
+						items[item_id] = item_data
+					else:
+						print("⚠️ CoreDataManager: Oggetto non valido ignorato: ", item_id)
+		else:
+			# Fallback per struttura piatta
+			for item_id in database.keys():
+				var item_data = database[item_id]
+				if item_data is Dictionary and validate_item_data(item_data):
+					items[item_id] = item_data
+				else:
+					print("⚠️ CoreDataManager: Oggetto non valido ignorato: ", item_id)
 
 # ========================================
 # API PUBBLICHE PRINCIPALI

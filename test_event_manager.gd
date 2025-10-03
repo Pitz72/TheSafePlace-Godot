@@ -1,6 +1,6 @@
 # test_event_manager.gd
 # Test per verificare il funzionamento dell'EventManager
-# Testa integrazione con PlayerManager e sistema skill check
+# Testa integrazione con PlayerSystemManager e sistema skill check
 
 extends Node
 
@@ -42,9 +42,9 @@ func test_event_manager_initialization():
 	
 	# Verifica riferimenti ai manager
 	if event_manager.player_manager:
-		print("✅ Riferimento PlayerManager OK")
+		print("✅ Riferimento PlayerSystemManager OK")
 	else:
-		print("❌ Riferimento PlayerManager mancante")
+		print("❌ Riferimento PlayerSystemManager mancante")
 	
 	if event_manager.data_manager:
 		print("✅ Riferimento DataManager OK")
@@ -166,7 +166,7 @@ func test_event_choice_processing():
 	print("\n🔄 Test processing scelta con skill check:")
 	
 	# Salva stato player prima del test
-	var player_manager = get_node("/root/PlayerManager")
+	var player_manager = get_node("/root/PlayerSystemManager")
 	var hp_before = player_manager.hp
 	var food_before = player_manager.food
 	

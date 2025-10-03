@@ -1,10 +1,10 @@
 extends Node
 
-## WorldSystemManager - Consolidamento TimeManager + CraftingManager
+## WorldSystemManager - Consolidamento WorldSystemManager + WorldSystemManager
 ##
 ## Responsabilità unificate:
-## - Gestione tempo di gioco e ciclo giorno/notte (TimeManager)
-## - Sistema crafting con ricette e materiali (CraftingManager)
+## - Gestione tempo di gioco e ciclo giorno/notte (WorldSystemManager)
+## - Sistema crafting con ricette e materiali (WorldSystemManager)
 ## - Integrazione tempo-crafting per meccaniche avanzate
 ## - Gestione sopravvivenza e penalità temporali
 

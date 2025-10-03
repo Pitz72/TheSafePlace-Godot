@@ -35,11 +35,11 @@ const LEVEL_NAMES = {
 
 # Standard manager prefixes
 const MANAGER_PREFIXES = {
-	"DataManager": "🗄️",
-	"PlayerManager": "👤",
-	"EventManager": "🎭", 
-	"TimeManager": "⏰",
-	"InputManager": "⌨️",
+	"CoreDataManager": "🗄️",
+	"PlayerSystemManager": "👤",
+	"NarrativeSystemManager": "🎭", 
+	"WorldSystemManager": "⏰",
+	"InterfaceSystemManager": "⌨️",
 	"ThemeManager": "🎨",
 	"SkillCheckManager": "🎲",
 	"MainGame": "🎮",

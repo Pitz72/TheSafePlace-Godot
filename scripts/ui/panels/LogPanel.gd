@@ -69,7 +69,7 @@ func add_world_log(message: String):
 		print("LogPanel: [ERROR] log_display è null - messaggio World perso: " + message)
 		return
 	
-	var timestamp = get_current_timestamp()
+	var timestamp = get_timestamp()
 	var formatted_message = "[color=cyan]%s[/color] [color=lightgreen][MONDO][/color] %s\n" % [timestamp, message]
 	
 	log_display.append_text(formatted_message)

@@ -58,11 +58,11 @@ func run_full_test_suite() -> void:
 func test_initial_state() -> void:
 	print("\n📊 TEST 1: Verifica stato iniziale")
 	
-	if not PlayerManager:
-		print("❌ PlayerManager non disponibile")
+	if not PlayerSystemManager:
+		print("❌ PlayerSystemManager non disponibile")
 		return
 	
-	var progression_data = PlayerManager.get_progression_data()
+	var progression_data = PlayerSystemManager.get_progression_data()
 	print("   Esperienza: %d" % progression_data.experience)
 	print("   Soglia prossimo livello: %d" % progression_data.experience_for_next_point)
 	print("   Punti disponibili: %d" % progression_data.available_stat_points)
@@ -71,20 +71,20 @@ func test_initial_state() -> void:
 	# Verifica statistiche iniziali
 	print("   Statistiche iniziali:")
 	for stat_name in ["forza", "agilita", "intelligenza", "carisma", "fortuna"]:
-		print("     %s: %d" % [stat_name.capitalize(), PlayerManager.get_stat(stat_name)])
+		print("     %s: %d" % [stat_name.capitalize(), PlayerSystemManager.get_stat(stat_name)])
 	
 	print("✅ Stato iniziale verificato")
 
 func test_gain_experience_no_level() -> void:
 	print("\n⭐ TEST 2: Guadagno esperienza senza livellamento")
 	
-	var initial_exp = PlayerManager.experience
+	var initial_exp = PlayerSystemManager.experience
 	var exp_to_gain = 50  # Meno della soglia iniziale (100)
 	
-	PlayerManager.add_experience(exp_to_gain, "Test guadagno esperienza")
+	PlayerSystemManager.add_experience(exp_to_gain, "Test guadagno esperienza")
 	
-	var final_exp = PlayerManager.experience
-	var points = PlayerManager.available_stat_points
+	var final_exp = PlayerSystemManager.experience
+	var points = PlayerSystemManager.available_stat_points
 	
 	print("   Esperienza: %d → %d (+%d)" % [initial_exp, final_exp, exp_to_gain])
 	print("   Punti statistica: %d (dovrebbe essere 0)" % points)
@@ -99,18 +99,18 @@ func test_gain_experience_no_level() -> void:
 func test_gain_experience_with_level() -> void:
 	print("\n🎉 TEST 3: Guadagno esperienza con livellamento")
 	
-	var initial_exp = PlayerManager.experience
-	var initial_points = PlayerManager.available_stat_points
+	var initial_exp = PlayerSystemManager.experience
+	var initial_points = PlayerSystemManager.available_stat_points
 	var exp_to_gain = 100  # Dovrebbe causare almeno un livellamento
 	
-	PlayerManager.add_experience(exp_to_gain, "Test livellamento")
+	PlayerSystemManager.add_experience(exp_to_gain, "Test livellamento")
 	
-	var final_exp = PlayerManager.experience
-	var final_points = PlayerManager.available_stat_points
+	var final_exp = PlayerSystemManager.experience
+	var final_points = PlayerSystemManager.available_stat_points
 	
 	print("   Esperienza: %d → %d" % [initial_exp, final_exp])
 	print("   Punti statistica: %d → %d" % [initial_points, final_points])
-	print("   Nuova soglia: %d" % PlayerManager.experience_for_next_point)
+	print("   Nuova soglia: %d" % PlayerSystemManager.experience_for_next_point)
 	
 	if final_points > initial_points:
 		print("✅ Test livellamento: PASSATO (punti guadagnati: %d)" % (final_points - initial_points))
@@ -123,11 +123,11 @@ func test_popup_without_points() -> void:
 	print("\n🏆 TEST 4: Tentativo apertura popup senza punti")
 	
 	# Azzera i punti temporaneamente
-	var original_points = PlayerManager.available_stat_points
-	PlayerManager.available_stat_points = 0
+	var original_points = PlayerSystemManager.available_stat_points
+	PlayerSystemManager.available_stat_points = 0
 	
 	print("   Simulazione comando [L] senza punti disponibili...")
-	var has_points = PlayerManager.has_available_stat_points()
+	var has_points = PlayerSystemManager.has_available_stat_points()
 	
 	if not has_points:
 		print("✅ Test popup senza punti: PASSATO (correttamente bloccato)")
@@ -135,7 +135,7 @@ func test_popup_without_points() -> void:
 		print("❌ Test popup senza punti: FALLITO (dovrebbe essere bloccato)")
 	
 	# Ripristina punti originali
-	PlayerManager.available_stat_points = original_points
+	PlayerSystemManager.available_stat_points = original_points
 	
 	await get_tree().process_frame
 
@@ -143,10 +143,10 @@ func test_popup_with_points() -> void:
 	print("\n🏆 TEST 5: Test apertura popup con punti disponibili")
 	
 	# Assicurati che ci siano punti disponibili
-	if not PlayerManager.has_available_stat_points():
-		PlayerManager.add_experience(200, "Test per assicurare punti")
+	if not PlayerSystemManager.has_available_stat_points():
+		PlayerSystemManager.add_experience(200, "Test per assicurare punti")
 	
-	var points = PlayerManager.available_stat_points
+	var points = PlayerSystemManager.available_stat_points
 	print("   Punti disponibili: %d" % points)
 	
 	if points > 0:
@@ -161,21 +161,21 @@ func test_stat_improvement() -> void:
 	print("\n📈 TEST 6: Test miglioramento statistiche")
 	
 	# Assicurati che ci siano punti
-	if not PlayerManager.has_available_stat_points():
-		PlayerManager.add_experience(300, "Test per punti statistica")
+	if not PlayerSystemManager.has_available_stat_points():
+		PlayerSystemManager.add_experience(300, "Test per punti statistica")
 	
-	var initial_points = PlayerManager.available_stat_points
-	var initial_forza = PlayerManager.get_stat("forza")
+	var initial_points = PlayerSystemManager.available_stat_points
+	var initial_forza = PlayerSystemManager.get_stat("forza")
 	
 	print("   Stato prima miglioramento:")
 	print("     Punti disponibili: %d" % initial_points)
 	print("     Forza: %d" % initial_forza)
 	
 	# Test miglioramento statistica
-	var success = PlayerManager.improve_stat("forza")
+	var success = PlayerSystemManager.improve_stat("forza")
 	
-	var final_points = PlayerManager.available_stat_points
-	var final_forza = PlayerManager.get_stat("forza")
+	var final_points = PlayerSystemManager.available_stat_points
+	var final_forza = PlayerSystemManager.get_stat("forza")
 	
 	print("   Stato dopo miglioramento:")
 	print("     Punti disponibili: %d" % final_points)
@@ -197,11 +197,11 @@ func test_stat_improvement() -> void:
 
 func print_progression_status() -> void:
 	"""Utility per stampare lo stato completo della progressione"""
-	if not PlayerManager:
-		print("❌ PlayerManager non disponibile")
+	if not PlayerSystemManager:
+		print("❌ PlayerSystemManager non disponibile")
 		return
 	
-	var data = PlayerManager.get_progression_data()
+	var data = PlayerSystemManager.get_progression_data()
 	print("\n📊 STATO PROGRESSIONE:")
 	print("   Esperienza: %d" % data.experience)
 	print("   Soglia prossimo livello: %d" % data.experience_for_next_point)
@@ -210,7 +210,7 @@ func print_progression_status() -> void:
 	
 	print("\n📊 STATISTICHE ATTUALI:")
 	for stat_name in ["forza", "agilita", "intelligenza", "carisma", "fortuna"]:
-		print("   %s: %d" % [stat_name.capitalize(), PlayerManager.get_stat(stat_name)])
+		print("   %s: %d" % [stat_name.capitalize(), PlayerSystemManager.get_stat(stat_name)])
 
 # ========================================
 # COMANDO MANUALI DI TEST (PER DEBUG)
@@ -218,12 +218,12 @@ func print_progression_status() -> void:
 
 func give_experience(amount: int) -> void:
 	"""Comando manuale per dare esperienza (per test)"""
-	PlayerManager.add_experience(amount, "Test manuale")
+	PlayerSystemManager.add_experience(amount, "Test manuale")
 	print_progression_status()
 
 func give_stat_points(amount: int) -> void:
 	"""Comando manuale per dare punti statistica (per test)"""
-	PlayerManager.available_stat_points += amount
+	PlayerSystemManager.available_stat_points += amount
 	print("🎯 Aggiunti %d punti statistica" % amount)
 	print_progression_status()
 
@@ -232,10 +232,10 @@ func test_all_stats() -> void:
 	var stats = ["forza", "agilita", "intelligenza", "carisma", "fortuna"]
 	
 	# Assicurati che ci siano abbastanza punti
-	PlayerManager.available_stat_points += 5
+	PlayerSystemManager.available_stat_points += 5
 	
 	for stat_name in stats:
-		var success = PlayerManager.improve_stat(stat_name)
+		var success = PlayerSystemManager.improve_stat(stat_name)
 		print("Miglioramento %s: %s" % [stat_name, "✅" if success else "❌"])
 	
 	print_progression_status() 

@@ -1,9 +1,9 @@
 extends Node
 
-## PlayerSystemManager - Consolidamento PlayerManager + SkillCheckManager
+## PlayerSystemManager - Consolidamento PlayerSystemManager + SkillCheckManager
 ##
 ## Responsabilità unificate:
-## - Gestione stato completo del giocatore (PlayerManager)
+## - Gestione stato completo del giocatore (PlayerSystemManager)
 ## - Sistema inventario con limite slot
 ## - Progressione personaggio (EXP, statistiche)
 ## - Stati fisici (normale, ferito, malato, avvelenato)
@@ -147,10 +147,10 @@ func _calculate_max_hp(vigor_stat: int) -> int:
 	return 80 + (vigor_stat * 2)
 
 func _connect_time_manager_signals():
-	"""Connette i segnali del TimeManager"""
-	if TimeManager:
-		if not TimeManager.time_advanced.is_connected(_on_time_advanced):
-			TimeManager.time_advanced.connect(_on_time_advanced)
+	"""Connette i segnali del WorldSystemManager"""
+	if WorldSystemManager:
+		if not WorldSystemManager.time_advanced.is_connected(_on_time_advanced):
+			WorldSystemManager.time_advanced.connect(_on_time_advanced)
 
 # ========================================
 # API GESTIONE RISORSE

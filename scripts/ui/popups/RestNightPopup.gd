@@ -64,7 +64,7 @@ func _on_choice_pressed(action: String):
 func _consume_resource(type: String):
 	var item_id_to_use = ""
 	# Trova il primo oggetto consumabile del tipo giusto nell'inventario
-	for item_slot in PlayerManager.inventory:
+	for item_slot in PlayerSystemManager.inventory:
 		var item_data = WorldSystemManager.get_item_data(item_slot.id)
 		if item_data.get("category") == "CONSUMABLE":
 			if type == "food" and item_data.get("subcategory") == "food":
@@ -75,9 +75,9 @@ func _consume_resource(type: String):
 				break
 	
 	if not item_id_to_use.is_empty():
-		PlayerManager.use_item(item_id_to_use)
+		PlayerSystemManager.use_item(item_id_to_use)
 	else:
-		PlayerManager.narrative_log_generated.emit("[color=yellow]Non hai nulla da %s.[/color]" % ("mangiare" if type == "food" else "bere"))
+		PlayerSystemManager.narrative_log_generated.emit("[color=yellow]Non hai nulla da %s.[/color]" % ("mangiare" if type == "food" else "bere"))
 
 func _update_button_status():
 	# Disabilita i bottoni se non ci sono oggetti corrispondenti
@@ -86,7 +86,7 @@ func _update_button_status():
 	choice3_button.disabled = not _has_resource("drink")
 
 func _has_resource(type: String) -> bool:
-	for item_slot in PlayerManager.inventory:
+	for item_slot in PlayerSystemManager.inventory:
 		var item_data = WorldSystemManager.get_item_data(item_slot.id)
 		if item_data.get("category") == "CONSUMABLE":
 			if type == "food" and item_data.get("subcategory") == "food":

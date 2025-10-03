@@ -54,7 +54,7 @@ signal popup_closed
 ## Oggetto corrente mostrato nel popup (dizionario dall'inventario)
 var _current_item: Dictionary = {}
 
-## Dati statici dell'oggetto corrente (dal DataManager)
+## Dati statici dell'oggetto corrente (dal CoreDataManager)
 var _current_item_data: Dictionary = {}
 
 ## Indice azione attualmente selezionata (per navigazione keyboard-only)

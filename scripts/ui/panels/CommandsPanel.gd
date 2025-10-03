@@ -17,8 +17,8 @@ func _ready():
 		WorldSystemManager.crafting_completed.connect(_on_crafting_completed)
 		WorldSystemManager.crafting_failed.connect(_on_crafting_failed)
 	
-	if TimeSystemManager:
-		TimeSystemManager.time_changed.connect(_on_time_changed)
+	if WorldSystemManager:
+		WorldSystemManager.time_changed.connect(_on_time_changed)
 	
 	# Connetti al segnale rifugio da MainGame
 	var main_game = get_node("/root/MainGame")
@@ -54,7 +54,7 @@ func update_panel(is_inventory_active: bool):
 	if is_in_shelter and not _is_night():
 		command1_label.text = "[1] Riposa\n(Recupera 10 HP, +2 ore)"
 		command2_label.text = "[2] Cerca Risorse\n(+30 min, skill check)"
-		var workbench_status = "Disponibile" if (CraftingManager and CraftingManager.has_workbench()) else "Non disponibile"
+		var workbench_status = "Disponibile" if (WorldSystemManager and WorldSystemManager.has_workbench()) else "Non disponibile"
 		command3_label.text = "[3] Banco da Lavoro\n(%s)\n[4] Lascia il Rifugio" % workbench_status
 		return
 	
@@ -65,7 +65,7 @@ func update_panel(is_inventory_active: bool):
 
 # Utility per controllare se è notte
 func _is_night() -> bool:
-	return TimeManager and TimeManager.is_night()
+	return WorldSystemManager and WorldSystemManager.is_night()
 
 func _on_crafting_completed(recipe_id: String, result_item: Dictionary):
 	"""Gestisce il completamento del crafting"""

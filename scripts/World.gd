@@ -350,10 +350,10 @@ func _update_camera_target():
 		target_camera_position = Vector2(player_pos.x * TILE_SIZE, player_pos.y * TILE_SIZE)
 
 # ============================================================================
-# LOGICA MOVIMENTO AVANZATA (InputManager Integration)
+# LOGICA MOVIMENTO AVANZATA (InterfaceSystemManager Integration)
 # ============================================================================
 
-## Connette i segnali InputManager per gestione movimento centralizzata
+## Connette i segnali InterfaceSystemManager per gestione movimento centralizzata
 func _connect_input_manager():
 	"""Configura connessioni ai segnali InterfaceSystemManager per movimento player"""
 	if not InterfaceSystemManager:

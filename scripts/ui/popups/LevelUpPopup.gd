@@ -123,7 +123,7 @@ func close_popup() -> void:
 	self.hide()
 	
 	# Ripristina stato input precedente (MAP o INVENTORY)
-	InputManager.set_state(InputManager.InputState.MAP)
+	InterfaceSystemManager.set_state(InterfaceSystemManager.InputState.MAP)
 	
 	# Emetti segnale di chiusura
 	popup_closed.emit()
@@ -172,7 +172,7 @@ func _navigate_selection(direction: int) -> void:
 
 ## Attiva l'azione attualmente selezionata
 func _activate_selected_action() -> void:
-	if not PlayerManager:
+	if not PlayerSystemManager:
 		return
 	
 	# Debug rimosso per ridurre log
@@ -186,13 +186,13 @@ func _activate_selected_action() -> void:
 	var stat_name = _stat_names[selected_stat_index]
 	
 	# Verifica se ci sono ancora punti disponibili
-	if not PlayerManager.has_available_stat_points():
+	if not PlayerSystemManager.has_available_stat_points():
 		# Debug rimosso per ridurre log
 		pass
 		return
 	
-	# Migliora statistica tramite PlayerManager
-	if PlayerManager.improve_stat(stat_name):
+	# Migliora statistica tramite PlayerSystemManager
+	if PlayerSystemManager.improve_stat(stat_name):
 		# Debug rimosso per ridurre log
 		pass
 		
@@ -201,7 +201,7 @@ func _activate_selected_action() -> void:
 		_update_visual_selection()
 		
 		# Se non ci sono più punti, chiudi automaticamente
-		if not PlayerManager.has_available_stat_points():
+		if not PlayerSystemManager.has_available_stat_points():
 			# Debug rimosso per ridurre log
 			pass
 			call_deferred("close_popup")  # Chiusura differita per evitare problemi input
@@ -215,19 +215,19 @@ func _activate_selected_action() -> void:
 
 ## Aggiorna tutti i dati mostrati nel popup
 func _update_popup_data() -> void:
-	if not PlayerManager:
+	if not PlayerSystemManager:
 		return
 	
 	# Aggiorna punti disponibili
-	var available_points = PlayerManager.available_stat_points
+	var available_points = PlayerSystemManager.available_stat_points
 	available_points_label.text = "Punti Disponibili: %d" % available_points
 	
 	# Aggiorna valori statistiche
-	forza_label.text = "Forza: %d" % PlayerManager.get_stat("forza")
-	agilita_label.text = "Agilità: %d" % PlayerManager.get_stat("agilita")
-	intelligenza_label.text = "Intelligenza: %d" % PlayerManager.get_stat("intelligenza")
-	carisma_label.text = "Carisma: %d" % PlayerManager.get_stat("carisma")
-	fortuna_label.text = "Fortuna: %d" % PlayerManager.get_stat("fortuna")
+	forza_label.text = "Forza: %d" % PlayerSystemManager.get_stat("forza")
+	agilita_label.text = "Agilità: %d" % PlayerSystemManager.get_stat("agilita")
+	intelligenza_label.text = "Intelligenza: %d" % PlayerSystemManager.get_stat("intelligenza")
+	carisma_label.text = "Carisma: %d" % PlayerSystemManager.get_stat("carisma")
+	fortuna_label.text = "Fortuna: %d" % PlayerSystemManager.get_stat("fortuna")
 	# Vigore non è modificabile nel level up (solo HP base influisce)
 	
 	# Aggiorna informazioni progressione (M3.T1 Enhancement)
@@ -237,11 +237,11 @@ func _update_popup_data() -> void:
 
 ## Aggiorna le informazioni di progressione (livello, EXP, ecc.)
 func _update_progression_info() -> void:
-	if not PlayerManager:
+	if not PlayerSystemManager:
 		return
 	
-	# Ottieni dati di progressione dal PlayerManager
-	var progression_data = PlayerManager.get_progression_data()
+	# Ottieni dati di progressione dal PlayerSystemManager
+	var progression_data = PlayerSystemManager.get_progression_data()
 	var current_level = progression_data.current_level
 	var current_exp = progression_data.experience
 	var exp_for_next = progression_data.experience_for_next_point
@@ -255,7 +255,7 @@ func _update_progression_info() -> void:
 	
 	# Debug rimosso per ridurre log
 
-# Funzione _calculate_current_level rimossa - ora usa PlayerManager.get_progression_data()
+# Funzione _calculate_current_level rimossa - ora usa PlayerSystemManager.get_progression_data()
 
 ## Aggiorna l'evidenziazione visuale della selezione corrente
 func _update_visual_selection() -> void:
@@ -265,7 +265,7 @@ func _update_visual_selection() -> void:
 		if button:
 			if i < _stat_names.size():
 				# Bottone statistica: mostra [+] normale o disabilitato
-				if PlayerManager and PlayerManager.has_available_stat_points():
+				if PlayerSystemManager and PlayerSystemManager.has_available_stat_points():
 					button.text = "[color=#00FF40][+][/color]"
 				else:
 					button.text = "[color=#666666][+][/color]"  # Disabilitato
@@ -278,7 +278,7 @@ func _update_visual_selection() -> void:
 	if selected_button:
 		if selected_stat_index < _stat_names.size():
 			# Bottone statistica selezionato: sfondo verde + testo nero
-			if PlayerManager and PlayerManager.has_available_stat_points():
+			if PlayerSystemManager and PlayerSystemManager.has_available_stat_points():
 				selected_button.text = "[bgcolor=#00FF40][color=#000000][+][/color][/bgcolor]"
 			else:
 				selected_button.text = "[bgcolor=#666666][color=#000000][+][/color][/bgcolor]"  # Disabilitato
@@ -287,3 +287,12 @@ func _update_visual_selection() -> void:
 			selected_button.text = "[bgcolor=#00FF40][color=#000000]Chiudi[/color][/bgcolor]"
 	
 	# Debug rimosso per ridurre log
+
+# ========================================
+# CALLBACK SEGNALI
+# ========================================
+
+## Callback per il segnale level_up di PlayerSystemManager
+func _on_level_up() -> void:
+	# Mostra automaticamente il popup quando il giocatore sale di livello
+	show_level_up_popup()

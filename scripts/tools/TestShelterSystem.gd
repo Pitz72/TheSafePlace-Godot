@@ -30,32 +30,32 @@ func test_file_existence():
 func test_critical_methods():
 	print("\n⚙️ Critical Method Tests:")
 	
-	# Test TimeManager methods
-	if TimeManager.has_method("advance_time_until_hour"):
-		print("✅ TimeManager.advance_time_until_hour() available")
+	# Test WorldSystemManager methods
+	if WorldSystemManager.has_method("advance_time_until_hour"):
+		print("✅ WorldSystemManager.advance_time_until_hour() available")
 		
 		# Test the method
-		var initial_hour = TimeManager.current_hour
+		var initial_hour = WorldSystemManager.current_hour
 		var target_hour = 6
 		print("   Testing time advancement: %d → %d" % [initial_hour, target_hour])
 		
-		TimeManager.advance_time_until_hour(target_hour)
+		WorldSystemManager.advance_time_until_hour(target_hour)
 		
-		if TimeManager.current_hour == target_hour:
+		if WorldSystemManager.current_hour == target_hour:
 			print("✅ Time advancement working correctly")
 		else:
-			print("⚠️ Time advancement result: %d (expected %d)" % [TimeManager.current_hour, target_hour])
+			print("⚠️ Time advancement result: %d (expected %d)" % [WorldSystemManager.current_hour, target_hour])
 	else:
-		print("❌ TimeManager.advance_time_until_hour() missing")
+		print("❌ WorldSystemManager.advance_time_until_hour() missing")
 	
-	# Test InputManager signals
-	if InputManager.has_signal("shelter_action_requested"):
-		print("✅ InputManager shelter_action_requested signal available")
+	# Test InterfaceSystemManager signals
+	if InterfaceSystemManager.has_signal("shelter_action_requested"):
+		print("✅ InterfaceSystemManager shelter_action_requested signal available")
 	else:
-		print("❌ InputManager shelter_action_requested signal missing")
+		print("❌ InterfaceSystemManager shelter_action_requested signal missing")
 	
-	# Test PlayerManager food/water methods
-	if PlayerManager.has_method("modify_food") and PlayerManager.has_method("modify_water"):
-		print("✅ PlayerManager food/water methods available")
+	# Test PlayerSystemManager food/water methods
+	if PlayerSystemManager.has_method("modify_food") and PlayerSystemManager.has_method("modify_water"):
+		print("✅ PlayerSystemManager food/water methods available")
 	else:
-		print("❌ PlayerManager food/water methods missing")
+		print("❌ PlayerSystemManager food/water methods missing")

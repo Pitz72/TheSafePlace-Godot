@@ -20,9 +20,7 @@ var is_awaiting_final_input: bool = false
 
 func _ready():
 	hide()
-	_connect_manager_signals()
-
-func _ready():
+	
 	if not CombatSystemManager:
 		push_error("CombatPopup: CombatSystemManager non trovato!")
 		return
@@ -204,3 +202,28 @@ func _update_actions_display(player_turn: bool):
 		waiting_label.text = "In attesa dell'azione nemica..."
 		waiting_label.modulate = Color(0.7, 0.7, 0.7)
 		actions_container.add_child(waiting_label)
+
+# ========================================
+# FUNZIONI HELPER PRIVATE
+# ========================================
+
+## Mostra le ricompense ottenute dal combattimento
+func _show_rewards(rewards: Dictionary) -> void:
+	if not rewards or rewards.is_empty():
+		return
+	
+	combat_log_label.append_text("\n--- RICOMPENSE ---\n")
+	
+	# Mostra esperienza guadagnata
+	if rewards.has("experience") and rewards.experience > 0:
+		combat_log_label.append_text("💫 Esperienza: +%d\n" % rewards.experience)
+	
+	# Mostra oggetti ottenuti
+	if rewards.has("items") and rewards.items.size() > 0:
+		combat_log_label.append_text("📦 Oggetti ottenuti:\n")
+		for item in rewards.items:
+			combat_log_label.append_text("  • %s\n" % item)
+	
+	# Mostra denaro ottenuto
+	if rewards.has("money") and rewards.money > 0:
+		combat_log_label.append_text("💰 Denaro: +%d\n" % rewards.money)

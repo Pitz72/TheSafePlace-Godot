@@ -59,9 +59,9 @@ func _update_workbench_info():
 	if not workbench_info:
 		return
 
-	var has_access = CraftingManager.has_workbench()
+	var has_access = WorldSystemManager.has_workbench()
 	var level = 1 if has_access else 0  # Per ora livello semplice
-	var skill = CraftingManager.get_crafting_skill()
+	var skill = WorldSystemManager.get_crafting_skill()
 
 	var info_text = "🔨 WORKBENCH - "
 	if has_access:
@@ -185,7 +185,7 @@ func _update_recipe_details():
 
 # Stima qualità del crafting
 func _estimate_craft_quality(recipe_data: Dictionary) -> float:
-	var skill = CraftingManager.get_crafting_skill()
+	var skill = WorldSystemManager.get_crafting_skill()
 	var skill_req = recipe_data.get("required_skill", 0)
 
 	# Qualità base: 0.5 + (skill/required_skill) * 0.5, con variazione casuale
@@ -260,7 +260,7 @@ func is_active() -> bool:
 	return is_popup_active
 
 # ====================
-# GESTIONE SEGNALI CRAFTINGMANAGER
+# GESTIONE SEGNALI WorldSystemManager
 # ====================
 
 func _on_crafting_completed(item_id: String, quantity: int):
@@ -271,15 +271,15 @@ func _on_crafting_completed(item_id: String, quantity: int):
 func _on_crafting_failed(recipe_id: String, reason):
 	var reason_text = ""
 	match reason:
-		CraftingManager.CraftingResult.INSUFFICIENT_MATERIALS:
+		WorldSystemManager.CraftingResult.INSUFFICIENT_MATERIALS:
 			reason_text = "Materiali insufficienti"
-		CraftingManager.CraftingResult.MISSING_TOOLS:
+		WorldSystemManager.CraftingResult.MISSING_TOOLS:
 			reason_text = "Strumenti mancanti"
-		CraftingManager.CraftingResult.INSUFFICIENT_SKILL:
+		WorldSystemManager.CraftingResult.INSUFFICIENT_SKILL:
 			reason_text = "Abilità insufficiente"
-		CraftingManager.CraftingResult.WORKBENCH_REQUIRED:
+		WorldSystemManager.CraftingResult.WORKBENCH_REQUIRED:
 			reason_text = "Workbench richiesto"
-		CraftingManager.CraftingResult.UNKNOWN_RECIPE:
+		WorldSystemManager.CraftingResult.UNKNOWN_RECIPE:
 			reason_text = "Ricetta sconosciuta"
 		_:
 			reason_text = "Errore sconosciuto"

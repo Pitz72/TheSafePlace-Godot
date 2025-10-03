@@ -385,7 +385,7 @@ func debug_print_interface_status():
 # COMPATIBILITÀ LEGACY
 # ========================================
 
-# Alias per compatibilità con InputManager
+# Alias per compatibilità con InterfaceSystemManager
 func set_state(new_state: InputState) -> void:
 	set_input_state(new_state)
 
