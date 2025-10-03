@@ -19,7 +19,7 @@ func _ready():
 	test_skill_check()
 	print("")
 	
-	# Test 4: Test con statistiche reali del PlayerManager
+	# Test 4: Test con statistiche reali del PlayerSystemManager
 	test_with_real_player_stats()
 	print("")
 	
@@ -40,7 +40,7 @@ func test_stat_modifier():
 	
 	for stat_value in test_values.keys():
 		var expected = test_values[stat_value]
-		var result = PlayerManager.get_stat_modifier(stat_value)
+		var result = PlayerSystemManager.get_stat_modifier(stat_value)
 		var status = "✓" if result == expected else "✗"
 		print("%s Stat %d -> Modifier %d (atteso: %d)" % [status, stat_value, result, expected])
 
@@ -52,7 +52,7 @@ func test_roll_d20():
 	var rolls = []
 	
 	for i in range(10):
-		var roll = PlayerManager.roll_d20()
+		var roll = PlayerSystemManager.roll_d20()
 		rolls.append(roll)
 		if roll >= 1 and roll <= 20:
 			valid_rolls += 1
@@ -64,9 +64,9 @@ func test_skill_check():
 	print("--- Test skill_check completo ---")
 	
 	# Simula statistiche del giocatore
-	PlayerManager.stats["forza"] = 15  # Modifier +2
-	PlayerManager.stats["agilita"] = 12   # Modifier +1
-	PlayerManager.stats["intelligenza"] = 8  # Modifier -1
+	PlayerSystemManager.stats["forza"] = 15  # Modifier +2
+	PlayerSystemManager.stats["agilita"] = 12   # Modifier +1
+	PlayerSystemManager.stats["intelligenza"] = 8  # Modifier -1
 	
 	# Test skill check con diverse difficoltà
 	var tests = [
@@ -76,9 +76,9 @@ func test_skill_check():
 	]
 	
 	for test in tests:
-		var result = PlayerManager.skill_check(test.stat, test.difficulty, test.modifier)
-		var stat_value = PlayerManager.stats.get(test.stat, 10)
-		var stat_mod = PlayerManager.get_stat_modifier(stat_value)
+		var result = PlayerSystemManager.skill_check(test.stat, test.difficulty, test.modifier)
+		var stat_value = PlayerSystemManager.stats.get(test.stat, 10)
+		var stat_mod = PlayerSystemManager.get_stat_modifier(stat_value)
 		var total_mod = stat_mod + test.modifier
 		
 		print("Skill Check %s (valore: %d, mod: %d, bonus: %d, difficoltà: %d)" % [
@@ -90,24 +90,24 @@ func test_skill_check():
 		])
 
 func test_with_real_player_stats():
-	print("--- Test con statistiche reali PlayerManager ---")
+	print("--- Test con statistiche reali PlayerSystemManager ---")
 	
 	# Mostra le statistiche attuali del giocatore
 	print("Statistiche attuali:")
-	var forza = PlayerManager.stats.get("forza", 10)
-	var agilita = PlayerManager.stats.get("agilita", 10)
-	var intelligenza = PlayerManager.stats.get("intelligenza", 10)
-	var carisma = PlayerManager.stats.get("carisma", 10)
-	var fortuna = PlayerManager.stats.get("fortuna", 10)
+	var forza = PlayerSystemManager.stats.get("forza", 10)
+	var agilita = PlayerSystemManager.stats.get("agilita", 10)
+	var intelligenza = PlayerSystemManager.stats.get("intelligenza", 10)
+	var carisma = PlayerSystemManager.stats.get("carisma", 10)
+	var fortuna = PlayerSystemManager.stats.get("fortuna", 10)
 	
-	print("  Forza: %d (mod: %d)" % [forza, PlayerManager.get_stat_modifier(forza)])
-	print("  Agilità: %d (mod: %d)" % [agilita, PlayerManager.get_stat_modifier(agilita)])
-	print("  Intelligenza: %d (mod: %d)" % [intelligenza, PlayerManager.get_stat_modifier(intelligenza)])
-	print("  Carisma: %d (mod: %d)" % [carisma, PlayerManager.get_stat_modifier(carisma)])
-	print("  Fortuna: %d (mod: %d)" % [fortuna, PlayerManager.get_stat_modifier(fortuna)])
+	print("  Forza: %d (mod: %d)" % [forza, PlayerSystemManager.get_stat_modifier(forza)])
+	print("  Agilità: %d (mod: %d)" % [agilita, PlayerSystemManager.get_stat_modifier(agilita)])
+	print("  Intelligenza: %d (mod: %d)" % [intelligenza, PlayerSystemManager.get_stat_modifier(intelligenza)])
+	print("  Carisma: %d (mod: %d)" % [carisma, PlayerSystemManager.get_stat_modifier(carisma)])
+	print("  Fortuna: %d (mod: %d)" % [fortuna, PlayerSystemManager.get_stat_modifier(fortuna)])
 	
 	# Test skill check reale
-	var real_test = PlayerManager.skill_check("forza", 15, 0)
+	var real_test = PlayerSystemManager.skill_check("forza", 15, 0)
 	print("")
 	print("Test reale - Prova di Forza (difficoltà 15):")
 	print("  %s - Tiro: %d, Totale: %d" % [

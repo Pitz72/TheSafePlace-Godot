@@ -90,7 +90,7 @@ func _start_generation_sequence(char_data: Dictionary) -> void:
         label.text = "???"
     accept_button.text = "[center][color=#888888]Accetta Personaggio[/color][/center]"
 
-    # Usa i dati forniti dal PlayerManager
+    # Usa i dati forniti dal PlayerSystemManager
     _rolled_stats = char_data.get("stats", {})
     var calc_hp = char_data.get("max_hp", 100)
     

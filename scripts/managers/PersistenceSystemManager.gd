@@ -459,7 +459,8 @@ func _generate_backup_id(save_id: String, manual: bool) -> String:
 func _calculate_checksum(data: Dictionary) -> String:
 	"""Calcola checksum per verifica integrità"""
 	var json_string = JSON.stringify(data)
-	return json_string.hash().hex_encode()
+	var hash_value = json_string.hash()
+	return var_to_str(hash_value)
 
 func _verify_save_integrity(save_data: Dictionary) -> bool:
 	"""Verifica integrità del salvataggio"""

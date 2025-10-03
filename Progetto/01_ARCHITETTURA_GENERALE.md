@@ -1,4 +1,4 @@
-# 🏗️ ARCHITETTURA GENERALE - THE SAFE PLACE v0.9.7.1
+# 🏗️ ARCHITETTURA GENERALE - THE SAFE PLACE v0.9.8.0
 
 ## 🎯 **OVERVIEW DEL SISTEMA**
 
@@ -34,21 +34,16 @@ The Safe Place è un **GDR testuale post-apocalittico** sviluppato in **Godot 4.
 
 ## 🧩 **COMPONENTI PRINCIPALI DEL SISTEMA**
 
-### **1. SINGLETON MANAGERS (12 Manager)**
+### **1. SINGLETON MANAGERS (7 Manager Consolidati)**
 
 ```
-ThemeManager      → Gestione temi, font, colori CRT
-DataManager       → Database JSON, validazione oggetti
-PlayerManager     → Stato giocatore, inventario, statistiche
-InputManager      → Input events, hotkey, stati UI
-TimeManager       → Ciclo giorno/notte, sistema temporale
-EventManager      → Eventi casuali, skill check, biomi
-SkillCheckManager → Sistema test abilità, probabilità
-CombatManager     → Sistema combattimento turn-based
-CraftingManager   → Sistema crafting e produzione
-NarrativeManager  → Sistema narrativo e ricordi
-QuestManager      → Sistema missioni e progressione
-SaveLoadManager   → Sistema salvataggio e caricamento
+CoreDataManager           → Database JSON, validazione, items, enemies
+PlayerSystemManager       → Stato giocatore, inventario, statistiche, skill check
+WorldSystemManager        → Tempo, ciclo giorno/notte, crafting, biomi
+NarrativeSystemManager    → Eventi narrativi, quest, ricordi, skill check
+CombatSystemManager       → Sistema combattimento turn-based, nemici
+InterfaceSystemManager    → UI/UX, temi, input, hotkey, popups
+PersistenceSystemManager  → Sistema salvataggio/caricamento, serializzazione
 ```
 
 ### **1.1. DEVELOPMENT TOOLS (v0.4.1)**

@@ -12,12 +12,12 @@ static func run_tests():
 	print("\n📋 Test 1: Validazione API")
 	_test_api_validation()
 	
-	# Test 2: Verifica TimeManager
-	print("\n⏰ Test 2: TimeManager Integration")
+	# Test 2: Verifica WorldSystemManager
+	print("\n⏰ Test 2: WorldSystemManager Integration")
 	_test_time_manager()
 	
-	# Test 3: Verifica InputManager
-	print("\n⌨️ Test 3: InputManager Integration") 
+	# Test 3: Verifica InterfaceSystemManager
+	print("\n⌨️ Test 3: InterfaceSystemManager Integration") 
 	_test_input_manager()
 	
 	# Test 4: Verifica CommandsPanel
@@ -27,29 +27,29 @@ static func run_tests():
 	print("\n✅ TUTTI I TEST COMPLETATI")
 
 static func _test_api_validation():
-	# Test esistenza metodi TimeManager
-	var time_manager = TimeManager
+	# Test esistenza metodi WorldSystemManager
+	var time_manager = WorldSystemManager
 	if time_manager and time_manager.has_method("advance_time_until_hour"):
-		print("✅ TimeManager.advance_time_until_hour() esiste")
+		print("✅ WorldSystemManager.advance_time_until_hour() esiste")
 	else:
-		print("❌ TimeManager.advance_time_until_hour() mancante")
+		print("❌ WorldSystemManager.advance_time_until_hour() mancante")
 	
 	if time_manager and time_manager.has_method("is_night"):
-		print("✅ TimeManager.is_night() esiste")
+		print("✅ WorldSystemManager.is_night() esiste")
 	else:
-		print("❌ TimeManager.is_night() mancante")
+		print("❌ WorldSystemManager.is_night() mancante")
 	
-	# Test esistenza segnali InputManager
-	var input_manager = InputManager
+	# Test esistenza segnali InterfaceSystemManager
+	var input_manager = InterfaceSystemManager
 	if input_manager and input_manager.has_signal("shelter_action_requested"):
-		print("✅ InputManager.shelter_action_requested signal esiste")
+		print("✅ InterfaceSystemManager.shelter_action_requested signal esiste")
 	else:
-		print("❌ InputManager.shelter_action_requested signal mancante")
+		print("❌ InterfaceSystemManager.shelter_action_requested signal mancante")
 
 static func _test_time_manager():
-	var time_manager = TimeManager
+	var time_manager = WorldSystemManager
 	if not time_manager:
-		print("❌ TimeManager non disponibile")
+		print("❌ WorldSystemManager non disponibile")
 		return
 	
 	# Test metodo advance_time_until_hour
@@ -66,12 +66,12 @@ static func _test_time_manager():
 		print("❌ Avanzamento tempo fallito: atteso %d, ottenuto %d" % [target_hour, time_manager.current_hour])
 
 static func _test_input_manager():
-	var input_manager = InputManager
+	var input_manager = InterfaceSystemManager
 	if not input_manager:
-		print("❌ InputManager non disponibile")
+		print("❌ InterfaceSystemManager non disponibile")
 		return
 	
-	print("✅ InputManager disponibile e configurato")
+	print("✅ InterfaceSystemManager disponibile e configurato")
 	print("   Stato corrente: %s" % input_manager.get_state_name())
 
 static func _test_commands_panel():

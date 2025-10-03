@@ -5,7 +5,7 @@
 extends Control
 class_name EventPopup
 
-# Segnali per comunicazione con EventManager
+# Segnali per comunicazione con NarrativeSystemManager
 signal choice_selected(choice_index: int)
 signal popup_closed()
 
@@ -38,14 +38,12 @@ func _ready():
 	# Connetti segnale chiusura
 	if close_button:
 		close_button.pressed.connect(_on_close_button_pressed)
-	func _ready():
+	
 	# Connetti al nuovo segnale di NarrativeSystemManager
 	if NarrativeSystemManager and not NarrativeSystemManager.skill_check_completed.is_connected(_on_skill_check_completed):
 		NarrativeSystemManager.skill_check_completed.connect(_on_skill_check_completed)
 		
 	result_container.visible = false
-	# Debug rimosso per ridurre log
-	pass
 
 # Mostra popup con dati evento
 func show_event(event_data: Dictionary):

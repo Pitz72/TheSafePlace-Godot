@@ -1,11 +1,13 @@
 extends Node
 
-## NarrativeSystemManager - Consolidamento NarrativeManager + QuestManager + EventManager
+const TSPLogger = preload("res://scripts/tools/TSPLogger.gd")
+
+## NarrativeSystemManager - Consolidamento NarrativeManager + QuestManager + NarrativeSystemManager
 ##
 ## Responsabilità unificate:
 ## - Sistema progressione emotiva e narrativa (NarrativeManager)
 ## - Gestione quest principali e secondarie (QuestManager)
-## - Sistema eventi dinamici e skill check (EventManager)
+## - Sistema eventi dinamici e skill check (NarrativeSystemManager)
 ## - Integrazione narrativa completa per esperienza immersiva
 
 # ========================================
@@ -37,6 +39,7 @@ signal wisdom_gained(amount: int, reason: String)
 signal quest_started(quest_id: String)
 signal quest_progressed(quest_id: String, stage_id: String)
 signal quest_completed(quest_id: String)
+signal quest_phase_triggered(phase_id: String, title: String, description: String)
 
 # ========================================
 # SEGNALI PUBBLICI - EVENTI
@@ -48,7 +51,6 @@ signal event_consequences_applied(narrative_log: String)
 
 # Segnali per transazioni con PlayerSystemManager
 signal item_transaction_requested(transaction_data: Dictionary)
-signal status_change_requested(status_to_add: String)
 signal resource_change_requested(resource_type: String, amount: int)
 signal experience_gain_requested(amount: int, reason: String)
 
@@ -83,6 +85,9 @@ var total_wisdom: int = 0
 
 ## Stato emotivo corrente
 var current_emotional_state: EmotionalState = EmotionalState.COLD
+
+## Bioma corrente del giocatore
+var current_player_biome: String = ""
 
 # ========================================
 # VARIABILI QUEST
@@ -325,6 +330,25 @@ func _load_main_quest():
 	else:
 		print("❌ Impossibile caricare la quest principale")
 
+## Metodo pubblico per inizializzazione quest (chiamato da MainGame)
+func initialize_quests() -> void:
+	"""Inizializza il sistema quest - wrapper pubblico per _load_main_quest()"""
+	TSPLogger.info("NarrativeSystemManager", "Inizializzazione quest richiesta da MainGame")
+	
+	# Verifica se le quest sono già state inizializzate
+	if not main_quest_stages.is_empty():
+		TSPLogger.info("NarrativeSystemManager", "Quest già inizializzate, skip")
+		return
+	
+	# Carica la quest principale
+	_load_main_quest()
+	
+	# Verifica successo inizializzazione
+	if main_quest_stages.is_empty():
+		TSPLogger.error("NarrativeSystemManager", "Fallimento inizializzazione quest")
+	else:
+		TSPLogger.success("NarrativeSystemManager", "Quest inizializzate con successo - %d stage caricati" % main_quest_stages.size())
+
 # ========================================
 # API EVENTI - TRIGGERING
 # ========================================
@@ -532,6 +556,18 @@ func get_completed_quests() -> Array:
 	"""Restituisce le quest completate"""
 	return completed_quests.duplicate()
 
+func update_player_biome(biome: String) -> void:
+	"""Aggiorna il bioma corrente del giocatore"""
+	if current_player_biome != biome:
+		current_player_biome = biome
+		TSPLogger.info("NarrativeSystemManager", "Bioma giocatore aggiornato: %s" % biome)
+		# Controlla i trigger delle quest dopo il cambio di bioma
+		check_all_triggers()
+
+func get_current_player_biome() -> String:
+	"""Restituisce il bioma corrente del giocatore"""
+	return current_player_biome
+
 # ========================================
 # DEBUG
 # ========================================
@@ -589,6 +625,7 @@ func _get_biome_events_optimized(biome: String) -> Array:
 	
 	return events
 
+func _preload_critical_events():
 func _get_event_data_optimized(event_id: String) -> Dictionary:
 	"""Ottiene dati evento con cache ottimizzata"""
 	# Controlla cache prima
@@ -602,7 +639,6 @@ func _get_event_data_optimized(event_id: String) -> Dictionary:
 	
 	return event_data
 
-func _preload_critical_events():
 	"""Precarica solo eventi critici per performance"""
 	var critical_events = ["random_events", "main_quest_events"]
 	
@@ -634,6 +670,241 @@ func _load_single_event(event_id: String) -> Dictionary:
 	# Se non trovato, carica da file specifico
 	var event_file = "res://data/events/single/%s.json" % event_id
 	return CoreDataManager.load_json_file(event_file)
+
+func check_all_triggers() -> void:
+	"""
+	Metodo pubblico per controllare tutti i trigger delle quest attive.
+	Valuta le condizioni dei trigger e attiva le quest appropriate.
+	"""
+	if main_quest_stages.is_empty():
+		TSPLogger.warn("NarrativeSystemManager", "Nessuna quest caricata per il controllo trigger")
+		return
+	
+	TSPLogger.info("NarrativeSystemManager", "Controllo trigger per tutte le quest attive...")
+	
+	# Itera attraverso tutti gli stage della quest principale
+	for stage in main_quest_stages:
+		var stage_id = stage.get("id", "")
+		var trigger_condition = stage.get("trigger_condition", "")
+		
+		# Salta se non c'è condizione trigger
+		if trigger_condition.is_empty():
+			continue
+		
+		# Verifica se lo stage è già stato triggerato
+		if quest_progress.has(main_quest_id) and quest_progress[main_quest_id].has(stage_id):
+			continue
+		
+		# Valuta la condizione del trigger
+		if _evaluate_trigger_condition(trigger_condition):
+			TSPLogger.info("NarrativeSystemManager", "Trigger attivato per stage: " + stage_id)
+			
+			# Segna lo stage come triggerato
+			if not quest_progress.has(main_quest_id):
+				quest_progress[main_quest_id] = {}
+			quest_progress[main_quest_id][stage_id] = true
+			
+			# Emetti il segnale per notificare il trigger
+			quest_phase_triggered.emit(stage_id, stage.get("title", ""), stage.get("description", ""))
+			
+			TSPLogger.success("NarrativeSystemManager", "Stage triggerato con successo: %s" % stage.get("title", stage_id))
+
+func _evaluate_trigger_condition(condition: String) -> bool:
+	"""
+	Valuta una condizione trigger e restituisce true se è soddisfatta.
+	Supporta operatori: >, <, ==, >=, <=, !=
+	"""
+	if condition.is_empty():
+		return false
+	
+	# Rimuovi spazi extra
+	condition = condition.strip_edges()
+	
+	TSPLogger.debug("NarrativeSystemManager", "Valutando condizione trigger: %s" % condition)
+	
+	# Gestisci condizioni booleane semplici
+	if condition in ["resting", "found_old_map", "deep_reflection", "crossroads_decision", "near_safe_place", "reached_safe_place"]:
+		var result = _evaluate_boolean_condition(condition)
+		TSPLogger.debug("NarrativeSystemManager", "Condizione booleana '%s' = %s" % [condition, result])
+		return result
+	
+	# Gestisci condizioni con operatori
+	var operators = [" >= ", " <= ", " != ", " > ", " < ", " == "]
+	
+	for operator in operators:
+		if condition.find(operator) != -1:
+			var parts = condition.split(operator, false, 1)
+			if parts.size() == 2:
+				var left_value = _get_condition_value(parts[0].strip_edges())
+				var right_value = _get_condition_value(parts[1].strip_edges())
+				
+				var result = _compare_values(left_value, right_value, operator.strip_edges())
+				TSPLogger.debug("NarrativeSystemManager", "Condizione '%s %s %s' = %s (%s %s %s)" % [parts[0].strip_edges(), operator.strip_edges(), parts[1].strip_edges(), result, left_value, operator.strip_edges(), right_value])
+				return result
+	
+	TSPLogger.warn("NarrativeSystemManager", "Condizione trigger non riconosciuta: " + condition)
+	return false
+
+func _evaluate_boolean_condition(condition: String) -> bool:
+	"""Valuta condizioni booleane specifiche del gioco"""
+	match condition:
+		"resting":
+			# Il giocatore è in stato di riposo se ha HP bassi o è notte
+			return PlayerSystemManager.hp < (PlayerSystemManager.max_hp * 0.5) or WorldSystemManager.is_night()
+		"found_old_map":
+			# Verifica se il giocatore ha trovato la mappa antica
+			if PlayerSystemManager:
+				return PlayerSystemManager.get_item_count("old_map") > 0
+			return false
+		"deep_reflection":
+			# Riflessione profonda quando il giocatore ha alta intelligenza e tempo di esplorazione
+			var intelligence = PlayerSystemManager.get_stat("intelligenza")
+			var exploration_time = WorldSystemManager.total_moves
+			var exploration_time = PlayerSystemManager.exploration_time
+		"crossroads_decision":
+			# Decisione ai bivi quando il giocatore ha oggetti chiave o alta percezione
+			var perception = PlayerSystemManager.get_stat("percezione")
+			var has_map = PlayerSystemManager.get_item_count("old_map") > 0
+			return perception >= 14 or has_map
+		"near_safe_place":
+			# Vicino a un luogo sicuro se ha alta percezione e non è in zone pericolose
+			var perception = PlayerSystemManager.get_stat("percezione")
+			var current_biome = current_player_biome
+			return perception >= 13 and not current_biome.contains("radiation") and not current_biome.contains("wasteland")
+		"reached_safe_place":
+			# Raggiunto luogo sicuro se il bioma corrente è sicuro
+			var current_biome = current_player_biome
+			return current_biome.contains("shelter") or current_biome.contains("village") or current_biome.contains("safe")
+		"near_radiation_zone":
+			# Vicino a una zona radioattiva - controlla se il giocatore è in biomi pericolosi
+			var current_biome = current_player_biome
+			return current_biome.contains("radiation") or current_biome.contains("wasteland") or current_biome.contains("toxic") or current_biome.contains("hazard")
+		_:
+			TSPLogger.warn("NarrativeSystemManager", "Condizione booleana sconosciuta: %s" % condition)
+			return false
+
+func _get_condition_value(value_str: String):
+	"""Ottiene il valore di una variabile o costante per la valutazione"""
+	value_str = value_str.strip_edges()
+	
+	# Gestisci valori numerici diretti
+	if value_str.is_valid_float():
+		return float(value_str)
+	
+	# Gestisci percentuali
+	if value_str.ends_with("%"):
+		var percent_str = value_str.substr(0, value_str.length() - 1)
+		if percent_str.is_valid_float():
+			return float(percent_str) / 100.0
+	
+	# Gestisci variabili del giocatore
+	if PlayerSystemManager:
+		match value_str:
+			"hp":
+				return PlayerSystemManager.hp
+			"max_hp":
+				return PlayerSystemManager.max_hp
+			"water":
+				return PlayerSystemManager.water
+			"food":
+				return PlayerSystemManager.food
+			"inventory_weight":
+				# Calcola peso inventario come percentuale
+				var used_slots = PlayerSystemManager.inventory.size()
+				return float(used_slots) / float(PlayerSystemManager.MAX_INVENTORY_SLOTS)
+			"exploration_time":
+				# Tempo di esplorazione in ore (basato sui movimenti totali)
+				if WorldSystemManager:
+					return WorldSystemManager.total_moves
+				return 0
+			"thirst_level":
+				# Livello di sete calcolato come 100 - water
+				return 100 - PlayerSystemManager.water
+			"time_of_day":
+				# Restituisce "night" o "day" basato su WorldSystemManager
+				if WorldSystemManager and WorldSystemManager.has_method("is_night"):
+					return "night" if WorldSystemManager.is_night() else "day"
+				return "day"
+			"current_biome":
+				# Restituisce il bioma corrente del giocatore
+				return current_player_biome
+			"resting":
+				return _evaluate_boolean_condition("resting")
+	
+	# Gestisci espressioni complesse come "max_hp * 0.8"
+	if value_str.find("*") != -1:
+		var parts = value_str.split("*", false, 1)
+		if parts.size() == 2:
+			var left = _get_condition_value(parts[0].strip_edges())
+			var right = _get_condition_value(parts[1].strip_edges())
+			if typeof(left) in [TYPE_INT, TYPE_FLOAT] and typeof(right) in [TYPE_INT, TYPE_FLOAT]:
+				return left * right
+	
+	TSPLogger.warn("NarrativeSystemManager", "Valore condizione non riconosciuto: " + value_str)
+	return 0
+
+func _compare_values(left, right, operator: String) -> bool:
+	"""Confronta due valori usando l'operatore specificato"""
+	# Converti a float per confronti numerici
+	if typeof(left) in [TYPE_INT, TYPE_FLOAT] and typeof(right) in [TYPE_INT, TYPE_FLOAT]:
+		var left_f = float(left)
+		var right_f = float(right)
+		
+		match operator:
+			">":
+				return left_f > right_f
+			"<":
+				return left_f < right_f
+			">=":
+				return left_f >= right_f
+			"<=":
+				return left_f <= right_f
+			"==":
+				return abs(left_f - right_f) < 0.001  # Confronto float con tolleranza
+			"!=":
+				return abs(left_f - right_f) >= 0.001
+	
+	# Confronti per altri tipi
+	match operator:
+		"==":
+			return left == right
+		"!=":
+			return left != right
+		_:
+			TSPLogger.warn("NarrativeSystemManager", "Operatore non supportato per tipo non numerico: " + operator)
+			return false
+
+
+func _get_event_data(event_id: String) -> Dictionary:
+	"""Restituisce i dati di un evento"""
+	if cached_events.has(event_id):
+		return cached_events[event_id]
+	
+	# Carica evento se non in cache
+	var event_file = "res://data/events/%s.json" % event_id
+	var event_data = CoreDataManager.load_json_file(event_file)
+	
+	if not event_data.is_empty():
+		cached_events[event_id] = event_data
+	
+	return event_data
+
+func _load_events_cache():
+	"""Carica la cache degli eventi"""
+	# Implementazione semplificata - carica eventi base
+	print("📚 Cache eventi caricata")
+func _get_event_data_optimized(event_id: String) -> Dictionary:
+	"""Ottiene dati evento con cache ottimizzata"""
+	# Controlla cache prima
+	if cached_events.has(event_id):
+		return cached_events[event_id]
+	
+	# Carica solo se necessario
+	var event_data = _load_single_event(event_id)
+	if not event_data.is_empty():
+		cached_events[event_id] = event_data
+	
+	return event_data
 
 func clear_event_cache():
 	"""Pulisce cache eventi per liberare memoria"""

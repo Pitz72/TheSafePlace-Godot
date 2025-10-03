@@ -44,9 +44,9 @@ func test_legacy_compatibility():
 	print("\n🔄 Test compatibilità legacy:")
 	
 	var legacy_aliases = [
-		"PlayerManager",
+		"PlayerSystemManager",
 		"DataManager",
-		"TimeManager",
+		"WorldSystemManager",
 		"EventManager",
 		"SkillCheckManager",
 		"QuestManager",

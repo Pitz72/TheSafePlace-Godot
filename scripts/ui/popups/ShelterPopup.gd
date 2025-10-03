@@ -72,7 +72,7 @@ func show_day_shelter():
 
 func _update_workbench_status():
 	"""Aggiorna lo stato del pulsante banco da lavoro"""
-	if CraftingManager and CraftingManager.has_workbench():
+	if WorldSystemManager and WorldSystemManager.has_workbench():
 		action3_button.text = "[3] Banco da Lavoro (Disponibile)"
 		action3_button.disabled = false
 	else:
